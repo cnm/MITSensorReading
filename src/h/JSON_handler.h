@@ -5,6 +5,6 @@
 
 bool generate_JSON(GSDPacket * packet, unsigned char ** response, size_t * length);
 
-GSDPacket generate_packet_from_JSON(char * data);
+bool generate_packet_from_JSON(char * data, GSDPacket * packet);
 
 #endif

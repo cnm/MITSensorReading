@@ -23,8 +23,8 @@ void print_rev_route(){
 	FOR_EACH(rev_item,reverse_table){
 		rev_entry = (ReverseRouteEntry *) rev_item->data;
 		printf("========== NEW REVERSE ENTRY =========\n");
-		printf("=== SOURCE: %s", rev_entry->source_address);
-		printf("=== LAST NODE: %s", rev_entry->previous_address);
+		printf("=== SOURCE: %d", rev_entry->source_address);
+		printf("=== LAST NODE: %d", rev_entry->previous_address);
 		printf("=== BROADCAST ID: %i", rev_entry->broadcast_id);
 		printf("========== END REVERSE ENTRY =========\n\n");
 	}

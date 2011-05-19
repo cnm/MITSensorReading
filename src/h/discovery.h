@@ -2,6 +2,7 @@
 #define __DISCOVERY_H__
 
 #include "listType.h"
+#include <stdint.h>
 
 #define ENABLE_DEBUG 1
 
@@ -11,8 +12,8 @@
 
 #define logger(...) openlog(LOG_FILE, LOG_CONS, LOG_DAEMON); syslog(LOG_INFO, __VA_ARGS__); closelog();
 
-#if ENABLE_DEBUG
-	#define debugger(...) fprintf(stdout, __VA_ARGS__);
+#ifdef ENABLE_DEBUG
+	#define debugger(...) printf(__VA_ARGS__);
 	//#define debugger(...) openlog(DEBUG_FILE, LOG_PID|LOG_CONS, LOG_USER); syslog(LOG_INFO, __VA_ARGS__); closelog();
 #else
 	#define debugger(...)
@@ -33,17 +34,18 @@ typedef struct service_description{
 }Service;
 
 typedef struct service_cache{
-	char* source_address;
+	uint8_t source_address;
 	bool local;
 	ServiceList services; 
 	GroupList vicinity_groups;
 	unsigned short lifetime;
+	unsigned short broadcast_id;
 }ServiceCache;
 
 typedef struct reverse_route_entry{
-	char* source_address;
+	uint8_t source_address;
 	unsigned short broadcast_id;
-	char* previous_address;
+	uint8_t previous_address;
 }ReverseRouteEntry;
 
 typedef struct advertisement_struct{
@@ -55,14 +57,14 @@ typedef struct advertisement_struct{
 
 typedef struct request_struct{
 	Service wanted_service;
-	char* last_address;
+	uint8_t last_address;
 }Request;
 
 typedef struct gsd_pkt{
 	unsigned long broadcast_id;
 	PacketType packet_type;
 	unsigned short hop_count;
-	char* source_address;
+	uint8_t source_address;
 	
 	union{
 		Advertisement * advertise;
@@ -73,6 +75,6 @@ typedef struct gsd_pkt{
 
 void * SendAdvertisement(void *);
 
-void P2PCacheAndForwardAdvertisement(GSDPacket * message);
+void P2PCacheAndForwardAdvertisement(GSDPacket * message, uint8_t src_id);
 
 #endif

@@ -80,29 +80,30 @@ void GetVicinity_GroupInfo(GroupList * vicinity_groups){
 
 void print_cache(){
 	LElement * cache_item;
-	//LElement * item;
+	LElement * item;
+	LElement * group_item;
 	ServiceCache * cache_entry;
 	
 	FOR_EACH(cache_item,cache){
 		cache_entry = (ServiceCache *)cache_item->data;
 		printf("========== NEW CACHE ENTRY =========\n");
 		printf("=== islocal: %s\n", (cache_entry->local)?"true":"false");
-		printf("=== Source: %s\n", cache_entry->source_address);
+		printf("=== Source: %d\n", cache_entry->source_address);
 		printf("=== lifetime: %i\n", cache_entry->lifetime);
-		printf("=====DESCRIPTIONS=====\n");
-	//	FOR_EACH(item,cache_entry->descriptions){
-	//		printf("=== %s\n", item->data);
-	//	}
-		printf("=====END DESCRIPTIONS=====\n");
-		printf("=====GROUPS=====\n");
-	//	FOR_EACH(item,cache_entry->groups){
-	//		printf("=== %s\n", item->data);
-	//	}
-		printf("=====END GROUPS=====\n");
+		FOR_EACH(item,cache_entry->services){
+			printf("=====NEW SERVICE=====\n");
+			printf("=== %s\n", ((Service *)item->data)->description);
+			printf("=====GROUPS======n");
+			FOR_EACH(group_item, ((Service *)item->data)->groups){			
+				printf("=== %s ", (Group) group_item->data);
+			}
+			printf("\n=====END GROUPS=====\n");
+			printf("=====END SERVICE=====\n");
+		}
 		printf("=====VICINITY GROUPS=====\n");
-	//	FOR_EACH(item,cache_entry->vicinity_groups){
-	//		printf("=== %s\n", item->data);
-	//	}
+		FOR_EACH(group_item, cache_entry->vicinity_groups){			
+			printf("=== %s ", (Group) group_item->data);
+		}
 		printf("=====END VIC. GROUPS=====\n");
 		printf("========== END CACHE ENTRY =========\n\n");
 	}
