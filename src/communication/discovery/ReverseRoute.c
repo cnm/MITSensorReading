@@ -5,7 +5,7 @@
 #include <string.h>
 #include "discovery.h"
 #include "listType.h"
-#include "handler.h"
+#include <fred/handler.h>
 
 ReverseRouteList reverse_table;
 

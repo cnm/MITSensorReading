@@ -3,10 +3,24 @@
 
 #include "listType.h"
 
+#define ENABLE_DEBUG 1
+
+#define LOG_FILE "gsdlog"
+//#define DEBUG_FILE "gsddebug"
+
+
+#define logger(...) openlog(LOG_FILE, LOG_CONS, LOG_DAEMON); syslog(LOG_INFO, __VA_ARGS__); closelog();
+
+#if ENABLE_DEBUG
+	#define debugger(...) fprintf(stdout, __VA_ARGS__);
+	//#define debugger(...) openlog(DEBUG_FILE, LOG_PID|LOG_CONS, LOG_USER); syslog(LOG_INFO, __VA_ARGS__); closelog();
+#else
+	#define debugger(...)
+#endif
+
 
 typedef LList CacheList;
 typedef LList ReverseRouteList;
-typedef char * Service;
 typedef char * Group;
 typedef LList GroupList;
 typedef LList ServiceList;
@@ -21,9 +35,8 @@ typedef struct service_description{
 typedef struct service_cache{
 	char* source_address;
 	bool local;
-	LList descriptions; 
-	LList groups;
-	LList vicinity_groups;
+	ServiceList services; 
+	GroupList vicinity_groups;
 	unsigned short lifetime;
 }ServiceCache;
 
@@ -54,11 +67,12 @@ typedef struct gsd_pkt{
 	union{
 		Advertisement * advertise;
 		Request * request;
-	}
+	};
+	
 }GSDPacket;
 
 void * SendAdvertisement(void *);
 
-void P2PCacheAndForwardAdvertisement(Advertisement message);
+void P2PCacheAndForwardAdvertisement(GSDPacket * message);
 
 #endif

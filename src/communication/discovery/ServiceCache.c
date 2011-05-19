@@ -5,30 +5,23 @@
 #include <string.h>
 #include "discovery.h"
 #include "listType.h"
-#include "handler.h"
+#include <fred/handler.h>
+#include <syslog.h>
 
 CacheList cache;
 
-LList GetLocal_ServiceInfo(void){
-	LList local_services;
-	LList descriptions;
+void GetLocal_ServiceInfo(ServiceList * local_services){
 	LElement * cache_item;
-	LElement * item;
 	
-	CreateList(&local_services);
+	CreateList(local_services);
 	
 	FOR_EACH(cache_item, cache){
 		if (((ServiceCache *)cache_item->data)->local){
-			descriptions = ((ServiceCache *)cache_item->data)->descriptions;
-			FOR_EACH(item, descriptions){
-				AddToList(item->data,&local_services);
-			}
+			AddToList(&((ServiceCache *)cache_item->data)->services,local_services);
 		}
 	}
-	
-	return local_services;
 }
-
+/*
 LList GetLocal_ServiceGroupInfo(void){
 	LList lista;
 	LList groups;
@@ -48,45 +41,46 @@ LList GetLocal_ServiceGroupInfo(void){
 	
 	return lista;
 }
-
-LList GetVicinity_GroupInfo(void){
-	LList vicinity_groups;
+*/
+void GetVicinity_GroupInfo(GroupList * vicinity_groups){
 	LElement * cache_item;
-	LElement * item;
+	LElement * service_item;
+	LElement * group_item;
 	LElement * tmp_item;
 	bool in_list = false;
 	
-	CreateList(&vicinity_groups);
+	CreateList(vicinity_groups);
 	
 	FOR_EACH(cache_item, cache){
 		if (!((ServiceCache *)cache_item->data)->local){
-			FOR_EACH(item,((ServiceCache *)cache_item->data)->groups){
-				FOR_EACH(tmp_item, vicinity_groups){
-					if (item == tmp_item)
-						in_list = true;
+			FOR_EACH(service_item,((ServiceCache *)cache_item->data)->services){
+				FOR_EACH(group_item, ((Service *) service_item)->groups){
+					FOR_EACH(tmp_item, (*vicinity_groups)){
+						if (strcmp((Group) group_item->data,(Group) tmp_item) == 0)
+							in_list = true;
+					}
+					if (!in_list)
+						AddToList(group_item->data, vicinity_groups);
+					in_list = false;
 				}
-				if (!in_list)
-					AddToList(item->data, &vicinity_groups);
-				in_list = false;
 			}
-			FOR_EACH(item,((ServiceCache *)cache_item->data)->vicinity_groups){
-				FOR_EACH(tmp_item, vicinity_groups){
-					if (item == tmp_item)
+			FOR_EACH(group_item,((ServiceCache *)cache_item->data)->vicinity_groups){
+				FOR_EACH(tmp_item, (*vicinity_groups)){
+					if (strcmp((Group) group_item->data, (Group) tmp_item) == 0)
 						in_list = true;
 				}
 				if (!in_list)
-					AddToList(item->data, &vicinity_groups);
+					AddToList(group_item->data, vicinity_groups);
 				in_list = false;
 			}
 		}
 	}
-	return vicinity_groups;
 }
 
 
 void print_cache(){
 	LElement * cache_item;
-	LElement * item;
+	//LElement * item;
 	ServiceCache * cache_entry;
 	
 	FOR_EACH(cache_item,cache){
@@ -96,19 +90,19 @@ void print_cache(){
 		printf("=== Source: %s\n", cache_entry->source_address);
 		printf("=== lifetime: %i\n", cache_entry->lifetime);
 		printf("=====DESCRIPTIONS=====\n");
-		FOR_EACH(item,cache_entry->descriptions){
-			printf("=== %s\n", item->data);
-		}
+	//	FOR_EACH(item,cache_entry->descriptions){
+	//		printf("=== %s\n", item->data);
+	//	}
 		printf("=====END DESCRIPTIONS=====\n");
 		printf("=====GROUPS=====\n");
-		FOR_EACH(item,cache_entry->groups){
-			printf("=== %s\n", item->data);
-		}
+	//	FOR_EACH(item,cache_entry->groups){
+	//		printf("=== %s\n", item->data);
+	//	}
 		printf("=====END GROUPS=====\n");
 		printf("=====VICINITY GROUPS=====\n");
-		FOR_EACH(item,cache_entry->vicinity_groups){
-			printf("=== %s\n", item->data);
-		}
+	//	FOR_EACH(item,cache_entry->vicinity_groups){
+	//		printf("=== %s\n", item->data);
+	//	}
 		printf("=====END VIC. GROUPS=====\n");
 		printf("========== END CACHE ENTRY =========\n\n");
 	}

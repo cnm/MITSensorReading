@@ -1,11 +1,11 @@
 CC=gcc
-LIBS = -pthread
-FLAGS = -Wall -I/home/novais/Dropbox/Tese/Implementacao/project/src/h
-EXECS = GSD
+LIBS = -lpthread -lfred -lyajl
+FLAGS = -Wall -g -I/home/novais/Dropbox/Tese/Implementacao/project/src/h
+EXECS = gsd
 
 all: $(EXECS)
 
-proxy: *.c
+gsd: *.c
 		$(CC) $(FLAGS) -o $@ $? $(LIBS)
 
 clean: 

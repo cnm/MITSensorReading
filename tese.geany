@@ -16,19 +16,23 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=0
-FILE_NAME_0=2014;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/communication/discovery/GSD.c;0;4
-FILE_NAME_1=1135;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/h/discovery.h;0;4
-FILE_NAME_2=578;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/h/listType.h;0;4
-FILE_NAME_3=190;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/communication/discovery/listType.c;0;4
-FILE_NAME_4=426;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Fred/handler_creation.c;0;4
-FILE_NAME_5=176;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/communication/discovery/ServiceCache.c;0;4
-FILE_NAME_6=199;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/communication/discovery/ReverseRoute.c;0;4
-FILE_NAME_7=104;Make;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/communication/discovery/Makefile;0;4
-FILE_NAME_8=9114;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/yajl/src/yajl_gen.c;0;4
-FILE_NAME_9=864;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/yajl/example/parse_config.c;0;4
-FILE_NAME_10=381;Make;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/yajl/example/Makefile;0;4
-FILE_NAME_11=1702;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/h/handler.h;0;4
+current_page=15
+FILE_NAME_0=877;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/h/discovery.h;0;4
+FILE_NAME_1=578;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/h/listType.h;0;4
+FILE_NAME_2=190;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/communication/discovery/listType.c;0;4
+FILE_NAME_3=426;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Fred/handler_creation.c;0;4
+FILE_NAME_4=494;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/communication/discovery/ServiceCache.c;0;4
+FILE_NAME_5=0;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/communication/discovery/ReverseRoute.c;0;4
+FILE_NAME_6=114;Make;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/communication/discovery/Makefile;0;4
+FILE_NAME_7=9114;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/yajl/src/yajl_gen.c;0;4
+FILE_NAME_8=2033;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/yajl/example/parse_config.c;0;4
+FILE_NAME_9=858;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/yajl/reformatter/json_reformat.c;0;4
+FILE_NAME_10=410;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/communication/discovery/JSON_handler.c;0;4
+FILE_NAME_11=5218;C;0;16;1;1;0;/usr/local/include/yajl/yajl_tree.h;0;4
+FILE_NAME_12=115;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/h/ServiceCache.h;0;4
+FILE_NAME_13=112;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/h/ReverseRoute.h;0;4
+FILE_NAME_14=224;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/h/JSON_handler.h;0;4
+FILE_NAME_15=2446;C;0;16;1;1;0;/home/novais/Dropbox/Tese/Implementacao/project/src/communication/discovery/GSD.c;0;4
 
 [build-menu]
 CFT_00_LB=_Compile
@@ -45,5 +49,5 @@ NF_02_LB=Make Clean
 NF_02_CM=make clean
 NF_02_WD=
 EX_00_LB=_Execute
-EX_00_CM="./GSD"
+EX_00_CM="./gsd"
 EX_00_WD=

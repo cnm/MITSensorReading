@@ -13,12 +13,13 @@
 #include <sys/types.h>
 #include <ifaddrs.h>
 #include <netinet/in.h> 
-#include <yajl/yajl_parse.h>
-#include <yajl/yajl_gen.h>
-#include <yajl/yajl_tree.h>
+#include <syslog.h>
 #include "discovery.h"
 #include "listType.h"
-#include "handler.h"
+#include "ServiceCache.h"
+#include "ReverseRoute.h"
+#include "JSON_handler.h"
+#include <fred/handler.h>
 
 unsigned short ADV_TIME_INTERVAL = 30;
 unsigned short ADV_LIFE_TIME = 180;
@@ -37,20 +38,35 @@ extern CacheList cache;
 unsigned int broadcast_id = 0;
 FILE * config_file;
 
-static void RequestService(Request req){
+static bool MatchService(GSDPacket * req){
 	LElement * cache_item;
+	LElement * service_item;
+	//TODO CHECK THIS COMPARE AND REMAKE ALL DESCRIPTIONS TO BE OWL
+	FOR_EACH(cache_item,cache){
+		if (((ServiceCache *)cache_item->data)->local){
+			FOR_EACH(service_item, (((ServiceCache *)cache_item->data)->services)){
+				if (strcmp(((Service *)service_item->data)->description, req->request->wanted_service.description))
+					return true;
+			}
+		}
+	}
+	
+	return false;
+}
+
+static void RequestService(GSDPacket * req){
 	
 	//REGISTER in reverseRouteTable this entry
 	ReverseRouteEntry * rev_entry = (ReverseRouteEntry *) malloc(sizeof(ReverseRouteEntry));
-	rev_entry->source_address = req.source_address;
-	rev_entry->previous_address = req.last_address;
-	rev_entry->broadcast_id = req.broadcast_id;
+	rev_entry->source_address = req->source_address;
+	rev_entry->previous_address = req->request->last_address;
+	rev_entry->broadcast_id = req->broadcast_id;
 	
-	AddToList(rev_entry, reverse_table);
+	AddToList(rev_entry, &reverse_table);
 	
 	
 	//Match request with services present in local cache
-	if(MatchService(&req)){
+	if(MatchService(req)){
 		//IF match 
 		//REVERSE ROUTE WITH SERVICE RESPONSE
 	}else{
@@ -63,37 +79,27 @@ static void RequestService(Request req){
 	
 }
 
-static bool MatchService(Request * req){
-	LElement * cache_item;
-	//TODO CHECK THIS COMPARE AND REMAKE ALL DESCRIPTIONS TO BE OWL
-	FOR_EACH(cache_item,cache){
-		if (((ServiceCache *)cache_item->data)->local && strcmp(((ServiceCache *)cache_item->data)->description,req->description))
-			return true;
-	}
-	
-	return false;
-}
-
 void *SendAdvertisement(void * thread_id){
-	char data[1024];
-	int length;
+	unsigned char * data;
+	GSDPacket packet;
+	packet.packet_type = GSD_ADVERTISE;
+	packet.hop_count = 0;
+	packet.source_address = MYADDRESS;
+	Advertisement message;
+	packet.advertise = &message;        
+	message.lifetime = ADV_LIFE_TIME;
+	message.diameter = ADV_MAX_DIAMETER;
+	
 	while (true){
-		Advertisement message;
-		message.descriptions = GetLocal_ServiceInfo();
-		message.groups = GetLocal_ServiceGroupInfo();
-		message.vicinity_groups = GetVicinity_GroupInfo();
-		message.hop_count = 0;
-		message.lifetime = ADV_LIFE_TIME;
-		message.diameter = ADV_MAX_DIAMETER;
-		message.broadcast_id = ++broadcast_id;
-		message.source_address = MYADDRESS;
-		
-		length = sprintf(data,"%d",PacketType.GSD_ADVERTISE);
-		send_data(handler, data, length, BROADCAST_ID);
-		
-		//TODO TRANSMIT ADVERTISEMENT TO NEIGHBOURS
-		printf("Hello\n%s\n%i\n", message.source_address, message.broadcast_id);
 		sleep(ADV_TIME_INTERVAL);
+		packet.broadcast_id = ++broadcast_id;
+		GetLocal_ServiceInfo(&message.services);
+		GetVicinity_GroupInfo(&message.vicinity_groups);		
+		
+		size_t length;
+		generate_JSON(&packet, &data, &length);
+			
+		send_data(handler, (char *) data, length, BROADCAST_ID);
 	}
 	
 	return NULL;
@@ -116,41 +122,39 @@ void P2PCacheAndForwardAdvertisement(GSDPacket * message){
 	if (SearchDuplicate(message))
 		return;
 	else{
-		char data[1024];
-		int length;
 		ServiceCache * service = (ServiceCache *) malloc(sizeof(ServiceCache));
-		service->source_address = message.source_address;
+		service->source_address = malloc(strlen(message->source_address));
+		strcpy(service->source_address, message->source_address);
 		service->local = false;
-		service->descriptions = message.descriptions;
-		service->groups = message.groups;
-		service->vicinity_groups = message.vicinity_groups;
-		service->lifetime = message.lifetime;
-		AddToList((void*) service, &cache);
+		service->services = message->advertise->services;
+		service->vicinity_groups = message->advertise->vicinity_groups;
+		service->lifetime = message->advertise->lifetime;
+		AddToList(service, &cache);
 		
+		unsigned char * data;
+		size_t size = 0;
+		generate_JSON(message,&data,&size);
 		
-		length = sprintf(data,"%d",PacketType.GSD_ADVERTISE);
-		
-		if (message.hop_count<message.diameter){
-			message.hop_count++;
-			send_data(handler, data, length, BROADCAST_ID);
+		if (message->hop_count<message->advertise->diameter){
+			message->hop_count++;
+			send_data(handler, (char *) data, size, BROADCAST_ID);
 		}
-		printf("ESTOU NO P2P %i \n", message.hop_count);
-		printf("ALGUMA COISA NA CACHE? %i \n", ((ServiceCache *)cache.pFirst->data)->lifetime);
+		debugger("ESTOU NO P2P %i \n", message->hop_count);
+		debugger("ALGUMA COISA NA CACHE? %i \n", ((ServiceCache *)cache.pFirst->data)->lifetime);
 	}
 }	
 
 void * test(void * thread_id){
-	Advertisement message;
+	GSDPacket message;
 	sleep(2);
-	message.descriptions = GetLocal_ServiceInfo();
-	message.groups = GetLocal_ServiceGroupInfo();
-	message.vicinity_groups = GetVicinity_GroupInfo();
+	GetLocal_ServiceInfo(&message.advertise->services);
+	GetVicinity_GroupInfo(&message.advertise->vicinity_groups);
 	message.hop_count = 0;
-	message.lifetime = ADV_LIFE_TIME;
-	message.diameter = ADV_MAX_DIAMETER;
+	message.advertise->lifetime = ADV_LIFE_TIME;
+	message.advertise->diameter = ADV_MAX_DIAMETER;
 	message.broadcast_id = ++broadcast_id;
 	message.source_address = MYADDRESS;
-	P2PCacheAndForwardAdvertisement(message);
+	P2PCacheAndForwardAdvertisement(&message);
 
 	pthread_exit(NULL);
 	return NULL;
@@ -158,60 +162,24 @@ void * test(void * thread_id){
 
 void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uint8_t src_id){
 	
-	yajl_val node;
-	char errbuf[1024];
-	
-	node = yajl_tree_parse((const char *) fileData, errbuf, sizeof(errbuf));
-	
-	/* parse error handling */
-    if (node == NULL) {
-        fprintf(stderr, "parse_error: ");
-        if (strlen(errbuf)) fprintf(stderr, " %s", errbuf);
-        else fprintf(stderr, "unknown error");
-        fprintf(stderr, "\n");
-        return 1;
-    }
-    
 	//TODO
 	//CHECK DATA; CREATE PACKET; CHECK PACKET TYPE; CALL METHODS
-	GSDPacket packet;
+	GSDPacket packet = generate_packet_from_JSON(data);
 	
-    char * path[] = { "Packet", "GSD", "packet_type", (const char *) 0 };
-    packet.packet_type = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_gen_integer));
-
-    path[2] = "broadcast_id";
-    packet.broadcast_id = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_gen_integer));
-    
-    path[2] = "hop_count";
-    packet.hop_count = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_gen_integer));
-    
-    path[2] = "source_address";
-    packet.source_address = YAJL_GET_STRING(yajl_tree_get(node, path, yajl_gen_string));
-	
-	switch(packet.packet_type){
-		case GSD_ADVERTISE: Advertisement adv;
-						packet.advertise = &adv;
-						
-						path[2] = "lifetime";
-						packet.lifetime = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_gen_integer));
-						path[2] = "diameter";
-						packet.diameter = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_gen_integer));
+    switch(packet.packet_type){
+		case GSD_ADVERTISE: P2PCacheAndForwardAdvertisement(&packet);
+								break;
+		case GSD_REQUEST: RequestService(&packet);
 						break;
-		case GSD_REQUEST: Request req;
-						packet.request = &req;
-						path[2] = "last_address";
-						packet.last_address = YAJL_GET_STRING(yajl_tree_get(node, path, yajl_gen_string));
-						break;
-		case default: printf("ERROR IN PACKET TYPE");
+		default: break;
 	}
 	
-	yajl_tree_free(node);
 }
 
 
 int main(int argc, char **argv)
 {
-	char op;
+	int op;
 	pthread_t thread;
 	pthread_t thread2;
 	char line[80];
@@ -223,31 +191,32 @@ int main(int argc, char **argv)
 	CreateList(&cache);
 	CreateList(&reverse_table);	
 	
+	logger("Main - Reading Config file\n");
+	
 	//LER CONFIGS DO FICHEIRO
 	config_file = fopen("teste.cfg","rt");
 	
 	while(fgets(line, 80, config_file)!=NULL){
-		var_value = strtok(line,"=\n");
+		var_value = strtok(line,"=");
 		
-		if (strcmp(var_value,"ADV_TIME_INTERVAL") == 0)
+		if (memcmp(var_value,"ADV_TIME_INTERVAL", sizeof(var_value)) == 0)
 			ADV_TIME_INTERVAL = atoi(strtok(NULL,"=\n"));
-		if (strcmp(var_value,"ADV_LIFE_TIME") == 0)
+		if (memcmp(var_value,"ADV_LIFE_TIME", sizeof(var_value)) == 0)
 			ADV_LIFE_TIME = atoi(strtok(NULL,"=\n"));
-		if (strcmp(var_value,"ADV_MAX_DIAMETER") == 0)
+		if (memcmp(var_value,"ADV_MAX_DIAMETER", sizeof(var_value)) == 0)
 			ADV_MAX_DIAMETER = atoi(strtok(NULL,"=\n"));
-		if (strcmp(var_value,"ADV_CACHE_SIZE") == 0)
+		if (memcmp(var_value,"ADV_CACHE_SIZE", sizeof(var_value)) == 0)
 			ADV_CACHE_SIZE = atoi(strtok(NULL,"=\n"));
-		if (strcmp(var_value,"REV_ROUTE_TIMEOUT") == 0)
+		if (memcmp(var_value,"REV_ROUTE_TIMEOUT", sizeof(var_value)) == 0)
 			REV_ROUTE_TIMEOUT = atoi(strtok(NULL,"=\n"));
-		if (strcmp(var_value,"MYADDRESS") == 0)
+		if (memcmp(var_value,"MYADDRESS", sizeof(var_value)) == 0)
 			MYADDRESS = strtok(NULL,"=\n");
-		if (strcmp(var_value,"INTERFACE") == 0)
+		if (memcmp(var_value,"INTERFACE", sizeof(var_value)) == 0)
 			INTERFACE = strtok(NULL, "=\n");
 			
 	}
 	
 	fclose(config_file);
-	
 	
 	//VERIFICAR IP
     getifaddrs(&ifAddrStruct);
@@ -264,7 +233,9 @@ int main(int argc, char **argv)
         }
     }
     
-    printf("MYADDRESS: %s\n",MYADDRESS);
+    logger("Main - Configuration concluded\n");
+    
+    debugger("Main - MYADDRESS: %s\n",MYADDRESS);
     
     if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
     
@@ -273,20 +244,19 @@ int main(int argc, char **argv)
 	pthread_create(&thread2, NULL, test, NULL);
 	pthread_create(&thread, NULL, SendAdvertisement, NULL);
 	
-	while(op != '3'){
+	while(op != 3){
 		printf("MENU:\n 1-PRINT CACHE\n 2-PRINT REVERSE_ROUTE_TABLE\n 3-EXIT\n\n");
-		op = getchar();
+		scanf("%d", &op);
 	
 		switch(op){
-			case '1': print_cache();
+			case 1: print_cache();
 					break;
-			case '2': print_rev_route();
+			case 2: print_rev_route();
 					break;
-			case '3': break;
-			default: printf("Acção Incorrecta");
+			case 3: break;
+			default: printf("Acção Incorrecta\n");
 		}
 	}
-	pthread_exit(NULL);
 	
 	return 0;
 }
