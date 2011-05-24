@@ -34,6 +34,7 @@ __tp(handler)* handler = NULL;
 
 extern ReverseRouteList reverse_table;
 extern CacheList cache;
+RequestList local_requests;
 
 unsigned int broadcast_id = 0;
 FILE * config_file;
@@ -54,6 +55,38 @@ static bool MatchService(GSDPacket * req){
 	return false;
 }
 
+void SelectiveForward(GSDPacket * req){
+	
+	if (req->hop_count > 0){
+		bool forwarded = false;
+		LElement * group_item;
+		LElement * other_g_item;
+		LElement * cache_item;
+		unsigned char * data;
+		size_t length;
+		
+		req->hop_count--;
+		generate_JSON(req, &data, &length);
+		
+		FOR_EACH(cache_item, cache){
+			FOR_EACH(group_item,req->request->wanted_service.groups){
+				FOR_EACH(other_g_item, ((ServiceCache *)cache_item->data)->vicinity_groups){
+					if (!strcmp((Group)group_item->data, (Group) other_g_item->data)){
+						uint8_t f_address = ((ServiceCache *) cache_item)->source_address;
+						forwarded = true;
+						if (f_address != req->request->last_address)
+							send_data(handler, (char *) data, length, f_address); 
+					}
+				}
+			}
+		}
+		
+		if (!forwarded){
+			send_data(handler, (char *) data, length, BROADCAST_ID); 
+		}
+	}
+}
+
 static void RequestService(GSDPacket * req, uint8_t src_id){
 	
 	//REGISTER in reverseRouteTable this entry
@@ -64,20 +97,26 @@ static void RequestService(GSDPacket * req, uint8_t src_id){
 	
 	AddToList(rev_entry, &reverse_table);
 	
-	//TODO
+	
 	//Match request with services present in local cache
 	if(MatchService(req)){
 		//IF match 
-		//REVERSE ROUTE WITH SERVICE RESPONSE
-	}else{
-		//IF no match
-		//Check Request-Groups in cache's Other-Groups
-		//IF exists in other-groups
-		//Selectively forward to that group (node)
-		//ELSE broadcasts request to its vicinity
-	}	
+		ServiceReply reply;
+		reply.dest_address = MYADDRESS;
+		
+		free(req->request);
+		req->reply = &reply;
+		req->packet_type = GSD_REPLY;
+		
+		ReverseRoute(req);
+				
+	}else
+		SelectiveForward(req);
+		
 	
 }
+
+
 
 void *SendAdvertisement(void * thread_id){
 	unsigned char * data;
@@ -150,7 +189,33 @@ void P2PCacheAndForwardAdvertisement(GSDPacket * message, uint8_t src_id){
 	}
 }	
 
+static void ServiceFound(GSDPacket * packet){
+	short i = 1;
+	char data[30];
+	LElement * request_item;
+	
+	logger("Service Found. Delivering to Application");
+	debugger("Service Found. SOURCE ID: %d", packet->reply->dest_address);
+	
+	FOR_EACH(request_item, local_requests){
+		if (((LocalRequest *) request_item->data)->broadcast_id == packet->broadcast_id){
+			sprintf(data,"SERVICE_FOUND:%d,%d", ((LocalRequest *) request_item->data)->request_id, packet->reply->dest_address);
+			send_data(handler, data, strlen(data), ((LocalRequest *) request_item->data)->local_address);
+			DelFromList(i,&local_requests);
+			break;	
+		}
+		i++;
+	}		
+	
+}
+
 void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uint8_t src_id){
+	
+	char * parser;
+	
+	if(!memcmp(data, "LOCAL_REQUEST", strlen("LOCAL_REQUEST"))){
+		parser = strtok(data,":");
+	}
 	
 	//CREATE PACKET; CHECK PACKET TYPE; CALL METHODS
 	GSDPacket packet;
@@ -160,6 +225,12 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uin
 		case GSD_ADVERTISE: P2PCacheAndForwardAdvertisement(&packet,src_id);
 								break;
 		case GSD_REQUEST: RequestService(&packet, src_id);
+						break;
+		case GSD_REPLY: 
+					if (packet.source_address == MYADDRESS)
+						ServiceFound(&packet);
+					else
+						ReverseRoute(&packet);
 						break;
 		default: break;
 	}
@@ -222,6 +293,8 @@ int main(int argc, char **argv)
 			ADV_CACHE_SIZE = atoi(strtok(NULL,"=\n"));
 		if (memcmp(var_value,"REV_ROUTE_TIMEOUT", sizeof(var_value)) == 0)
 			REV_ROUTE_TIMEOUT = atoi(strtok(NULL,"=\n"));
+		if (memcmp(var_value,"BROADCAST_ID", sizeof(var_value)) == 0)
+			BROADCAST_ID = atoi(strtok(NULL,"=\n"));
 		if (memcmp(var_value,"MYADDRESS", sizeof(var_value)) == 0)
 			MYADDRESS = atoi(strtok(NULL,"=\n"));
 		if (memcmp(var_value,"INTERFACE", sizeof(var_value)) == 0)

@@ -2,6 +2,19 @@
 #define __SERVICECACHE_H__
 
 #include "listType.h"
+#include "discovery.h"
+
+
+typedef LList CacheList;
+
+typedef struct service_cache{
+	uint8_t source_address;
+	bool local;
+	ServiceList services; 
+	GroupList vicinity_groups;
+	unsigned short lifetime;
+	unsigned short broadcast_id;
+}ServiceCache;
 
 void GetLocal_ServiceInfo(ServiceList *);
 

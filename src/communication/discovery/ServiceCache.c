@@ -5,6 +5,7 @@
 #include <string.h>
 #include "discovery.h"
 #include "listType.h"
+#include "ServiceCache.h"
 #include <fred/handler.h>
 #include <syslog.h>
 

@@ -105,6 +105,10 @@ bool generate_JSON(GSDPacket * packet, unsigned char ** response, size_t * lengt
 			yajl_gen_map_close(g);
 			
 			break;
+		case GSD_REPLY:
+			yajl_gen_string(g, (unsigned char *) "dest_address", strlen("dest_address"));
+			yajl_gen_integer(g, packet->reply->dest_address);
+			break;
 		default: break;
 	}
 	
@@ -154,6 +158,7 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
     
 	Advertisement adv;
 	Request req;
+	ServiceReply reply;
 	char * tmp;
 	
 	const char * path_in_array[] = {"description", (char *) 0};
@@ -238,6 +243,11 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
 						req.wanted_service = serv;
 						
 						yajl_tree_free(object);
+						break;
+		case GSD_REPLY:
+						packet->reply = &reply;
+						path[2] = "dest_address";
+						reply.dest_address = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
 						break;
 		default: debugger("ERROR IN PACKET TYPE");
 		

@@ -5,11 +5,12 @@
 #include <string.h>
 #include "discovery.h"
 #include "listType.h"
+#include "ReverseRoute.h"
 #include <fred/handler.h>
 
 ReverseRouteList reverse_table;
 
-void ReverseRoute(void){
+void ReverseRoute(GSDPacket * reply){
 	//TODO 
 	//CHECK REVERSE_ROUTE TABLE FOR PREVIOUS HOP AND TRANSMIT
 	//IF UNSUCCESSFULL
