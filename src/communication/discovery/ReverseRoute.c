@@ -3,15 +3,36 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
+#include <syslog.h>
 #include "discovery.h"
 #include "listType.h"
 #include "ReverseRoute.h"
 #include <fred/handler.h>
+#include "JSON_handler.h"
 
 ReverseRouteList reverse_table;
+extern __tp(handler)* handler;
 
 void ReverseRoute(GSDPacket * reply){
-	//TODO 
+	
+	LElement * rev_item;
+	ReverseRouteEntry * rev_entry;
+	unsigned char * data;
+	size_t length;
+	
+	logger("Starting ReverseRoute\n");
+	
+	FOR_EACH(rev_item,reverse_table){
+		rev_entry = (ReverseRouteEntry *) rev_item->data;
+		if (reply->broadcast_id == rev_entry->broadcast_id){
+			generate_JSON(reply, &data, &length);
+			send_data(handler, (char *) data, length,rev_entry->previous_address);
+			break;
+		}
+	}
+	
+	free(data);
+	
 	//CHECK REVERSE_ROUTE TABLE FOR PREVIOUS HOP AND TRANSMIT
 	//IF UNSUCCESSFULL
 	//START AODV (OR SIMPLY SEND TO SOURCE ADDRESS??

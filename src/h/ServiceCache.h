@@ -8,7 +8,7 @@
 typedef LList CacheList;
 
 typedef struct service_cache{
-	uint8_t source_address;
+	uint16_t source_address;
 	bool local;
 	ServiceList services; 
 	GroupList vicinity_groups;
@@ -24,4 +24,5 @@ void GetVicinity_GroupInfo(GroupList *);
 
 void print_cache();
 
+void FilterCache();
 #endif

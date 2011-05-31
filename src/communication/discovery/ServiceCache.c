@@ -10,15 +10,17 @@
 #include <syslog.h>
 
 CacheList cache;
+extern unsigned short ADV_TIME_INTERVAL;
 
 void GetLocal_ServiceInfo(ServiceList * local_services){
 	LElement * cache_item;
-	
-	CreateList(local_services);
+	LElement * service_item;
 	
 	FOR_EACH(cache_item, cache){
 		if (((ServiceCache *)cache_item->data)->local){
-			AddToList(&((ServiceCache *)cache_item->data)->services,local_services);
+			FOR_EACH(service_item,((ServiceCache *)cache_item->data)->services){
+				AddToList((Service *)service_item->data,local_services);
+			}			
 		}
 	}
 }
@@ -78,6 +80,26 @@ void GetVicinity_GroupInfo(GroupList * vicinity_groups){
 	}
 }
 
+void FilterCache(){
+	LElement * cache_item;
+	ServiceCache * cache_entry;
+	int index = 1;
+	
+	logger("Filtering Cache");
+	
+	FOR_EACH(cache_item,cache){
+		cache_entry = (ServiceCache *) cache_item->data;
+		if (!cache_entry->local){
+			if (cache_entry->lifetime < ADV_TIME_INTERVAL)
+				DelFromList(index, &cache);
+			else
+				cache_entry->lifetime -= ADV_TIME_INTERVAL;
+		}
+		
+		index++;
+	}
+}
+
 
 void print_cache(){
 	LElement * cache_item;
@@ -93,17 +115,17 @@ void print_cache(){
 		printf("=== lifetime: %i\n", cache_entry->lifetime);
 		FOR_EACH(item,cache_entry->services){
 			printf("=====NEW SERVICE=====\n");
-			printf("=== %s\n", ((Service *)item->data)->description);
-			printf("=====GROUPS======n");
+			printf("	=== %s\n", ((Service *)item->data)->description);
+			printf("	=====GROUPS======\n");
 			FOR_EACH(group_item, ((Service *)item->data)->groups){			
-				printf("=== %s ", (Group) group_item->data);
+				printf("		=== %s\n", (Group) group_item->data);
 			}
-			printf("\n=====END GROUPS=====\n");
+			printf("	=====END GROUPS=====\n");
 			printf("=====END SERVICE=====\n");
 		}
 		printf("=====VICINITY GROUPS=====\n");
 		FOR_EACH(group_item, cache_entry->vicinity_groups){			
-			printf("=== %s ", (Group) group_item->data);
+			printf("	=== %s ", (Group) group_item->data);
 		}
 		printf("=====END VIC. GROUPS=====\n");
 		printf("========== END CACHE ENTRY =========\n\n");

@@ -3,6 +3,7 @@
 
 #include "listType.h"
 #include <stdint.h>
+#include <arpa/inet.h>
 
 #define ENABLE_DEBUG 1
 
@@ -26,11 +27,14 @@ typedef enum PckType { GSD_ADVERTISE, GSD_REQUEST, GSD_REPLY } PacketType;
 
 typedef struct service_description{
 	char * description;
+	uint16_t address;
+	char * ip_address;
 	GroupList groups;
 }Service;
 
 typedef struct service_reply{
-	uint8_t dest_address;
+	uint16_t dest_address;
+	char * ip_address;
 }ServiceReply;
 
 typedef struct advertisement_struct{
@@ -42,11 +46,12 @@ typedef struct advertisement_struct{
 
 typedef struct request_struct{
 	Service wanted_service;
-	uint8_t last_address;
+	uint16_t last_address;
+	char * ip_last_address;
 }Request;
 
 typedef struct local_request{
-	uint8_t local_address;
+	uint16_t local_address;
 	unsigned long broadcast_id;
 	unsigned short request_id;
 }LocalRequest;
@@ -55,7 +60,8 @@ typedef struct gsd_pkt{
 	unsigned long broadcast_id;
 	PacketType packet_type;
 	unsigned short hop_count;
-	uint8_t source_address;
+	uint16_t source_address;
+	char * gsd_ip_address;
 	
 	union{
 		Advertisement * advertise;
@@ -66,7 +72,5 @@ typedef struct gsd_pkt{
 }GSDPacket;
 
 void * SendAdvertisement(void *);
-
-void P2PCacheAndForwardAdvertisement(GSDPacket * message, uint8_t src_id);
 
 #endif

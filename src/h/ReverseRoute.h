@@ -4,9 +4,9 @@
 typedef LList ReverseRouteList;
 
 typedef struct reverse_route_entry{
-	uint8_t source_address;
+	uint16_t source_address;
 	unsigned short broadcast_id;
-	uint8_t previous_address;
+	uint16_t previous_address;
 }ReverseRouteEntry;
 
 void ReverseRoute(GSDPacket * reply);

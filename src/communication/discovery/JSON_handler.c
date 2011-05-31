@@ -7,8 +7,13 @@
 #include <yajl/yajl_tree.h>
 #include "discovery.h"
 #include "listType.h"
+#include "ServiceCache.h"
 #include <fred/handler.h>
 #include <syslog.h>
+
+extern uint16_t MYADDRESS;
+extern char* MYIPADDRESS;
+extern CacheList cache;
 
 bool generate_JSON(GSDPacket * packet, unsigned char ** response, size_t * length){
 	
@@ -45,6 +50,9 @@ bool generate_JSON(GSDPacket * packet, unsigned char ** response, size_t * lengt
 	yajl_gen_string(g, ( unsigned char *) "source_address", strlen("source_address"));
 	yajl_gen_integer(g,packet->source_address);
 	
+	yajl_gen_string(g, ( unsigned char *) "gsd_ip_address", strlen("gsd_ip_address"));
+	yajl_gen_string(g,(unsigned char *) packet->gsd_ip_address, strlen(packet->gsd_ip_address));
+	
 	switch(packet->packet_type){
 		case GSD_ADVERTISE:
 			yajl_gen_string(g, ( unsigned char *) "lifetime", strlen("lifetime"));
@@ -61,6 +69,9 @@ bool generate_JSON(GSDPacket * packet, unsigned char ** response, size_t * lengt
 				yajl_gen_map_open(g);
 				yajl_gen_string(g, ( unsigned char *) "description", strlen("description"));
 				yajl_gen_string(g, (unsigned char *) ((Service *) service_elem->data)->description, strlen(((Service *) service_elem->data)->description));
+				
+				yajl_gen_string(g, ( unsigned char *) "ip_address", strlen("ip_address"));
+				yajl_gen_string(g,(unsigned char *) ((Service *) service_elem->data)->ip_address, strlen(((Service *) service_elem->data)->ip_address));
 				
 				yajl_gen_string(g, ( unsigned char *) "groups", strlen("groups"));
 				LElement * group_elem;
@@ -88,6 +99,9 @@ bool generate_JSON(GSDPacket * packet, unsigned char ** response, size_t * lengt
 			yajl_gen_string(g, ( unsigned char *) "last_address", strlen("last_address"));
 			yajl_gen_integer(g, packet->request->last_address);
 			
+			yajl_gen_string(g, ( unsigned char *) "ip_last_address", strlen("ip_last_address"));
+			yajl_gen_string(g,(unsigned char *) packet->request->ip_last_address, strlen(packet->request->ip_last_address));
+			
 			yajl_gen_string(g, ( unsigned char *) "service", strlen("service"));
 			yajl_gen_map_open(g);
 			
@@ -108,6 +122,9 @@ bool generate_JSON(GSDPacket * packet, unsigned char ** response, size_t * lengt
 		case GSD_REPLY:
 			yajl_gen_string(g, (unsigned char *) "dest_address", strlen("dest_address"));
 			yajl_gen_integer(g, packet->reply->dest_address);
+			
+			yajl_gen_string(g, ( unsigned char *) "ip_address", strlen("ip_address"));
+			yajl_gen_string(g,(unsigned char *) packet->reply->ip_address, strlen(packet->reply->ip_address));
 			break;
 		default: break;
 	}
@@ -127,8 +144,15 @@ bool generate_JSON(GSDPacket * packet, unsigned char ** response, size_t * lengt
 }
 
 bool generate_packet_from_JSON(char * data, GSDPacket * packet){
+	
 	yajl_val node;
 	char errbuf[1024];
+	Advertisement adv;
+	Request req;
+	ServiceReply reply;
+	char * tmp;
+	
+	logger("Parsing packet from JSON message");
 	
 	node = yajl_tree_parse(( char *) data, errbuf, sizeof(errbuf));
 	
@@ -156,14 +180,12 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
     path[2] = "source_address";
     packet->source_address = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
     
-	Advertisement adv;
-	Request req;
-	ServiceReply reply;
-	char * tmp;
+	path[2] = "gsd_ip_address";
+	tmp = YAJL_GET_STRING(yajl_tree_get(node, path, yajl_t_string));
+	packet->gsd_ip_address = (char *) malloc(strlen(tmp)+1);
+	memcpy(packet->gsd_ip_address, tmp, strlen(tmp)+1);
 	
-	const char * path_in_array[] = {"description", (char *) 0};
-	const char * path_to_groups[] = {"groups"};
-	int i;
+	int i,j;
 		
 	switch(packet->packet_type){
 		case GSD_ADVERTISE: 
@@ -177,77 +199,93 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
 						const char * path_to_services[] = {"Packet", "GSD", "services"};
 						yajl_val array = yajl_tree_get(node,path_to_services,yajl_t_array);
 						CreateList(&adv.services);
-						char * array_index[] = {(char *) 0};
 						for (i = 0; i< YAJL_GET_ARRAY(array)->len; i++){
-							sprintf(array_index[0],"%d", i);
-							yajl_val serv = yajl_tree_get(array, (const char **) array_index,yajl_t_object);
 							Service service;
-							tmp = YAJL_GET_STRING(yajl_tree_get(serv, path_in_array, yajl_t_string));
-							service.description = (char *) malloc((strlen(tmp)+1)*sizeof(char));
-							strcpy(service.description, tmp);
-							yajl_val groups_JSON = yajl_tree_get(serv,path_to_groups, yajl_t_array);
+							
+							yajl_val obj = YAJL_GET_ARRAY(array)->values[i];
+							yajl_val groups_JSON;
+							
+							for (j = 0; j < YAJL_GET_OBJECT(obj)->len; j++){
+								if (!strcmp(YAJL_GET_OBJECT(obj)->keys[j],"description")){
+									tmp = YAJL_GET_STRING(YAJL_GET_OBJECT(obj)->values[j]);
+									service.description = (char *) malloc(strlen(tmp)+1);
+									memcpy(service.description, tmp,strlen(tmp)+1);
+								}else if (!strcmp(YAJL_GET_OBJECT(obj)->keys[j],"ip_address")){
+									tmp = YAJL_GET_STRING(YAJL_GET_OBJECT(obj)->values[j]);
+									service.ip_address = (char *) malloc(strlen(tmp)+1);
+									memcpy(service.ip_address, tmp,strlen(tmp)+1);	
+								}else if (!strcmp(YAJL_GET_OBJECT(obj)->keys[j],"groups"))
+									groups_JSON = YAJL_GET_OBJECT(obj)->values[j];
+								
+							}
+							
 							CreateList(&service.groups);
-							int j;
 							for (j=0; j < YAJL_GET_ARRAY(groups_JSON)->len; j++){
-								sprintf(array_index[0], "%d", j);
-								tmp = YAJL_GET_STRING(yajl_tree_get(groups_JSON, (const char **) array_index,yajl_t_string));
+								tmp = YAJL_GET_STRING(YAJL_GET_ARRAY(groups_JSON)->values[j]);
 								Group group = (char *) malloc((strlen(tmp)+1)*sizeof(char));
 								strcpy(group, tmp);
 								AddToList(&group, &service.groups);
 							}
 							AddToList(&service,&adv.services);
-							yajl_tree_free(groups_JSON);
 						}
 						
 						path_to_services[2] = "vicinity_groups";
 						
 						array = yajl_tree_get(node,path_to_services,yajl_t_array);
 						CreateList(&adv.vicinity_groups);
-						int j;
 						for (j=0; j < YAJL_GET_ARRAY(array)->len; j++){
-								sprintf(array_index[0], "%d", j);
-								tmp = YAJL_GET_STRING(yajl_tree_get(array,(const char **) array_index,yajl_t_string));
+								tmp = YAJL_GET_STRING(YAJL_GET_ARRAY(array)->values[j]);
 								Group group = (char *) malloc((strlen(tmp)+1)*sizeof(char));
 								strcpy(group, tmp);
 								AddToList(&group, &adv.vicinity_groups);
 						}
 						
-						yajl_tree_free(array);
 						break;
 		case GSD_REQUEST:
 						packet->request = &req;
 						path[2] = "last_address";
 						req.last_address = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
+						
+						path[2] = "ip_last_address";
+						tmp = YAJL_GET_STRING(yajl_tree_get(node, path, yajl_t_string));
+						req.ip_last_address = (char *) malloc(strlen(tmp)+1);
+						memcpy(req.ip_last_address, tmp, strlen(tmp)+1);
 
 						path[2] = "service";
-						yajl_val object = yajl_tree_get(node,path, yajl_t_object);
+						yajl_val obj = yajl_tree_get(node,path, yajl_t_object);
+						yajl_val array_groups;
 						Service serv;
 						
-						const char * path_in_obj[] = {"description", (char *) 0};
-						
-						tmp = YAJL_GET_STRING(yajl_tree_get(object,path_in_obj, yajl_t_string));
-						serv.description = (char *) malloc((strlen(tmp)+1)*sizeof(char));
-						strcpy(serv.description, tmp);
+						for (j = 0; j< YAJL_GET_OBJECT(obj)->len; j++){
+								if (!strcmp(YAJL_GET_OBJECT(obj)->keys[j],"description")){
+									tmp = YAJL_GET_STRING(YAJL_GET_OBJECT(obj)->values[j]);
+									serv.description = (char *) malloc(strlen(tmp)+1);
+									memcpy(serv.description, tmp,strlen(tmp)+1);
+								}else if (!strcmp(YAJL_GET_OBJECT(obj)->keys[j],"groups"))
+									array_groups = YAJL_GET_OBJECT(obj)->values[j];
+								
+						}
 						
 						CreateList(&serv.groups);
 						
-						yajl_val array_groups = yajl_tree_get(object, path_to_groups, yajl_t_array);
-						
 						for (i = 0; i < YAJL_GET_ARRAY(array_groups)->len ; i++){
-							sprintf(array_index[0], "%d", i);
-							tmp = YAJL_GET_STRING(yajl_tree_get(array_groups,(const char **) array_index,yajl_t_string));
+							tmp = YAJL_GET_STRING(YAJL_GET_ARRAY(array_groups)->values[i]);
 							Group group = (char *) malloc((strlen(tmp)+1)*sizeof(char));
 							strcpy(group, tmp);
 							AddToList(&group, &serv.groups);
 						}
 						req.wanted_service = serv;
 						
-						yajl_tree_free(object);
 						break;
 		case GSD_REPLY:
 						packet->reply = &reply;
 						path[2] = "dest_address";
 						reply.dest_address = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
+						
+						path[2] = "ip_address";
+						tmp = YAJL_GET_STRING(yajl_tree_get(node, path, yajl_t_string));
+						reply.ip_address = (char *) malloc(strlen(tmp)+1);
+						memcpy(reply.ip_address, tmp, strlen(tmp)+1);
 						break;
 		default: debugger("ERROR IN PACKET TYPE");
 		
@@ -256,5 +294,80 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
 	yajl_tree_free(node);
 	
 	
+    return true;
+}
+
+bool Import_Local_Services(char * data){
+
+	yajl_val node, groups_JSON;
+	char errbuf[1024];
+	char * tmp;
+	int i,j;
+	
+	logger("Importing Local Services");
+	
+	node = yajl_tree_parse(( char *) data, errbuf, sizeof(errbuf));
+	
+	/* parse error handling */
+    if (node == NULL) {
+        printf("parse_error: ");
+        if (strlen(errbuf)){
+			printf(" %s\n", errbuf);
+        }else{
+			printf("unknown error\n");
+		}
+        return false;
+    }
+    
+    yajl_val array = YAJL_GET_OBJECT(node)->values[0];
+    
+    ServiceCache * entry = (ServiceCache *) malloc(sizeof(ServiceCache));
+    entry->local = true;
+	entry->lifetime = 0;
+	entry->broadcast_id = 0;
+	entry->source_address = MYADDRESS;
+	
+	CreateList(&entry->services);
+	CreateList(&entry->vicinity_groups);
+    
+    for (i=0; i < YAJL_GET_ARRAY(array)->len; i++){
+		
+		Service * service = (Service *) malloc(sizeof(Service));			
+		
+		CreateList(&service->groups);				
+		
+		yajl_val obj = YAJL_GET_ARRAY(array)->values[i];		
+		
+		for (j=0; j < YAJL_GET_OBJECT(obj)->len; j++){			
+			
+			if (!strcmp("description", YAJL_GET_OBJECT(obj)->keys[j])){
+				tmp = YAJL_GET_STRING(YAJL_GET_OBJECT(obj)->values[j]);
+				service->description = (char *) malloc(strlen(tmp)+1);
+				memcpy(service->description, tmp, strlen(tmp)+1);
+			}else if (!strcmp("port", YAJL_GET_OBJECT(obj)->keys[j])){
+				int port = YAJL_GET_INTEGER(YAJL_GET_OBJECT(obj)->values[j]);
+				service->ip_address = (char *) malloc(strlen(MYIPADDRESS)+7);
+				memset(service->ip_address, 0, strlen(MYIPADDRESS)+7);
+				sprintf(service->ip_address, "%s:%d", MYIPADDRESS, port);
+			}else if (!strcmp("address", YAJL_GET_OBJECT(obj)->keys[j])){
+				service->address = YAJL_GET_INTEGER(YAJL_GET_OBJECT(obj)->values[j]);
+			}else if (!strcmp("groups", YAJL_GET_OBJECT(obj)->keys[j])){
+				groups_JSON = YAJL_GET_OBJECT(obj)->values[j];
+			}
+		}
+		
+		for (j=0; j < YAJL_GET_ARRAY(groups_JSON)->len; j++){
+			tmp = YAJL_GET_STRING(YAJL_GET_ARRAY(groups_JSON)->values[j]);
+			Group group = (Group) malloc(strlen(tmp)+1);
+			memcpy(group, tmp, strlen(tmp)+1);
+			AddToList(group, &service->groups);
+		}
+		
+		AddToList(service,&entry->services);
+		
+	}
+	
+	AddToList(entry, &cache);
+    
     return true;
 }

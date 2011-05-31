@@ -26,9 +26,12 @@ unsigned short ADV_LIFE_TIME = 180;
 unsigned short ADV_MAX_DIAMETER = 1;
 unsigned short ADV_CACHE_SIZE = 20;
 unsigned short REV_ROUTE_TIMEOUT = 60;
-uint8_t BROADCAST_ID = 255;
-uint8_t MYADDRESS = 12;
+uint16_t BROADCAST_ID = 1;
+uint16_t MYADDRESS = 1001;
+uint16_t MYPORT = 57432;
 char * INTERFACE = "wlan0";
+char * MYIPADDRESS;
+char * porto;
 
 __tp(handler)* handler = NULL;
 
@@ -37,9 +40,8 @@ extern CacheList cache;
 RequestList local_requests;
 
 unsigned int broadcast_id = 0;
-FILE * config_file;
 
-static bool MatchService(GSDPacket * req){
+static char * MatchService(GSDPacket * req){
 	LElement * cache_item;
 	LElement * service_item;
 	//TODO CHECK THIS COMPARE AND REMAKE ALL DESCRIPTIONS TO BE OWL
@@ -47,15 +49,15 @@ static bool MatchService(GSDPacket * req){
 		if (((ServiceCache *)cache_item->data)->local){
 			FOR_EACH(service_item, (((ServiceCache *)cache_item->data)->services)){
 				if (strcmp(((Service *)service_item->data)->description, req->request->wanted_service.description)==0)
-					return true;
+					return ((Service *)service_item->data)->ip_address;
 			}
 		}
 	}
 	
-	return false;
+	return NULL;
 }
 
-void SelectiveForward(GSDPacket * req){
+static void SelectiveForward(GSDPacket * req){
 	
 	if (req->hop_count > 0){
 		bool forwarded = false;
@@ -72,7 +74,7 @@ void SelectiveForward(GSDPacket * req){
 			FOR_EACH(group_item,req->request->wanted_service.groups){
 				FOR_EACH(other_g_item, ((ServiceCache *)cache_item->data)->vicinity_groups){
 					if (!strcmp((Group)group_item->data, (Group) other_g_item->data)){
-						uint8_t f_address = ((ServiceCache *) cache_item)->source_address;
+						uint16_t f_address = ((ServiceCache *) cache_item)->source_address;
 						forwarded = true;
 						if (f_address != req->request->last_address)
 							send_data(handler, (char *) data, length, f_address); 
@@ -82,12 +84,36 @@ void SelectiveForward(GSDPacket * req){
 		}
 		
 		if (!forwarded){
+			logger("No available match, broadcasting request");
 			send_data(handler, (char *) data, length, BROADCAST_ID); 
-		}
+		}else
+			logger("Encountered possible match to service. Forwarding request unicast");
 	}
 }
 
-static void RequestService(GSDPacket * req, uint8_t src_id){
+static void Register_Handler(char ip_address[], uint16_t h_address){
+	
+	char * ip_handler, * port_handler;
+	struct sockaddr_in haddr;
+	
+	ip_handler = strtok(ip_address, ":");	
+	port_handler = strtok(NULL, ":");		
+	
+	haddr.sin_family = AF_INET;
+	inet_pton(AF_INET, ip_handler, &haddr.sin_addr);
+	haddr.sin_port = htons(atoi(port_handler));
+			
+	uint32_t result = register_handler(h_address, (*(struct sockaddr *) &haddr), handler->module_communication.regd);
+	if (result==1){
+		logger("Registered Handler With id: %d", result);
+	}else{
+		logger("Error registering handler: %s", registry_error_str(-result));
+	}	
+}
+
+static void RequestService(GSDPacket * req){
+	
+	logger("Received Request. Processing\n");
 	
 	//REGISTER in reverseRouteTable this entry
 	ReverseRouteEntry * rev_entry = (ReverseRouteEntry *) malloc(sizeof(ReverseRouteEntry));
@@ -96,13 +122,20 @@ static void RequestService(GSDPacket * req, uint8_t src_id){
 	rev_entry->broadcast_id = req->broadcast_id;
 	
 	AddToList(rev_entry, &reverse_table);
-	
+
+	Register_Handler(req->gsd_ip_address, req->source_address);
+	Register_Handler(req->request->ip_last_address,req->request->last_address);
 	
 	//Match request with services present in local cache
-	if(MatchService(req)){
-		//IF match 
+	char * ip_match = MatchService(req);
+	if(ip_match != NULL){
+		//IF match
+		
+		logger("Local Service Match found. Replying\n");
+		
 		ServiceReply reply;
 		reply.dest_address = MYADDRESS;
+		reply.ip_address = ip_match;
 		
 		free(req->request);
 		req->reply = &reply;
@@ -110,35 +143,48 @@ static void RequestService(GSDPacket * req, uint8_t src_id){
 		
 		ReverseRoute(req);
 				
-	}else
-		SelectiveForward(req);
+	}else{
 		
+		logger("No local match to request.\n");
+		
+		SelectiveForward(req);
+	}
 	
 }
-
-
 
 void *SendAdvertisement(void * thread_id){
 	unsigned char * data;
 	GSDPacket packet;
+	
+	logger("Starting advertisement timer\n");
+	
 	packet.packet_type = GSD_ADVERTISE;
 	packet.hop_count = 0;
 	packet.source_address = MYADDRESS;
+	packet.gsd_ip_address = MYIPADDRESS;
 	Advertisement message;
 	packet.advertise = &message;        
 	message.lifetime = ADV_LIFE_TIME;
 	message.diameter = ADV_MAX_DIAMETER;
+	CreateList(&message.services);
+	GetLocal_ServiceInfo(&message.services);
 	
 	while (true){
 		sleep(ADV_TIME_INTERVAL);
+		
 		packet.broadcast_id = ++broadcast_id;
-		GetLocal_ServiceInfo(&message.services);
+		
+		CreateList(&message.vicinity_groups);
 		GetVicinity_GroupInfo(&message.vicinity_groups);		
 		
 		size_t length;
 		generate_JSON(&packet, &data, &length);
 			
 		send_data(handler, (char *) data, length, BROADCAST_ID);
+		
+		logger("Advertisement Sent");
+		
+		FilterCache();
 	}
 	
 	return NULL;
@@ -150,7 +196,7 @@ void *SendAdvertisement(void * thread_id){
 // @return
 static bool SearchDuplicate(GSDPacket * message){
 		unsigned short id = message->broadcast_id;
-		uint8_t address = message->source_address;
+		uint16_t address = message->source_address;
 		LElement * cache_entry;
 		FOR_EACH(cache_entry,cache){
 			if (((ServiceCache*) cache_entry->data)->broadcast_id == id && address == ((ServiceCache*) cache_entry->data)->source_address)
@@ -163,16 +209,54 @@ static bool SearchDuplicate(GSDPacket * message){
 // name: P2PCacheAndForwardAdvertisement
 // @param Advertisement
 // @return void
-void P2PCacheAndForwardAdvertisement(GSDPacket * message, uint8_t src_id){
-	if (SearchDuplicate(message))
+static void P2PCacheAndForwardAdvertisement(GSDPacket * message){
+	
+	logger("Advertise received... Processing\n");
+	
+	if (SearchDuplicate(message)){
+		logger("Duplicate message. Discarding..\n");
 		return;
-	else{
+	}else{
+		logger("New Advertise. Storing\n");
+		LElement * item;
+		LElement * item_group;
 		ServiceCache * service = (ServiceCache *) malloc(sizeof(ServiceCache));
 		service->source_address = message->source_address;
 		service->broadcast_id = message->broadcast_id;
 		service->local = false;
-		service->services = message->advertise->services;
-		service->vicinity_groups = message->advertise->vicinity_groups;
+		
+		Register_Handler(message->gsd_ip_address, message->source_address);
+		
+		CreateList(&service->services);
+		CreateList(&service->vicinity_groups);
+		
+		FOR_EACH(item, message->advertise->services){
+			Service * serv_tmp = (Service *) malloc(sizeof(Service));
+			CreateList(&serv_tmp->groups);
+			serv_tmp->description = (char *) malloc(strlen(((Service *) item->data)->description)+1);
+			memcpy(serv_tmp->description, ((Service *) item->data)->description, strlen(((Service *) item->data)->description)+1);
+			
+			serv_tmp->ip_address = (char *) malloc(strlen(((Service *) item->data)->ip_address)+1);
+			memcpy(serv_tmp->ip_address, ((Service *) item->data)->ip_address, strlen(((Service *) item->data)->ip_address)+1);
+			
+			serv_tmp->address = ((Service *) item->data)->address;
+
+			Register_Handler(serv_tmp->ip_address,serv_tmp->address);
+			
+			FOR_EACH(item_group,((Service *) item->data)->groups){
+				Group tmp_group = (Group) malloc(strlen((Group) item_group->data)+1);
+				memcpy(tmp_group,item_group->data,strlen((Group) item_group->data)+1);
+				AddToList(tmp_group, &serv_tmp->groups);
+			}
+			AddToList(serv_tmp, &service->services);
+		}
+		
+		FOR_EACH(item, message->advertise->vicinity_groups){
+			Group tmp_group = (Group) malloc(strlen((Group) item->data)+1);
+			memcpy(tmp_group,item->data,strlen((Group) item->data)+1);
+			AddToList(tmp_group, &service->vicinity_groups);
+		}
+	
 		service->lifetime = message->advertise->lifetime;
 		AddToList(service, &cache);
 		
@@ -182,6 +266,7 @@ void P2PCacheAndForwardAdvertisement(GSDPacket * message, uint8_t src_id){
 		generate_JSON(message,&data,&size);
 		
 		if (message->hop_count<message->advertise->diameter){
+			logger("Forwarding advertise\n");
 			send_data(handler, (char *) data, size, BROADCAST_ID);
 		}
 		debugger("ESTOU NO P2P %i \n", message->hop_count);
@@ -194,8 +279,10 @@ static void ServiceFound(GSDPacket * packet){
 	char data[30];
 	LElement * request_item;
 	
-	logger("Service Found. Delivering to Application");
-	debugger("Service Found. SOURCE ID: %d", packet->reply->dest_address);
+	logger("Service Found. Delivering to Application\n");
+	debugger("Service Found. SOURCE ID: %d\n", packet->reply->dest_address);
+	
+	Register_Handler(packet->reply->ip_address,packet->reply->dest_address);
 	
 	FOR_EACH(request_item, local_requests){
 		if (((LocalRequest *) request_item->data)->broadcast_id == packet->broadcast_id){
@@ -206,35 +293,78 @@ static void ServiceFound(GSDPacket * packet){
 		}
 		i++;
 	}		
-	
 }
 
-void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uint8_t src_id){
+static void create_local_request(char * data, GSDPacket * packet){
+		char * parser;
+		char * tmp_group;
+		
+		Request * req = (Request *) malloc(sizeof(Request));
+		
+		logger("Parsing local request\n");
 	
-	char * parser;
-	
-	if(!memcmp(data, "LOCAL_REQUEST", strlen("LOCAL_REQUEST"))){
 		parser = strtok(data,":");
-	}
+		parser = strtok(NULL,";");
+		packet->packet_type = GSD_REQUEST;
+		packet->source_address = MYADDRESS;
+		packet->hop_count = 0;
+		packet->broadcast_id = BROADCAST_ID;
+		packet->request = req;
+		packet->gsd_ip_address = MYIPADDRESS;
+		
+		req->last_address = MYADDRESS;
+		req->ip_last_address = MYIPADDRESS;
+		req->wanted_service.description = (char *) malloc(strlen(parser)+1);
+		memcpy(req->wanted_service.description,parser,strlen(parser)+1);
+		
+		CreateList(&req->wanted_service.groups);
+		
+		
+		//TODO ISTO ESTA MAL FEITO N?
+		while((parser = strtok(NULL,",")) != NULL){
+			tmp_group = (char *) malloc(strlen(parser)+1);
+			AddToList(tmp_group,&req->wanted_service.groups);
+		}
+		
+}
+
+void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uint16_t src_id){
+	
+	GSDPacket * packet = (GSDPacket *) malloc(sizeof(GSDPacket));
+	
+	
+	logger("Received message\n");
 	
 	//CREATE PACKET; CHECK PACKET TYPE; CALL METHODS
-	GSDPacket packet;
-	generate_packet_from_JSON(data, &packet);
 	
-    switch(packet.packet_type){
-		case GSD_ADVERTISE: P2PCacheAndForwardAdvertisement(&packet,src_id);
+	if(!memcmp(data, "LOCAL_REQUEST", strlen("LOCAL_REQUEST")))
+		create_local_request(data,packet);
+	else
+		generate_packet_from_JSON(data, packet);
+	
+	
+	//VERIFICAR SE VEIO DO PRÓPRIO NÓ (Broadcast)
+	if (!memcmp(packet->gsd_ip_address,MYIPADDRESS,strlen(MYIPADDRESS)) && packet->packet_type != GSD_REPLY){
+		free(packet);
+		return;
+	}
+	
+	
+    switch(packet->packet_type){
+		case GSD_ADVERTISE: P2PCacheAndForwardAdvertisement(packet);
 								break;
-		case GSD_REQUEST: RequestService(&packet, src_id);
+		case GSD_REQUEST: RequestService(packet);
 						break;
 		case GSD_REPLY: 
-					if (packet.source_address == MYADDRESS)
-						ServiceFound(&packet);
+					if (packet->source_address == MYADDRESS)
+						ServiceFound(packet);
 					else
-						ReverseRoute(&packet);
+						ReverseRoute(packet);
 						break;
 		default: break;
 	}
 	
+	free(packet);
 }
 
 void * test(void * thread_id){
@@ -247,11 +377,15 @@ void * test(void * thread_id){
 	message.advertise->diameter = ADV_MAX_DIAMETER;
 	message.broadcast_id = ++broadcast_id;
 	message.source_address = MYADDRESS;
+	message.packet_type = GSD_ADVERTISE;
+	
+	CreateList(&message.advertise->services);
+	CreateList(&message.advertise->vicinity_groups);
 	
 	GetLocal_ServiceInfo(&message.advertise->services);
 	GetVicinity_GroupInfo(&message.advertise->vicinity_groups);
 	
-	unsigned char * data;
+	unsigned char * data = NULL;
 	size_t size = 0;
 	message.hop_count++;
 	generate_JSON(&message,&data,&size);
@@ -261,16 +395,86 @@ void * test(void * thread_id){
 	return NULL;
 }
 
+/*static void simulate_cache_entries(){
+	
+	//TODO READ SERVICES FROM FILE
+	
+	ServiceCache * entry = (ServiceCache *) malloc(sizeof(ServiceCache));
+	
+	entry->source_address = MYADDRESS;
+	entry->local = true;
+	entry->lifetime = ADV_LIFE_TIME;
+	entry->broadcast_id = 0;
+	
+	CreateList(&entry->services);
+	CreateList(&entry->vicinity_groups);
+	
+	Service * service = (Service *) malloc(sizeof(Service));
+	service->address = 1;
+	service->description = "SENSOR:A";
+	service->ip_address = "192.168.2.100:57432";
+	
+	CreateList(&service->groups);
+
+	char * grupo = "SENSOR";
+	AddToList(grupo, &service->groups);
+
+	grupo = "PEOPLE_LOCATION";
+	AddToList(grupo, &service->groups);
+
+	grupo = "SERVICE";
+	AddToList(grupo, &service->groups);
+	
+	AddToList(service,&entry->services);
+	
+
+	
+	service = (Service *) malloc(sizeof(Service));
+	service->address = 2;
+	service->description = "MANAGER:A";
+	service->ip_address = "192.168.2.100:57431";
+	
+	CreateList(&service->groups);
+	grupo = "MANAGER";
+	AddToList(grupo, &service->groups);
+	
+	grupo = "PEOPLE_LOCATION";
+	AddToList(grupo, &service->groups);
+	
+	grupo = "SERVICE";
+	AddToList(grupo, &service->groups);
+	
+	AddToList(service,&entry->services);
+
+	AddToList(entry, &cache);
+	
+}
+* */
+
+static void free_elements(){
+	FreeList(&cache);
+	FreeList(&reverse_table);
+	FreeList(&local_requests);
+	free(porto);
+}
+
 int main(int argc, char **argv)
 {
-	int op;
+	int op = 0;
 	pthread_t thread;
-	pthread_t thread2;
+	//pthread_t thread2;
 	char line[80];
-	char* var_value;
-	//struct ifaddrs * ifAddrStruct=NULL;
-    //struct ifaddrs * ifa=NULL;
-    //void * tmpAddrPtr=NULL;
+	char *var_value, *local_services;
+	unsigned long fileLen;
+	struct ifaddrs * ifAddrStruct=NULL;
+    struct ifaddrs * ifa=NULL;
+    void * tmpAddrPtr=NULL;
+    FILE * config_file;
+    
+    if (argc < 3 || argc > 4){
+		printf("USAGE: gsd <Handler_file> <GSD_file> [<Local_Services_file>]\n");
+		return 0;
+	}
 	
 	CreateList(&cache);
 	CreateList(&reverse_table);	
@@ -278,7 +482,11 @@ int main(int argc, char **argv)
 	logger("Main - Reading Config file\n");
 	
 	//LER CONFIGS DO FICHEIRO
-	config_file = fopen("teste.cfg","rt");
+	if (!(config_file = fopen(argv[2],"rt"))){
+		printf("Invalid GSD config file\n");
+		return 0;
+	}
+	
 	
 	while(fgets(line, 80, config_file)!=NULL){
 		var_value = strtok(line,"=");
@@ -295,6 +503,8 @@ int main(int argc, char **argv)
 			REV_ROUTE_TIMEOUT = atoi(strtok(NULL,"=\n"));
 		if (memcmp(var_value,"BROADCAST_ID", sizeof(var_value)) == 0)
 			BROADCAST_ID = atoi(strtok(NULL,"=\n"));
+		if (memcmp(var_value,"MYPORT", sizeof(var_value)) == 0)
+			MYPORT = atoi(strtok(NULL,"=\n"));
 		if (memcmp(var_value,"MYADDRESS", sizeof(var_value)) == 0)
 			MYADDRESS = atoi(strtok(NULL,"=\n"));
 		if (memcmp(var_value,"INTERFACE", sizeof(var_value)) == 0)
@@ -304,7 +514,6 @@ int main(int argc, char **argv)
 	
 	fclose(config_file);
 	
-	/*
 	//VERIFICAR IP
     getifaddrs(&ifAddrStruct);
 
@@ -314,22 +523,64 @@ int main(int argc, char **argv)
             tmpAddrPtr=&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
             char addressBuffer[INET_ADDRSTRLEN];
             inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
-            printf("%s IP Address %s\n", ifa->ifa_name, addressBuffer); 
+            debugger("%s IP Address %s\n", ifa->ifa_name, addressBuffer); 
             if (strcmp(ifa->ifa_name, INTERFACE))
-				MYADDRESS = addressBuffer;
+				MYIPADDRESS = addressBuffer;
         }
     }
-    * */
+    
+    free(ifAddrStruct);
+    free(ifa);
     
     logger("Main - Configuration concluded\n");
     
     debugger("Main - MYADDRESS: %d\n",MYADDRESS);
     
-//    if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
+    if (argc == 4){
+		
+		if(!(config_file = fopen(argv[3], "rt"))) {
+			printf("Invalid Local Services File");
+			return 0;
+		}
+		
+		fseek(config_file, 0, SEEK_END);
+		fileLen=ftell(config_file);
+		fseek(config_file, 0, SEEK_SET);
+
+		//Allocate memory
+		local_services=(char *)malloc(fileLen+1);
+		
+		fread(local_services,fileLen,1,config_file);
+		fclose(config_file);
+		
+		if(!Import_Local_Services(local_services)){
+			printf("Invalid Local Service. Probably not in JSON format\n");
+			return 0;
+		}
+		
+		free(local_services);
+	}
     
-    handler = __tp(create_handler_based_on_file)(argv[1], receive);
+    
+    
+    
+//    if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
+
+	handler = __tp(create_handler_based_on_file)(argv[1], receive);	
 	
-	pthread_create(&thread2, NULL, test, NULL);
+	// ############## TEST SEGMENT ############### 
+	
+	char ip[21] = "255.255.255.255:57432";
+	
+	Register_Handler(ip, BROADCAST_ID);
+	
+	//pthread_create(&thread2, NULL, test, NULL);
+	//simulate_cache_entries();
+	
+	// ############## END TEST SEGMENT ##############
+	
+	    
+	
 	pthread_create(&thread, NULL, SendAdvertisement, NULL);
 	
 	while(op != 3){
@@ -341,7 +592,8 @@ int main(int argc, char **argv)
 					break;
 			case 2: print_rev_route();
 					break;
-			case 3: break;
+			case 3: free_elements();
+					break;
 			default: printf("Acção Incorrecta\n");
 		}
 	}

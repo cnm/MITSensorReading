@@ -26,6 +26,8 @@ LElement *AddToList(void *item, LList *list);
 
 bool DelFromList(unsigned short num, LList * list);
 
+void FreeList(LList * list);
+
 #define FOR_EACH(item_ptr, list) \
      for (item_ptr = list.pFirst; item_ptr != NULL; item_ptr=item_ptr->next)
 
