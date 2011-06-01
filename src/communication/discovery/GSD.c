@@ -91,7 +91,7 @@ static void SelectiveForward(GSDPacket * req){
 	}
 }
 
-static void Register_Handler(char ip_address[], uint16_t h_address){
+static void Register_Handler(char * ip_address, uint16_t h_address){
 	
 	char * ip_handler, * port_handler;
 	struct sockaddr_in haddr;
@@ -226,7 +226,10 @@ static void P2PCacheAndForwardAdvertisement(GSDPacket * message){
 		service->broadcast_id = message->broadcast_id;
 		service->local = false;
 		
-		Register_Handler(message->gsd_ip_address, message->source_address);
+		char * gsd_ip = (char *) malloc(strlen(message->gsd_ip_address)+1);
+		memcpy(gsd_ip,message->gsd_ip_address,strlen(message->gsd_ip_address)+1);
+		
+		Register_Handler(gsd_ip, message->source_address);
 		
 		CreateList(&service->services);
 		CreateList(&service->vicinity_groups);
