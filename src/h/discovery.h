@@ -26,8 +26,8 @@ typedef LList RequestList;
 typedef enum PckType { GSD_ADVERTISE, GSD_REQUEST, GSD_REPLY } PacketType;
 
 typedef struct service_description{
-	char * description;
 	uint16_t address;
+	char * description;
 	char * ip_address;
 	GroupList groups;
 }Service;
@@ -38,16 +38,16 @@ typedef struct service_reply{
 }ServiceReply;
 
 typedef struct advertisement_struct{
-	ServiceList services; 
-	GroupList vicinity_groups;
 	unsigned short lifetime;
 	unsigned short diameter;
+	ServiceList services; 
+	GroupList vicinity_groups;
 }Advertisement;
 
 typedef struct request_struct{
-	Service wanted_service;
 	uint16_t last_address;
 	char * ip_last_address;
+	Service wanted_service;	
 }Request;
 
 typedef struct local_request{

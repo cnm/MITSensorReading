@@ -9,11 +9,11 @@ typedef LList CacheList;
 
 typedef struct service_cache{
 	uint16_t source_address;
+	unsigned short lifetime;
+	unsigned short broadcast_id;
 	bool local;
 	ServiceList services; 
 	GroupList vicinity_groups;
-	unsigned short lifetime;
-	unsigned short broadcast_id;
 }ServiceCache;
 
 void GetLocal_ServiceInfo(ServiceList *);

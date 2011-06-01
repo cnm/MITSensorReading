@@ -115,7 +115,8 @@ void print_cache(){
 		printf("=== lifetime: %i\n", cache_entry->lifetime);
 		FOR_EACH(item,cache_entry->services){
 			printf("=====NEW SERVICE=====\n");
-			printf("	=== %s\n", ((Service *)item->data)->description);
+			printf("	=== Description: %s\n", ((Service *)item->data)->description);
+			printf("	=== IPADD: %s\n", ((Service *)item->data)->ip_address);
 			printf("	=====GROUPS======\n");
 			FOR_EACH(group_item, ((Service *)item->data)->groups){			
 				printf("		=== %s\n", (Group) group_item->data);
