@@ -9,4 +9,4 @@ gsd: *.c
 		$(CC) $(FLAGS) -o $@ $? $(LIBS)
 
 clean: 
-		rm $(EXECS)
+		rm *.o $(EXECS)

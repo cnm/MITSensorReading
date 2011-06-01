@@ -491,23 +491,23 @@ int main(int argc, char **argv)
 	while(fgets(line, 80, config_file)!=NULL){
 		var_value = strtok(line,"=");
 		
-		if (memcmp(var_value,"ADV_TIME_INTERVAL", sizeof(var_value)) == 0)
+		if (memcmp(var_value,"ADV_TIME_INTERVAL", strlen("ADV_TIME_INTERVAL")) == 0)
 			ADV_TIME_INTERVAL = atoi(strtok(NULL,"=\n"));
-		if (memcmp(var_value,"ADV_LIFE_TIME", sizeof(var_value)) == 0)
+		if (memcmp(var_value,"ADV_LIFE_TIME", strlen("ADV_LIFE_TIME")) == 0)
 			ADV_LIFE_TIME = atoi(strtok(NULL,"=\n"));
-		if (memcmp(var_value,"ADV_MAX_DIAMETER", sizeof(var_value)) == 0)
+		if (memcmp(var_value,"ADV_MAX_DIAMETER", strlen("ADV_MAX_DIAMETER")) == 0)
 			ADV_MAX_DIAMETER = atoi(strtok(NULL,"=\n"));
-		if (memcmp(var_value,"ADV_CACHE_SIZE", sizeof(var_value)) == 0)
+		if (memcmp(var_value,"ADV_CACHE_SIZE", strlen("ADV_CACHE_SIZE")) == 0)
 			ADV_CACHE_SIZE = atoi(strtok(NULL,"=\n"));
-		if (memcmp(var_value,"REV_ROUTE_TIMEOUT", sizeof(var_value)) == 0)
+		if (memcmp(var_value,"REV_ROUTE_TIMEOUT", strlen("REV_ROUTE_TIMEOUT")) == 0)
 			REV_ROUTE_TIMEOUT = atoi(strtok(NULL,"=\n"));
-		if (memcmp(var_value,"BROADCAST_ID", sizeof(var_value)) == 0)
+		if (memcmp(var_value,"BROADCAST_ID", strlen("BROADCAST_ID")) == 0)
 			BROADCAST_ID = atoi(strtok(NULL,"=\n"));
-		if (memcmp(var_value,"MYPORT", sizeof(var_value)) == 0)
+		if (memcmp(var_value,"MYPORT", strlen("MYPORT")) == 0)
 			MYPORT = atoi(strtok(NULL,"=\n"));
-		if (memcmp(var_value,"MYADDRESS", sizeof(var_value)) == 0)
+		if (memcmp(var_value,"MYADDRESS", strlen("MYADDRESS")) == 0)
 			MYADDRESS = atoi(strtok(NULL,"=\n"));
-		if (memcmp(var_value,"INTERFACE", sizeof(var_value)) == 0)
+		if (memcmp(var_value,"INTERFACE", strlen("INTERFACE")) == 0)
 			INTERFACE = strtok(NULL, "=\n");
 			
 	}
