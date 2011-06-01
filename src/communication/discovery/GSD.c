@@ -181,7 +181,7 @@ void *SendAdvertisement(void * thread_id){
 		packet.broadcast_id = ++broadcast_id;
 		
 		CreateList(&message.vicinity_groups);
-		GetVicinity_GroupInfo(&message.vicinity_groups);		
+		//GetVicinity_GroupInfo(&message.vicinity_groups);		
 		
 		size_t length;
 		generate_JSON(&packet, &data, &length);
