@@ -161,7 +161,8 @@ void *SendAdvertisement(void * thread_id){
 	packet.packet_type = GSD_ADVERTISE;
 	packet.hop_count = 0;
 	packet.source_address = MYADDRESS;
-	packet.gsd_ip_address = MYIPADDRESS;
+	packet.gsd_ip_address = (char *) malloc(strlen(MYIPADDRESS) + 5 + 2);
+	sprintf(packet.gsd_ip_address, "%s:%d", MYIPADDRESS, MYPORT);
 	Advertisement message;
 	packet.advertise = &message;        
 	message.lifetime = ADV_LIFE_TIME;
