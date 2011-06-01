@@ -196,7 +196,7 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
 						path[2] = "diameter";
 						adv.diameter = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
 						path[2] = "services";
-						const char * path_to_services[] = {"Packet", "GSD", "services"};
+						const char * path_to_services[] = {"Packet", "GSD", "services", ( char *) 0 };
 						yajl_val array = yajl_tree_get(node,path_to_services,yajl_t_array);
 						CreateList(&adv.services);
 						for (i = 0; i< YAJL_GET_ARRAY(array)->len; i++){
