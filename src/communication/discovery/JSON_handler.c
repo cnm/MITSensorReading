@@ -70,6 +70,9 @@ bool generate_JSON(GSDPacket * packet, unsigned char ** response, size_t * lengt
 				yajl_gen_string(g, ( unsigned char *) "description", strlen("description"));
 				yajl_gen_string(g, (unsigned char *) ((Service *) service_elem->data)->description, strlen(((Service *) service_elem->data)->description));
 				
+				yajl_gen_string(g, (unsigned char *) "address", strlen("address"));
+				yajl_gen_integer(g, ((Service *) service_elem->data)->address);
+				
 				yajl_gen_string(g, ( unsigned char *) "ip_address", strlen("ip_address"));
 				yajl_gen_string(g,(unsigned char *) ((Service *) service_elem->data)->ip_address, strlen(((Service *) service_elem->data)->ip_address));
 				
@@ -196,7 +199,7 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
 						path[2] = "diameter";
 						adv.diameter = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
 						path[2] = "services";
-						const char * path_to_services[] = {"Packet", "GSD", "services", ( char *) 0 };
+						const char * path_to_services[] = {"Packet", "GSD", "services", (char *) 0 };
 						yajl_val array = yajl_tree_get(node,path_to_services,yajl_t_array);
 						CreateList(&adv.services);
 						for (i = 0; i< YAJL_GET_ARRAY(array)->len; i++){
@@ -210,6 +213,8 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
 									tmp = YAJL_GET_STRING(YAJL_GET_OBJECT(obj)->values[j]);
 									service.description = (char *) malloc(strlen(tmp)+1);
 									memcpy(service.description, tmp,strlen(tmp)+1);
+								}else if (!strcmp(YAJL_GET_OBJECT(obj)->keys[j],"address")){
+									service.address = YAJL_GET_INTEGER(YAJL_GET_OBJECT(obj)->values[j]);
 								}else if (!strcmp(YAJL_GET_OBJECT(obj)->keys[j],"ip_address")){
 									tmp = YAJL_GET_STRING(YAJL_GET_OBJECT(obj)->values[j]);
 									service.ip_address = (char *) malloc(strlen(tmp)+1);
