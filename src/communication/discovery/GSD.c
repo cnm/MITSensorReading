@@ -100,7 +100,9 @@ static void Register_Handler(char * ip_address, uint16_t h_address){
 	memcpy(gsd_ip,ip_address,strlen(ip_address)+1);
 	
 	ip_handler = strtok(gsd_ip, ":");	
-	port_handler = strtok(NULL, ":");		
+	for(port_handler = gsd_ip; *port_handler != ':' ; port_handler++);
+	port_handler++;
+	//port_handler = strtok(NULL, ":");		
 	
 	haddr.sin_family = AF_INET;
 	inet_pton(AF_INET, ip_handler, &haddr.sin_addr);
