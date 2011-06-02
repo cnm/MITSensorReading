@@ -25,4 +25,7 @@ void GetVicinity_GroupInfo(GroupList *);
 void print_cache();
 
 void FilterCache();
+
+void CleanPreviousCache(uint16_t address);
+
 #endif

@@ -100,6 +100,17 @@ void FilterCache(){
 	}
 }
 
+void CleanPreviousCache(uint16_t address){
+	LElement * cache_entry;
+	int index = 1;
+	
+	FOR_EACH(cache_entry, cache){
+		if (((ServiceCache *)cache_entry)->source_address == address)
+			DelFromList(index, &cache);
+		index++;
+	}
+}
+
 
 void print_cache(){
 	LElement * cache_item;

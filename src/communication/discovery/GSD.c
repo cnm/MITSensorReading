@@ -224,6 +224,9 @@ static void P2PCacheAndForwardAdvertisement(GSDPacket * message){
 		return;
 	}else{
 		logger("New Advertise. Storing\n");
+		
+		CleanPreviousCache(message->source_address);		
+		
 		LElement * item;
 		LElement * item_group;
 		ServiceCache * service = (ServiceCache *) malloc(sizeof(ServiceCache));
