@@ -201,11 +201,12 @@ void *SendAdvertisement(void * thread_id){
 // @param
 // @return
 static bool SearchDuplicate(GSDPacket * message){
-		unsigned short id = message->broadcast_id;
+		//unsigned short id = message->broadcast_id;
 		uint16_t address = message->source_address;
 		LElement * cache_entry;
 		FOR_EACH(cache_entry,cache){
-			if (((ServiceCache*) cache_entry->data)->broadcast_id == id && address == ((ServiceCache*) cache_entry->data)->source_address)
+			//if (((ServiceCache*) cache_entry->data)->broadcast_id == id && address == ((ServiceCache*) cache_entry->data)->source_address)
+			if (address == ((ServiceCache*) cache_entry->data)->source_address)
 				return true;
 		}
 		return false;
@@ -223,9 +224,7 @@ static void P2PCacheAndForwardAdvertisement(GSDPacket * message){
 		logger("Duplicate message. Discarding..\n");
 		return;
 	}else{
-		logger("New Advertise. Storing\n");
-		
-		CleanPreviousCache(message->source_address);		
+		logger("New Advertise. Storing\n");	
 		
 		LElement * item;
 		LElement * item_group;
