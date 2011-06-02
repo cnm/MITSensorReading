@@ -201,7 +201,7 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
 						yajl_val array = yajl_tree_get(node,path_to_services,yajl_t_array);
 						CreateList(&adv->services);
 						for (i = 0; i< YAJL_GET_ARRAY(array)->len; i++){
-							Service service;
+							Service * service = (Service *) malloc(sizeof(Service));
 							
 							yajl_val obj = YAJL_GET_ARRAY(array)->values[i];
 							yajl_val groups_JSON;
@@ -209,27 +209,27 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
 							for (j = 0; j < YAJL_GET_OBJECT(obj)->len; j++){
 								if (!strcmp(YAJL_GET_OBJECT(obj)->keys[j],"description")){
 									tmp = YAJL_GET_STRING(YAJL_GET_OBJECT(obj)->values[j]);
-									service.description = (char *) malloc(strlen(tmp)+1);
-									memcpy(service.description, tmp,strlen(tmp)+1);
+									service->description = (char *) malloc(strlen(tmp)+1);
+									memcpy(service->description, tmp,strlen(tmp)+1);
 								}else if (!strcmp(YAJL_GET_OBJECT(obj)->keys[j],"address")){
-									service.address = YAJL_GET_INTEGER(YAJL_GET_OBJECT(obj)->values[j]);
+									service->address = YAJL_GET_INTEGER(YAJL_GET_OBJECT(obj)->values[j]);
 								}else if (!strcmp(YAJL_GET_OBJECT(obj)->keys[j],"ip_address")){
 									tmp = YAJL_GET_STRING(YAJL_GET_OBJECT(obj)->values[j]);
-									service.ip_address = (char *) malloc(strlen(tmp)+1);
-									memcpy(service.ip_address, tmp,strlen(tmp)+1);	
+									service->ip_address = (char *) malloc(strlen(tmp)+1);
+									memcpy(service->ip_address, tmp,strlen(tmp)+1);	
 								}else if (!strcmp(YAJL_GET_OBJECT(obj)->keys[j],"groups"))
 									groups_JSON = YAJL_GET_OBJECT(obj)->values[j];
 								
 							}
 							
-							CreateList(&service.groups);
+							CreateList(&service->groups);
 							for (j=0; j < YAJL_GET_ARRAY(groups_JSON)->len; j++){
 								tmp = YAJL_GET_STRING(YAJL_GET_ARRAY(groups_JSON)->values[j]);
 								Group group = (char *) malloc((strlen(tmp)+1)*sizeof(char));
 								memcpy(group, tmp, strlen(tmp)+1);
-								AddToList(group, &service.groups);
+								AddToList(group, &service->groups);
 							}
-							AddToList(&service,&adv->services);
+							AddToList(service,&adv->services);
 						}
 						
 						path_to_services[2] = "vicinity_groups";
