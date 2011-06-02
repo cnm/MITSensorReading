@@ -64,10 +64,14 @@ bool DelFromList(unsigned short num, LList * list){
 			free(curr);
 			deleted = true;
 		}
-		
-		if (curr->next == NULL)
-			break;
 	}
+	
+	if (list->NumEl == 1){
+		list->NumEl = 0;
+		list->pFirst = NULL;
+		list->pLast = NULL;
+		return true;
+	}	
 	
 	if (deleted)
 		list->NumEl = list->NumEl - 1;
