@@ -55,23 +55,30 @@ bool DelFromList(unsigned short num, LList * list){
 		
     for (i=1, curr=list->pFirst; i <= num; i++, curr=curr->next){
 		if (i == num){
-			if (curr->next != NULL){
+			if (curr->next != NULL && curr->prev != NULL){
 				curr->prev->next = curr->next;
 				curr->next->prev = curr->prev;
-			}else if(curr->prev != NULL){
+			}else if(curr->prev != NULL && curr->next == NULL){
 				curr->prev->next = NULL;
+			}else if (curr->prev == NULL && curr->next != NULL){
+				curr->next->prev = NULL;
 			}
+			
+			if (list->NumEl == 1){
+				list->pFirst = NULL;
+				list->pLast = NULL;
+			}else{
+				if (curr == list->pFirst)
+					list->pFirst = curr->next;
+			
+				if (curr == list->pLast)
+					list->pLast = curr->prev;
+			}
+			
 			free(curr);
 			deleted = true;
 		}
 	}
-	
-	if (list->NumEl == 1){
-		list->NumEl = 0;
-		list->pFirst = NULL;
-		list->pLast = NULL;
-		return true;
-	}	
 	
 	if (deleted)
 		list->NumEl = list->NumEl - 1;
