@@ -227,7 +227,7 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
 								tmp = YAJL_GET_STRING(YAJL_GET_ARRAY(groups_JSON)->values[j]);
 								Group group = (char *) malloc((strlen(tmp)+1)*sizeof(char));
 								memcpy(group, tmp, strlen(tmp)+1);
-								AddToList(&group, &service.groups);
+								AddToList(group, &service.groups);
 							}
 							AddToList(&service,&adv->services);
 						}
@@ -240,7 +240,7 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
 								tmp = YAJL_GET_STRING(YAJL_GET_ARRAY(array)->values[j]);
 								Group group = (char *) malloc((strlen(tmp)+1)*sizeof(char));
 								memcpy(group, tmp, strlen(tmp)+1);
-								AddToList(&group, &adv->vicinity_groups);
+								AddToList(group, &adv->vicinity_groups);
 						}
 						
 						break;
@@ -278,7 +278,7 @@ bool generate_packet_from_JSON(char * data, GSDPacket * packet){
 							tmp = YAJL_GET_STRING(YAJL_GET_ARRAY(array_groups)->values[i]);
 							Group group = (char *) malloc((strlen(tmp)+1)*sizeof(char));
 							memcpy(group, tmp, strlen(tmp)+1);
-							AddToList(&group, &serv.groups);
+							AddToList(group, &serv.groups);
 						}
 						req->wanted_service = serv;
 						
