@@ -105,6 +105,7 @@ static void Register_Handler(char * ip_address, uint16_t h_address){
 	haddr.sin_family = AF_INET;
 	inet_pton(AF_INET, ip_handler, &haddr.sin_addr);
 	haddr.sin_port = htons(atoi(port_handler));
+	printf("PORCA %d\n", ntohs(haddr.sin_port));
 			
 	uint32_t result = register_handler(h_address, (*(struct sockaddr *) &haddr), handler->module_communication.regd);
 	if (result==1){
