@@ -106,9 +106,7 @@ static void Register_Handler(char * ip_address, uint16_t h_address){
 	
 	haddr.sin_family = AF_INET;
 
-	printf("PORCAAA %s\n", port_handler);
 	haddr.sin_port = htons(atoi(port_handler));
-	printf("PORCA %d\n", ntohs(haddr.sin_port));
 			
 	uint32_t result = register_handler(h_address, (*(struct sockaddr *) &haddr), handler->module_communication.regd);
 	if (result==1){
@@ -281,8 +279,7 @@ static void P2PCacheAndForwardAdvertisement(GSDPacket * message){
 			logger("Forwarding advertise\n");
 			send_data(handler, (char *) data, size, BROADCAST_ID);
 		}
-		debugger("ESTOU NO P2P %i \n", message->hop_count);
-		debugger("ALGUMA COISA NA CACHE? %i \n", ((ServiceCache *)cache.pFirst->data)->lifetime);
+
 	}
 }	
 
