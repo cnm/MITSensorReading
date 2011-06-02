@@ -97,15 +97,15 @@ static void Register_Handler(char * ip_address, uint16_t h_address){
 	struct sockaddr_in haddr;
 	
 	gsd_ip = (char *) malloc(strlen(ip_address)+1);
+	memset(gsd_ip, 0, strlen(ip_address)+1);
 	memcpy(gsd_ip,ip_address,strlen(ip_address)+1);
 	
 	ip_handler = strtok(gsd_ip, ":");	
-	for(port_handler = gsd_ip; *port_handler != ':' ; port_handler++);
-	port_handler++;
-	//port_handler = strtok(NULL, ":");		
+	inet_pton(AF_INET, ip_handler, &haddr.sin_addr);	
+	port_handler = strtok(NULL, ":");		
 	
 	haddr.sin_family = AF_INET;
-	inet_pton(AF_INET, ip_handler, &haddr.sin_addr);
+
 	printf("PORCAAA %s\n", port_handler);
 	haddr.sin_port = htons(atoi(port_handler));
 	printf("PORCA %d\n", ntohs(haddr.sin_port));
