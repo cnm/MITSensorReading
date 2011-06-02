@@ -582,7 +582,7 @@ int main(int argc, char **argv)
 	
 	// ############## TEST SEGMENT ############### 
 	
-	char ip[21] = "255.255.255.255:57432";
+	char ip[22] = "255.255.255.255:57432";
 	
 	Register_Handler(ip, BROADCAST_ID);
 	
