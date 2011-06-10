@@ -9,13 +9,15 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <syslog.h>
-#include "discovery.h"
-#include "listType.h"
-#include "JSON_handler.h"
+#include <stdint.h>
+#include <time.h>
 #include <fred/handler.h>
 
-#define INSIDE x
-#define OUTSIDE y
+#define MICRO_SECONDS 1000
+#define NANO_SECONDS 1000
+
+#define INSIDE "sa"
+#define OUTSIDE "asd"
 #define HIGH
 #define LOW
 
@@ -33,7 +35,7 @@ void loop(){
 	uin64_t timestamp;
 	short i = read(INSIDE);
 	short o = read(OUTSIDE);
-	t = current_timestamp();
+	clock_t t = clock();
 	if (i==HIGH){
 		in_t = t;
 		if ((in_t - out_t) <= DELTA_MOVEMENT)

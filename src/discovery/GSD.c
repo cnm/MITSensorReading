@@ -499,6 +499,10 @@ int main(int argc, char **argv)
 	
 	
 	while(fgets(line, 80, config_file)!=NULL){
+
+		if (line[0] == '#')
+			continue;
+
 		var_value = strtok(line,"=");
 		
 		if (memcmp(var_value,"ADV_TIME_INTERVAL", strlen("ADV_TIME_INTERVAL")) == 0)
