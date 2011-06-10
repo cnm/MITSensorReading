@@ -1,6 +1,6 @@
 CC=gcc
 LIBS = -lpthread -lfred -lyajl
-FLAGS = -Wall -g -I../../h
+FLAGS = -Wall -g -I../../include
 EXECS = gsd
 
 all: $(EXECS)

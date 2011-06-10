@@ -461,6 +461,7 @@ void * test(void * thread_id){
 * */
 
 static void free_elements(){
+	unregister_handler_address(MYADDRESS,handler->module_communication.regd);
 	FreeList(&cache);
 	FreeList(&reverse_table);
 	FreeList(&local_requests);
