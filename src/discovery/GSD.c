@@ -18,7 +18,7 @@
 #include "listType.h"
 #include "ServiceCache.h"
 #include "ReverseRoute.h"
-#include "JSON_handler.h"
+#include "GSD_JSON_handler.h"
 #include <fred/handler.h>
 
 unsigned short ADV_TIME_INTERVAL = 30;

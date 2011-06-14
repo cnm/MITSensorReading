@@ -5,7 +5,7 @@ EXECS = spotter
 
 all: $(EXECS)
 
-spotter: spotter.c
+spotter: spotter.c ../../lib/*.c
 		$(CC) $(FLAGS) -o $@ $? $(LIBS)
 
 clean: 

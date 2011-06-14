@@ -5,7 +5,7 @@ EXECS = gsd
 
 all: $(EXECS)
 
-gsd: *.c
+gsd: *.c ../../lib/listType.c
 		$(CC) $(FLAGS) -o $@ $? $(LIBS)
 
 clean: 

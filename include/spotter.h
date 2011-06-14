@@ -10,9 +10,10 @@
 
 #define ENABLE_DEBUG 1
 
-#define LOG_FILE "spotterlog"
+/*
+#define SPOTTER_LOG_FILE "spotterlog"
 
-#define logger(...) openlog(LOG_FILE, LOG_CONS, LOG_DAEMON); syslog(LOG_INFO, __VA_ARGS__); closelog();
+#define logger(...) openlog(SPOTTER_LOG_FILE, LOG_CONS, LOG_DAEMON); syslog(LOG_INFO, __VA_ARGS__); closelog();
 
 #ifdef ENABLE_DEBUG
 	#define debugger(...) printf(__VA_ARGS__);
@@ -20,6 +21,14 @@
 #else
 	#define debugger(...)
 #endif
+*/
+
+typedef enum plugin_type{SYNC, ASYNC} PluginType;
+
+typedef struct plugin{
+	char * location;
+	PluginType type;
+}Plugin;
 
 
 
