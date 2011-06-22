@@ -10,7 +10,7 @@
 
 typedef enum data_type{ ENTRY, COUNT, RSS} DataType;
 typedef enum rss_type{ WIFI, BLUETOOTH, RFID, OTHER} RSSType;
-typedef enum message_type { REGISTER_SENSOR, REGISTER_MANAGER, SENSOR_DATA, MANAGER_DATA } MessageType;
+typedef enum message_type { REQUEST_INSTANT, REQUEST_FREQUENT, REGISTER_SENSOR, REGISTER_MANAGER, SENSOR_DATA, MANAGER_DATA } MessageType;
 
 typedef struct location{
 	float x;

@@ -41,10 +41,15 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 	yajl_gen_integer(g, packet->type);
 
 	switch (packet->type){
+		case REQUEST_INSTANT: break;
+		case REQUEST_FREQUENT: break;
 		case REGISTER_SENSOR: break;
 		case REGISTER_MANAGER: break;
 		case SENSOR_DATA: break;
 		case MANAGER_DATA: break;
+
+		//TODO GENERATE JSON for all message types
+
 		default: break;
 	}
 
@@ -53,5 +58,8 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 }
 
 bool generate_packet_from_JSON(char * data, LocationPacket * packet){
+
+	//TODO: GENERATE PACKET FOR ALL MESSAGE TYPES
+
 	return true;
 }

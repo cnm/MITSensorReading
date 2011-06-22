@@ -37,7 +37,7 @@ void ServiceFound(uint16_t dest_handler) {
 
 	if (!manager_available){
 
-		//Register in Service with self location
+		//Respond to Service Manager with self location
 		send_data(handler,(char *) &self,strlen((char *) &self),dest_handler);
 
 		//ENABLE SENDING
@@ -46,6 +46,18 @@ void ServiceFound(uint16_t dest_handler) {
 		pthread_mutex_unlock(&manager);
 	}
 
+}
+
+void RequestInstant(uint16_t address){
+	//TODO retornar ao address o estado actual dos sensores
+}
+
+void RequestFrequent(uint16_t manager_address, unsigned short required_frequence){
+	//TODO Registar o novo Manager com a devida frequencia para começar a enviar para estes os dados sensed a cada required_frequence
+}
+
+void ConfirmSpontaneousRegister(){
+	//TODO: Confirmar o registo pedido por este nó; recebe a frequencia final com que vai emitir ao Manager
 }
 
 void ManagerLost(){
