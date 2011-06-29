@@ -30,6 +30,7 @@ typedef struct plugin{
 	PluginType type;
 }Plugin;
 
-
+void SendSensorData(uint16_t address);
+void AddManager(uint16_t address, unsigned short frequence);
 
 #endif /* SPOTTER_H_ */

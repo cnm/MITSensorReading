@@ -12,52 +12,87 @@
 #include <dlfcn.h>
 #include <fred/handler.h>
 #include "listType.h"
-#include "discovery.h"
 #include "spotter.h"
 #include "location.h"
+#include "location_json.h"
+#include "gsd_api.h"
+#include "spotter_services.h"
 
 
 __tp(handler)* handler = NULL;
 unsigned short SENSE_FREQUENCY = 5;
+unsigned short MIN_UPDATE_FREQUENCY = 15;
 unsigned short UPDATE_FREQUENCY = 15;
 LList plugins;
-uint16_t MY_ADDRESS;
+uint16_t MY_ADDRESS, manager_address;
 Location self;
 bool manager_available = false;
 pthread_mutex_t manager, dataToSend;
-LList sensorDataList;
+SensorDataList cached_data;
 
 void SensorResult(SensorData * data){
-	pthread_mutex_lock(&dataToSend);
-	AddToList(data,&sensorDataList);
-	pthread_mutex_unlock(&dataToSend);
-}
-
-void ServiceFound(uint16_t dest_handler) {
-
-	if (!manager_available){
-
-		//Respond to Service Manager with self location
-		send_data(handler,(char *) &self,strlen((char *) &self),dest_handler);
-
-		//ENABLE SENDING
-		pthread_mutex_lock(&manager);
-		manager_available = true;
-		pthread_mutex_unlock(&manager);
+	short index = 1;
+	LElement * elem;
+	switch(data->type){
+		case ENTRY:
+			FOR_EACH(elem,cached_data){
+				if (((SensorData *)elem->data)->type == ENTRY){
+					((SensorData *)elem->data)->entrances += data->entrances;
+					free(data);
+					break;
+				}
+			}
+			break;
+		case COUNT:
+			FOR_EACH(elem,cached_data){
+				if (((SensorData *)elem->data)->type == COUNT){
+					((SensorData *)elem->data)->people = data->people;
+					free(data);
+					break;
+				}
+			}
+			break;
+		case RSS:
+			FOR_EACH(elem,cached_data){
+				if (((SensorData *)elem->data)->type == RSS){
+					pthread_mutex_lock(&dataToSend);
+					DelFromList(index, &cached_data);
+					AddToList(data, &cached_data);
+					pthread_mutex_unlock(&dataToSend);
+				}
+			}
+			break;
 	}
 
 }
 
-void RequestInstant(uint16_t address){
-	//TODO retornar ao address o estado actual dos sensores
+void AddManager(uint16_t address, unsigned short frequence){
+	pthread_mutex_lock(&manager);
+	manager_address = address;
+	if (frequence >= MIN_UPDATE_FREQUENCY)
+		UPDATE_FREQUENCY = frequence;
+	else
+		UPDATE_FREQUENCY = MIN_UPDATE_FREQUENCY;
+	manager_available = true;
+	pthread_mutex_unlock(&manager);
 }
 
-void RequestFrequent(uint16_t manager_address, unsigned short required_frequence){
-	//TODO Registar o novo Manager com a devida frequencia para começar a enviar para estes os dados sensed a cada required_frequence
-}
+void ServiceFound(uint16_t dest_handler) {
+	if (!manager_available){
+		//Send to Service Manager self location and maximum sense frequency
+		unsigned char * data;
+		size_t length;
+		LocationPacket location;
+		location.type = REGISTER_SENSOR;
+		location.RegSensor.sensor_location = self;
+		location.RegSensor.min_update_frequency = MIN_UPDATE_FREQUENCY;
 
-void ConfirmSpontaneousRegister(){
-	//TODO: Confirmar o registo pedido por este nó; recebe a frequencia final com que vai emitir ao Manager
+		generate_JSON(&location,&data,&length);
+
+		send_data(handler, (char *)&data,length,dest_handler);
+
+		free(data);
+	}
 }
 
 void ManagerLost(){
@@ -67,7 +102,24 @@ void ManagerLost(){
 }
 
 void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uint16_t src_id){
+	LocationPacket * packet = (LocationPacket *) malloc(sizeof(LocationPacket));
+	generate_packet_from_JSON(data, packet);
 
+	switch(packet->type){
+		case REGISTER_SENSOR:
+			ConfirmSpontaneousRegister(src_id,packet->required_frequency);
+			break;
+		case REQUEST_FREQUENT:
+			RequestFrequent(src_id,packet->required_frequency);
+				break;
+		case REQUEST_INSTANT:
+			RequestInstant(src_id);
+				break;
+		default:
+				break;
+	}
+
+	free(packet);
 }
 
 void * sensor_loop(){
@@ -89,7 +141,7 @@ void * sensor_loop(){
 				if ((error = dlerror()) != NULL) {
 					fprintf(stderr, "%s\n", error);
 					pthread_mutex_lock(&dataToSend);
-					DelFromList(index,&sensorDataList);
+					DelFromList(index,&cached_data);
 					pthread_mutex_unlock(&dataToSend);
 				}
 				start_sense();
@@ -98,13 +150,40 @@ void * sensor_loop(){
 		}
 		sleep(SENSE_FREQUENCY);
 	}
+	return NULL;
+}
+
+void SendSensorData(uint16_t address){
+	LocationPacket packet;
+	LElement * elem;
+	unsigned char * data;
+	size_t length;
+	packet.type = SENSOR_DATA;
+
+	CreateList(&packet.data);
+	FOR_EACH(elem, cached_data){
+		AddToList(elem,&packet.data);
+	}
+	generate_JSON(&packet, &data,&length);
+
+	send_data(handler, (char *)&data,length,manager_address);
+
+	free(data);
 }
 
 void * spotter_send_loop(){
+
 	while(true){
+
+		if (manager_available)
+			SendSensorData(manager_address);
+
+		//FreeList(&cached_data);
 
 		sleep(UPDATE_FREQUENCY);
 	}
+
+	return NULL;
 }
 
 /*
@@ -118,7 +197,7 @@ void free_elements(){
 	pthread_mutex_destroy(&manager);
 	pthread_mutex_destroy(&dataToSend);
 	FreeList(&plugins);
-	FreeList(&sensorDataList);
+	FreeList(&cached_data);
 }
 
 void print_plugins(){
@@ -137,7 +216,7 @@ void print_plugins(){
 	}
 }
 
-int main(int argc, char * argv[]) {
+int main(int argc, char ** argv) {
 
 	//LER CONFIGS E VER QUAIS OS PLUGINS QUE EXISTEM
 	char line[80];
@@ -158,7 +237,7 @@ int main(int argc, char * argv[]) {
 	}
 
 	CreateList(&plugins);
-	CreateList(&sensorDataList);
+	CreateList(&cached_data);
 
 	logger("Main - Reading Config file\n");
 
@@ -197,8 +276,8 @@ int main(int argc, char * argv[]) {
 			self.y = atof(strtok(NULL, "\n"));
 		}else if (!memcmp(var_value, "SENSE_FREQUENCY",strlen("SENSE_FREQUENCY")))
 			SENSE_FREQUENCY = atoi(strtok(NULL, "=\n"));
-		else if (!memcmp(var_value, "UPDATE_FREQUENCY", strlen("UPDATE_FREQUENCY")))
-			UPDATE_FREQUENCY = atoi(strtok(NULL, "=\n"));
+		else if (!memcmp(var_value, "MIN_UPDATE_FREQUENCY", strlen("MIN_UPDATE_FREQUENCY")))
+			MIN_UPDATE_FREQUENCY = atoi(strtok(NULL, "=\n"));
 
 	}
 
@@ -211,8 +290,19 @@ int main(int argc, char * argv[]) {
 
 	//FUTURE WORK: REGISTER SERVICE GSD
 
-	//REQUEST MANAGER OF ZONE X
+	//TODO: ALTERAR PARA IR BUSCAR ZONA CORRECTA
+	Service wanted;
+	char * group1 = "MANAGER";
+	char * group2 = "PEOPLE_LOCATION";
+	char * group3 = "SERVICE";
 
+	wanted.description = "MANAGER:A";
+	CreateList(&wanted.groups);
+	AddToList(group1,&wanted.groups);
+	AddToList(group2,&wanted.groups);
+	AddToList(group3,&wanted.groups);
+
+	RequestService(&wanted);
 
 	pthread_mutex_init(&manager,NULL);
 	pthread_mutex_init(&dataToSend,NULL);
@@ -234,13 +324,13 @@ int main(int argc, char * argv[]) {
 			//free_elements();
 			//exit(1);
 		}else{
-			start_cb();
+			start_cb(&SensorResult);
 			dlclose(handle);
 		}
 		index++;
 	}
 
-	//pthread_create(&sense_loop, NULL, sensor_loop, NULL);
+	pthread_create(&sense_loop, NULL, sensor_loop, NULL);
 	pthread_create(&update_manager_loop, NULL, spotter_send_loop, NULL);
 
 	while(op != 3){

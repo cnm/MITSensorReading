@@ -12,43 +12,28 @@
 #include <stdint.h>
 #include <time.h>
 #include <fred/handler.h>
+#include "spotter.h"
+#include "location.h"
+#include "sbus.h"
 
 #define MICRO_SECONDS 1000
 #define NANO_SECONDS 1000
 
-#define INSIDE "sa"
-#define OUTSIDE "asd"
-#define HIGH
-#define LOW
+#define HIGH 1
+#define LOW 0
 
-uint64_t in_t;
-uint64_t out_t;
+time_t in_t,out_t;
+time_t DELTA_MOVEMENT = 1;
 
-uint64_t DELTA_MOVEMENT;
+uint64_t entradas,saidas;
+unsigned int presencas;
 
-uint64_t entradas;
-uint64_t saidas;
+unsigned short INSIDE_PIN;
+unsigned short OUTSIDE_PIN;
+bool sensor_loop = true;
 
-uint64_t presencas;
+void (* sensor_result)(SensorData *);
 
-void loop(){
-	uin64_t timestamp;
-	short i = read(INSIDE);
-	short o = read(OUTSIDE);
-	clock_t t = clock();
-	if (i==HIGH){
-		in_t = t;
-		if ((in_t - out_t) <= DELTA_MOVEMENT)
-			entradas++;
-	}
-	if(o == HIGH){
-		out_t = t;
-		if ((out_t - in_t) <= DELTA_MOVEMENT)
-			saidas++;
-	}
-
-	presencas = (entradas - saidas < 0 ? 0 : entradas - saidas);
-}
 
 void wait_miliseconds(int miliseconds){
     struct timespec interval, left;
@@ -98,6 +83,48 @@ int getpin(int pin){
     return value;
 }
 
+void loop(){
+
+}
+
+void start_cb(void (* sensor_result_cb)(SensorData *)){
+	sensor_result = sensor_result_cb;
+	short i;
+	short o;
+	SensorData data;
+	while(sensor_loop){
+		i = getpin(INSIDE_PIN);
+		o = getpin(OUTSIDE_PIN);
+
+		if (i == LOW){
+			time(&in_t);
+			if ((in_t - out_t) <= DELTA_MOVEMENT){
+				data.entrances = 1;
+				entradas++;
+				sensor_result(&data);
+			}
+		}
+		if(o == LOW){
+			time(&out_t);
+			if ((out_t - in_t)  <= DELTA_MOVEMENT){
+				data.entrances = -1;
+				sensor_result(&data);
+				saidas++;
+			}
+
+		}
+
+		presencas = (entradas - saidas < 0 ? 0 : entradas - saidas);
+		wait_miliseconds(50);
+	}
+
+}
+
+void stop_cb(){
+	sensor_result = NULL;
+	sensor_loop = false;
+}
+/*
 int main(int argc, char * argv[]){
 	int duration_limit = atoi(argv[1]);
 	int limit = 16*duration_limit;
@@ -121,3 +148,4 @@ int main(int argc, char * argv[]){
 	duration = difftime(end, start);
 	printf("limit : %d ; Total time: %.2f\n", limit,duration);
 }
+*/
