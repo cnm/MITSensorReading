@@ -10,7 +10,7 @@
 
 #include "discovery.h"
 
-bool RegisterService(Service *, uint16_t handler_id, void (* service_found_cb(uint16_t)));
+bool RegisterService(Service *, uint16_t handler_id, void (* service_found_cb)(uint16_t));
 void RequestService(Service *);
 bool StopProvidingService(uint16_t handler_id);
 

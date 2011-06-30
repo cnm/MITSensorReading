@@ -7,9 +7,9 @@
 
 #include "gsd_api.h"
 
-void (* callback(uint16_t));
+void (* callback)(uint16_t);
 
-bool RegisterService(Service * provide, uint16_t handler_id, void (* service_found_cb(uint16_t))){
+bool RegisterService(Service * provide, uint16_t handler_id, void (* service_found_cb)(uint16_t)){
 	//TODO:FUTURE WORK - DINAMICALLY REGISTER IN GSD; FOR NOW JUST LOCALLY SAVE THE POINTER TO THE CALLBACK FUNCTION
 
 	callback = service_found_cb;
