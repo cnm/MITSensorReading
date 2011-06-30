@@ -28,9 +28,10 @@ time_t DELTA_MOVEMENT = 1;
 uint64_t entradas,saidas;
 unsigned int presencas;
 
-unsigned short INSIDE_PIN;
-unsigned short OUTSIDE_PIN;
+unsigned short INSIDE_PIN = 34;
+unsigned short OUTSIDE_PIN = 35;
 bool sensor_loop = true;
+pthread_t sense_loop;
 
 void (* sensor_result)(SensorData *);
 
@@ -83,12 +84,7 @@ int getpin(int pin){
     return value;
 }
 
-void loop(){
-
-}
-
-void start_cb(void (* sensor_result_cb)(SensorData *)){
-	sensor_result = sensor_result_cb;
+void * loop(){
 	short i;
 	short o;
 	SensorData data;
@@ -117,12 +113,17 @@ void start_cb(void (* sensor_result_cb)(SensorData *)){
 		presencas = (entradas - saidas < 0 ? 0 : entradas - saidas);
 		wait_miliseconds(50);
 	}
+}
 
+void start_cb(void (* sensor_result_cb)(SensorData *)){
+	sensor_result = sensor_result_cb;
+	pthread_create(&sense_loop,NULL,loop,NULL);
 }
 
 void stop_cb(){
 	sensor_result = NULL;
 	sensor_loop = false;
+	pthread_kill(sense_loop,0);
 }
 /*
 int main(int argc, char * argv[]){

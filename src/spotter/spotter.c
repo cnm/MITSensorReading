@@ -216,6 +216,30 @@ void print_plugins(){
 	}
 }
 
+void print_current_data(){
+	LElement * item;
+	SensorData * sensor;
+	unsigned short i;
+	FOR_EACH(item,cached_data){
+		sensor = (SensorData *) item->data;
+		printf("-------------------- SENSOR DATA -------------------------");
+		switch(sensor->type){
+			case ENTRY:
+				printf("--- TYPE: ENTRIES - VALUE: %ld \n", sensor->entrances);
+				break;
+			case COUNT:
+				printf("--- TYPE: COUNT - VALUE: %hu \n", sensor->people);
+				break;
+			case RSS:
+				printf("--- TYPE: RSS - NUM_NODES: %hu \n", sensor->RSS.node_number);
+				for (i=0; i < sensor->RSS.node_number; i++){
+					printf("- ID: %ld , RSS: %u \n", sensor->RSS.nodes[i], sensor->RSS.rss[i]);
+				}
+				break;
+		}
+	}
+}
+
 int main(int argc, char ** argv) {
 
 	//LER CONFIGS E VER QUAIS OS PLUGINS QUE EXISTEM
@@ -338,7 +362,7 @@ int main(int argc, char ** argv) {
 		scanf("%d", &op);
 
 		switch(op){
-			case 1:
+			case 1: print_current_data();
 					break;
 			case 2:	print_plugins();
 					break;
