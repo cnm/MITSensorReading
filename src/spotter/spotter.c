@@ -349,7 +349,7 @@ int main(int argc, char ** argv) {
 			//exit(1);
 		}else{
 			start_cb(&SensorResult);
-			dlclose(handle);
+			//dlclose(handle);
 		}
 		index++;
 	}
