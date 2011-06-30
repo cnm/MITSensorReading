@@ -77,9 +77,9 @@ void setpin(int pin, int value){
 
 int getpin(int pin){
     int value;
-    sbuslock();
+
     value = getdiopin(pin);
-    sbusunlock();
+
 
     return value;
 }
@@ -89,8 +89,12 @@ void * loop(){
 	short o;
 	SensorData data;
 	while(sensor_loop){
-		i = getpin(INSIDE_PIN);
-		o = getpin(OUTSIDE_PIN);
+		sbuslock();
+		i = getdiopin(INSIDE_PIN);
+		sbusunlock();
+		sbuslock();
+		o = getdiopin(OUTSIDE_PIN);
+		sbusunlock();
 
 		if (i == LOW){
 			time(&in_t);
