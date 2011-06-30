@@ -23,7 +23,7 @@
 #define LOW 0
 
 time_t in_t,out_t;
-time_t DELTA_MOVEMENT = 1;
+time_t DELTA_MOVEMENT = 3;
 
 uint64_t entradas,saidas;
 unsigned int presencas;
@@ -77,9 +77,9 @@ void setpin(int pin, int value){
 
 int getpin(int pin){
     int value;
-
+    sbuslock();
     value = getdiopin(pin);
-
+    sbusunlock();
 
     return value;
 }
@@ -89,12 +89,8 @@ void * loop(){
 	short o;
 	SensorData data;
 	while(sensor_loop){
-		sbuslock();
-		i = getdiopin(INSIDE_PIN);
-		sbusunlock();
-		sbuslock();
-		o = getdiopin(OUTSIDE_PIN);
-		sbusunlock();
+		i = getpin(INSIDE_PIN);
+		o = getpin(OUTSIDE_PIN);
 
 		if (i == LOW){
 			time(&in_t);

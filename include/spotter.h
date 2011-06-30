@@ -28,6 +28,7 @@ typedef enum plugin_type{SYNC, ASYNC} PluginType;
 typedef struct plugin{
 	char * location;
 	PluginType type;
+	void * handle;
 }Plugin;
 
 void SendSensorData(uint16_t address);

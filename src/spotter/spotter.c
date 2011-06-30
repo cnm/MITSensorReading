@@ -126,7 +126,6 @@ void * sensor_loop(){
 	LElement * item;
 	Plugin * plugin;
 	void (* start_sense)();
-	void * handle;
 	int index = 1;
 	char * error;
 	while(true){
@@ -135,9 +134,7 @@ void * sensor_loop(){
 			index++;
 			plugin = (Plugin *) item->data;
 			if (plugin->type == SYNC){
-				handle = dlopen(plugin->location, RTLD_LAZY);
-				dlerror(); /* Clear any existing error */
-				start_sense = dlsym(handle, "start_sense");
+				start_sense = dlsym(plugin->handle, "start_sense");
 				if ((error = dlerror()) != NULL) {
 					fprintf(stderr, "%s\n", error);
 					pthread_mutex_lock(&dataToSend);
@@ -145,7 +142,6 @@ void * sensor_loop(){
 					pthread_mutex_unlock(&dataToSend);
 				}
 				start_sense();
-				dlclose(handle);
 			}
 		}
 		sleep(SENSE_FREQUENCY);
@@ -193,9 +189,14 @@ void * spotter_send_loop(){
  */
 
 void free_elements(){
+	LElement * elem;
 	unregister_handler_address(MY_ADDRESS,handler->module_communication.regd);
 	pthread_mutex_destroy(&manager);
 	pthread_mutex_destroy(&dataToSend);
+	FOR_EACH(elem, plugins){
+		Plugin * p = (Plugin *)elem->data;
+		dlclose(p->handle);
+	}
 	FreeList(&plugins);
 	FreeList(&cached_data);
 }
@@ -340,7 +341,9 @@ int main(int argc, char ** argv) {
 			fprintf(stderr, "%s\n", dlerror());
 			//free_elements();
 			//exit(1);
-		}
+		}else
+			plugin->handle = handle;
+
 		dlerror(); /* Clear any existing error */
 		start_cb = dlsym(handle, "start_cb");
 		if ((error = dlerror()) != NULL) {
