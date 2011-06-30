@@ -12,6 +12,6 @@ clean:
 		rm $(EXECS)
 
 plugins: 
-	gcc -I..\..\include -fPIC -g -c -Wall ir_sensor.c  
-	gcc -I..\..\include -fPIC -g -c -Wall sbus.c 
+	gcc -I../../include -fPIC -g -c -Wall ir_sensor.c  
+	gcc -I../../include -fPIC -g -c -Wall sbus.c 
 	gcc -shared -Wl,-soname,ir_sensor.so.1 -o ir_sensor.so.1.0.1 ir_sensor.o sbus.o -lc
