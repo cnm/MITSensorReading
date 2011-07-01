@@ -134,7 +134,7 @@ void * loop(){
 		printf("getpin i\n");
 		i = getpin(INSIDE_PIN);
 		printf("getpin o\n");
-		//o = getpin(OUTSIDE_PIN);
+		o = getpin(OUTSIDE_PIN);
 
 		if (i == LOW){
 			time(&in_t);

@@ -351,7 +351,7 @@ int main(int argc, char ** argv) {
 			//free_elements();
 			//exit(1);
 		}else{
-			start_cb(&SensorResult);
+			start_cb(SensorResult);
 			//dlclose(handle);
 		}
 		index++;
