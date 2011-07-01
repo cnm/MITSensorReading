@@ -136,7 +136,7 @@ void * loop(){
 		//printf("getpin o\n");
 		o = getpin(OUTSIDE_PIN);
 
-		if (i == LOW && lasti == HIGH){
+		if (i == LOW && last_i == HIGH){
 			time(&in_t);
 			printf("LOW NO DE DENTRO!\n");
 			if ((in_t - out_t) <= DELTA_MOVEMENT){
@@ -146,7 +146,7 @@ void * loop(){
 				sensor_result(&data);
 			}
 		}
-		if(o == LOW && lasto == HIGH){
+		if(o == LOW && last_o == HIGH){
 			time(&out_t);
 			printf("LOW NO DE FORA!\n");
 			if ((out_t - in_t)  <= DELTA_MOVEMENT){
