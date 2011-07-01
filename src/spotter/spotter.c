@@ -33,6 +33,7 @@ SensorDataList cached_data;
 void SensorResult(SensorData * data){
 	short index = 1;
 	LElement * elem;
+	printf("GOT ONE RESULT!!! \n");
 	switch(data->type){
 		case ENTRY:
 			FOR_EACH(elem,cached_data){
