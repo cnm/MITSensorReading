@@ -127,8 +127,8 @@ int getpin(int pin){
 }
 
 void * loop(){
-	short i;
-	short o;
+	short i=1;
+	short o=1;
 	SensorData data;
 	while(sensor_loop){
 		printf("getpin i\n");
