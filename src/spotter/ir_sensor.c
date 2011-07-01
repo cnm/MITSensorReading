@@ -22,16 +22,16 @@
 #define HIGH 1
 #define LOW 0
 
-time_t in_t,out_t;
-time_t DELTA_MOVEMENT = 3;
+static time_t in_t,out_t;
+static time_t DELTA_MOVEMENT = 3;
 
-uint64_t entradas,saidas;
-unsigned int presencas;
+static uint64_t entradas,saidas;
+static unsigned int presencas;
 
-unsigned short INSIDE_PIN = 34;
-unsigned short OUTSIDE_PIN = 35;
-bool sensor_loop = true;
-pthread_t sense_loop;
+static unsigned short INSIDE_PIN = 34;
+static unsigned short OUTSIDE_PIN = 35;
+static bool sensor_loop = true;
+static pthread_t sense_loop;
 
 void (* sensor_result)(SensorData *);
 
@@ -89,8 +89,10 @@ void * loop(){
 	short o;
 	SensorData data;
 	while(sensor_loop){
-		i = getpin(INSIDE_PIN);
-		o = getpin(OUTSIDE_PIN);
+		printf("getpin i\n");
+		printf("getpin o\n");
+		//i = getpin(INSIDE_PIN);
+		//o = getpin(OUTSIDE_PIN);
 
 		if (i == LOW){
 			time(&in_t);
