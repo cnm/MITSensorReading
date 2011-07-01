@@ -94,7 +94,9 @@ void * loop(){
 
 		if (i == LOW){
 			time(&in_t);
+			printf("LOW NO DE DENTRO!\n");
 			if ((in_t - out_t) <= DELTA_MOVEMENT){
+				printf("NOVA ENTRADA\n");
 				data.entrances = 1;
 				entradas++;
 				sensor_result(&data);
@@ -102,7 +104,9 @@ void * loop(){
 		}
 		if(o == LOW){
 			time(&out_t);
+			printf("LOW NO DE FORA!\n");
 			if ((out_t - in_t)  <= DELTA_MOVEMENT){
+				printf("NOVA SAIDA\n");
 				data.entrances = -1;
 				sensor_result(&data);
 				saidas++;
