@@ -35,6 +35,55 @@ static pthread_t sense_loop;
 
 void (* sensor_result)(SensorData *);
 
+/*******************************************************************************
+* getdiopin: accepts a DIO pin number and returns its value.
+*******************************************************************************/
+int getdiopin(int pin)
+{
+   int pinOffSet;
+   int pinValue = 99999;
+
+   /*******************************************************************
+   *0x66: DIO and tagmem control (RW)
+   *  bit 15-12: DIO input for pins 40(MSB)-37(LSB) (RO)
+   *  bit 11-8: DIO output for pins 40(MSB)-37(LSB) (RW)
+   *  bit 7-4: DIO direction for pins 40(MSB)-37(LSB) (1 - output) (RW)
+   ********************************************************************/
+   if (pin <= 40 && pin >= 37)
+   {
+      pinOffSet = pin - 25; // -37 to get to 0, + 10 to correct offset
+
+      // Obtain the specific pin value (1 or 0)
+      pinValue = (sbus_peek16(0x66) >> pinOffSet) & 0x0001;
+   }
+
+   /*********************************************************************
+   *0x68: DIO input for pins 36(MSB)-21(LSB) (RO)
+   *0x6a: DIO output for pins 36(MSB)-21(LSB) (RW)
+   *0x6c: DIO direction for pins 36(MSB)-21(LSB) (1 - output) (RW)
+   *********************************************************************/
+   else if (pin <= 36 && pin >= 21)
+   {
+      pinOffSet = pin - 21; // Easier to understand when LSB = 0 and MSB = 15
+
+      // Obtain the specific pin value (1 or 0)
+      pinValue = (sbus_peek16(0x68) >> pinOffSet) & 0x0001;
+   }
+
+   /*********************************************************************
+   *0x6e: DIO input for pins 20(MSB)-5(LSB) (RO)
+   *0x70: DIO output for pins 20(MSB)-5(LSB) (RW)
+   *0x72: DIO direction for pins 20(MSB)-5(LSB) (1 - output) (RW)
+   *********************************************************************/
+   else if (pin <= 20 && pin >= 5)
+   {
+      pinOffSet = pin - 5;  // Easier to understand when LSB = 0 and MSB = 15
+
+      // Obtain the specific pin value (1 or 0)
+      pinValue = (sbus_peek16(0x6e) >> pinOffSet) & 0x0001;
+   }
+   return pinValue;
+}
 
 void wait_miliseconds(int miliseconds){
     struct timespec interval, left;
@@ -68,13 +117,6 @@ void wait_seconds(int seconds){
         else perror("nanosleep");
     }
 }
-
-void setpin(int pin, int value){
-    sbuslock();
-    setdiopin(pin, value);
-    sbusunlock();
-}
-
 int getpin(int pin){
     int value;
     sbuslock();

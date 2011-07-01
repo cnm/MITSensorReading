@@ -1,22 +1,89 @@
-/*  Copyright 2004-2009, Technologic Systems
- *  All Rights Reserved.
+/* Copyright 2010, Unpublished Work of Technologic Systems
+ * All Rights Reserved.
+ *
+ * THIS WORK IS AN UNPUBLISHED WORK AND CONTAINS CONFIDENTIAL,
+ * PROPRIETARY AND TRADE SECRET INFORMATION OF TECHNOLOGIC SYSTEMS.
+ * ACCESS TO THIS WORK IS RESTRICTED TO (I) TECHNOLOGIC SYSTEMS
+ * EMPLOYEES WHO HAVE A NEED TO KNOW TO PERFORM TASKS WITHIN THE SCOPE
+ * OF THEIR ASSIGNMENTS AND (II) ENTITIES OTHER THAN TECHNOLOGIC
+ * SYSTEMS WHO HAVE ENTERED INTO APPROPRIATE LICENSE AGREEMENTS.  NO
+ * PART OF THIS WORK MAY BE USED, PRACTICED, PERFORMED, COPIED,
+ * DISTRIBUTED, REVISED, MODIFIED, TRANSLATED, ABRIDGED, CONDENSED,
+ * EXPANDED, COLLECTED, COMPILED, LINKED, RECAST, TRANSFORMED, ADAPTED
+ * IN ANY FORM OR BY ANY MEANS, MANUAL, MECHANICAL, CHEMICAL,
+ * ELECTRICAL, ELECTRONIC, OPTICAL, BIOLOGICAL, OR OTHERWISE WITHOUT
+ * THE PRIOR WRITTEN PERMISSION AND CONSENT OF TECHNOLOGIC SYSTEMS.
+ * ANY USE OR EXPLOITATION OF THIS WORK WITHOUT THE PRIOR WRITTEN
+ * CONSENT OF TECHNOLOGIC SYSTEMS COULD SUBJECT THE PERPETRATOR TO
+ * CRIMINAL AND CIVIL LIABILITY.
  */
+
+/* Version history:
+ *
+ * 01/01/2011 - KB
+ *   Added includes and a #define to be compatible with TEMP_FAILURE_RETRY
+ *
+ * 12/30/2010 - KB
+ *   Added TEMP_FAILURE_RETRY to sbuslock()
+ *
+ * 12/16/2010 - KB
+ *   Updated reservemem() to properly check if we have access to the map
+ *   Included win* functions for memwindow with TS-4500
+ *   Included sbus_*stream16 functions to read a buffer of specified lenght
+ *	from the SBUS mem window
+ *   Comment blocks for function information
+ *
+ * 04/08/2011 - KB
+ *   Added assert()'s to fail if any SBUS transactions are tried without
+ *	previously locking the SBUS
+ *
+ * 04/13/2011 - KB for JO
+ *   Modified sbus_poke16() to correct arm9 handling of short vs long
+ *
+ */
+
 #include <assert.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
+#include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
-#include <sched.h>
+
+#define MW_ADR    0x18
+#define MW_CONF   0x1a
+#define MW_DAT1   0x1c
+#define MW_DAT2   0x1e
+#define _GNU_SOURCE
+
+#ifndef TEMP_FAILURE_RETRY
+# define TEMP_FAILURE_RETRY(expression) \
+  (__extension__                                                              \
+    ({ long int __result;                                                     \
+       do __result = (long int) (expression);                                 \
+       while (__result == -1L && errno == EINTR);                             \
+       __result; }))
+#endif
+
+
 
 void sbus_poke16(unsigned int, unsigned short);
-static void poke32(unsigned int, unsigned int);
 unsigned short sbus_peek16(unsigned int);
-static unsigned int peek32(unsigned int);
+
+void winpoke16(unsigned int, unsigned short);
+unsigned short winpeek16(unsigned int);
+void winpoke32(unsigned int, unsigned int);
+unsigned int winpeek32(unsigned int);
+void winpoke8(unsigned int, unsigned char);
+unsigned char winpeek8(unsigned int);
+
+void sbus_peekstream16(int adr_reg, int dat_reg, int adr, unsigned char *buf, int n);
+void sbus_pokestream16(int adr_reg, int dat_reg, int adr, unsigned char *buf, int n);
 
 void sbuslock(void);
 void sbusunlock(void);
@@ -24,9 +91,26 @@ void sbuspreempt(void);
 
 static volatile unsigned int *cvspiregs, *cvgpioregs;
 static int last_gpio_adr = 0;
+static int sbuslocked = 0;
+
+/* The following SBUS peek16/poke16 functions are the base for all other SBUS
+ * read/write functions.  These are written in assembly in order to optimize
+ * these functions as best as possible.  The SBUS is 16-bits wide and all
+ * transactions and registers are based on this.  It is possible to do 8 and 32
+ * bit transactions by using shifts or combining two of these functions back to
+ * back, hence they were not included in the SBUS API for simplicities sake.
+ *
+ * The sbus_poke16 function takes an adr and a dat, it will write the dat to
+ * the location specified by adr.
+ *
+ * The sbus_peek16 function only takes an adr argument and returns a short of
+ * the data located at adr.
+ */
 
 void sbus_poke16(unsigned int adr, unsigned short dat) {
-	unsigned int dummy;
+	unsigned int dummy = 0;
+	unsigned int d = dat;
+	assert(sbuslocked == 1);
 	if (last_gpio_adr != adr >> 5) {
 		last_gpio_adr = adr >> 5;
 		cvgpioregs[0] = (cvgpioregs[0] & ~(0x3<<15))|((adr>>5)<<15);
@@ -48,13 +132,14 @@ void sbus_poke16(unsigned int adr, unsigned short dat) {
 		"ands r1, %0, #0x1\n"
 		"moveq %0, #0x0\n"
 		"beq 3b\n"
-		: "+r"(dummy) : "r"(adr), "r"(dat), "r"(cvspiregs) : "r1","cc"
+		: "+r"(dummy) : "r"(adr), "r"(d), "r"(cvspiregs) : "r1","cc"
 	);
 }
 
 
 unsigned short sbus_peek16(unsigned int adr) {
-	unsigned short ret;
+	unsigned short ret = 0;
+	assert(sbuslocked == 1);
 
 	if (last_gpio_adr != adr >> 5) {
 		last_gpio_adr = adr >> 5;
@@ -80,6 +165,149 @@ unsigned short sbus_peek16(unsigned int adr) {
 
 }
 
+/* The win* functions are designed for use with the TS-4500 using the opencore
+ * and any baseboard that supports memory windowing. This current includes any
+ * external bus, baseboard ADC support, or any custom baseboard features.
+ *
+ * The opencore wb_memwindow.v describes the layout and register mapping. The
+ * opencore has support for 8, 16, and 32bit bus cycles so we provide functions
+ * for them here.
+ *
+ * These functions work exactly the same as the sbus_*16 functions.  The poke
+ * version requires both adr and dat and return nothing.  The peek version
+ * requires adr and returns a data type equal to its bit-width.
+ */
+
+void winpoke16(unsigned int adr, unsigned short dat) {
+	assert(sbuslocked == 1);
+
+        sbus_poke16(MW_ADR, adr >> 11);
+        sbus_poke16(MW_CONF, (adr & 0x7ff) | (0x10 << 11));
+        sbus_poke16(MW_DAT1, dat);
+}
+
+void xwinpoke16(unsigned int adr, unsigned short dat) {
+	assert(sbuslocked == 1);
+
+        sbus_poke16(MW_ADR, adr >> 11);
+        //sbus_poke16(MW_CONF, (adr & 0x7ff) | (0x10 << 11));
+        //sbus_poke16(MW_DAT1, dat);
+}
+
+unsigned short winpeek16(unsigned int adr) {
+	assert(sbuslocked == 1);
+
+        sbus_poke16(MW_ADR, adr >> 11);
+        sbus_poke16(MW_CONF, (adr & 0x7ff) | (0x10 << 11));
+        return sbus_peek16(MW_DAT1);
+}
+
+void winpoke32(unsigned int adr, unsigned int dat) {
+	assert(sbuslocked == 1);
+
+        sbus_poke16(MW_ADR, adr >> 11);
+        sbus_poke16(MW_CONF, (adr & 0x7ff) | (0x0d << 11));
+        sbus_poke16(MW_DAT2, dat & 0xffff);
+        sbus_poke16(MW_DAT2, dat >> 16);
+}
+
+unsigned int winpeek32(unsigned int adr) {
+	assert(sbuslocked == 1);
+
+        unsigned int ret;
+
+        sbus_poke16(MW_ADR, adr >> 11);
+        sbus_poke16(MW_CONF, (adr & 0x7ff) | (0x0d << 11));
+        ret = sbus_peek16(MW_DAT2);
+        ret |= (sbus_peek16(MW_DAT2) << 16);
+        return ret;
+}
+
+void winpoke8(unsigned int adr, unsigned char dat) {
+	assert(sbuslocked == 1);
+        sbus_poke16(MW_ADR, adr >> 11);
+        sbus_poke16(MW_CONF, (adr & 0x7ff) | (0x18 << 11));
+        sbus_poke16(MW_DAT1, dat);
+}
+
+unsigned char winpeek8(unsigned int adr) {
+	assert(sbuslocked == 1);
+        sbus_poke16(MW_ADR, adr >> 11);
+        sbus_poke16(MW_CONF, (adr & 0x7ff) | (0x18 << 11));
+        return sbus_peek16(MW_DAT1) & 0xff;
+}
+
+/* The sbus_*stream16 functions are meant to stream data over the SBUS.
+ * Intended to be used with memory windows in the FPGA, it is not normally
+ * used with the default FPGA functionality and meant to be useful to customers
+ * who wish to include a memory window in the FPGA using the internal blockram.
+ *
+ * The opencore wb_memwindow.v describes the register layout and the
+ * layout of these two functions.
+ *
+ * The arguments to sbus_peekstream16() are dat_reg which is the location of the
+ * data register, adr_reg is the location of the address register of the mem
+ * window, adr is the address to start the peek stream from, buf is a pointer to
+ * a buffer to write the data to, and n is length of data to read.
+ *
+ * The arguments to sbus_pokestream16() are dat_reg which is the location of the
+ * data register, adr_reg is the location of the address register of the mem
+ * window, adr is the address to start the poke stream from, buf is a pointer to
+ * a buffer to read data from, and n is length of data to read.
+ *
+ * These functions assume a standard memory window that is 16-bits wide and
+ * auto increments the address window (standard for the memwindow in the TS-75XX
+ * and TS-4500 opencore).  They will set the base addresss adr in the adr_reg
+ * and keep reading data from dat_reg for n length of bytes.
+ */
+
+void sbus_peekstream16(int adr_reg, int dat_reg, int adr, unsigned char *buf, int n) {
+	assert(sbuslocked == 1);
+        assert(n != 0);
+
+	sbus_poke16(adr_reg, adr);
+
+        while (n >= 2) {
+                unsigned int s = sbus_peek16(dat_reg);
+                *buf++ = s & 0xff;
+                *buf++ = s >> 8;
+                n -= 2;
+        }
+
+        if (n) *buf = sbus_peek16(dat_reg) & 0xff;
+};
+
+
+void sbus_pokestream16(int adr_reg, int dat_reg, int adr, unsigned char *buf, int n) {
+	assert(sbuslocked == 1);
+        assert(n != 0);
+
+	sbus_poke16(adr_reg, adr);
+
+        while (n >= 2) {
+                unsigned int s;
+                s = *buf++;
+                s |= *buf++ << 8;
+                sbus_poke16(dat_reg, s);
+                n -= 2;
+        }
+
+        if (n) sbus_poke16(dat_reg, *buf);
+}
+
+/* reservemem() is meant to demand page ALL parts of the calling application
+ * in to RAM.  This is to prevent an unavoidable kernel deadlock if your code
+ * ventures in to un-paged areas while you hold the lock.  This is an issue
+ * on the TS-75XX/TS-4500 when running from XNAND/SD card as nandctl and sdctl
+ * both need to get the lock before they can get any data for the kernel.
+ *
+ * This will cause issues with threading, it is recommended to have a seperate
+ * application the communicates with an IPC to the main threaded application.
+ * The reason for this is so only that tiny application will be paged while it
+ * has the lock as opposed to all threads of the threaded application.
+ *
+ * This function should NOT be modified in any way!
+ */
 
 static void reservemem(void) {
 	char dummy[32768];
@@ -98,14 +326,13 @@ static void reservemem(void) {
 		exit(1);
 	}
 	while (!feof(maps)) {
-		unsigned int s, e, i;
+		unsigned int s, e, i, x;
 		char m[PATH_MAX + 1];
 		char perms[16];
-		int r = fscanf(maps, "%x-%x %s %*x %*x:%*x %*d",
-		  &s, &e, perms);
+		int r = fscanf(maps, "%x-%x %s %*x %x:%*x %*d",
+		  &s, &e, perms, &x);
 		if (r == EOF) break;
-	//	assert (r == 2);
-	//	printf("MANEL %d", r);
+		assert (r == 4);
 
 		i = 0;
 		while ((r = fgetc(maps)) != '\n') {
@@ -114,17 +341,32 @@ static void reservemem(void) {
 		}
 		m[i] = '\0';
 		assert(s <= e && (s & 0xfff) == 0);
-		if (perms[0] == 'r') while (s < e) {
-			volatile unsigned char *ptr = (unsigned char *)s;
-			*ptr;
-			s += pgsize;
-		}
-	}
+                if (perms[0] == 'r' && perms[3] == 'p' && x != 1)
+                  while (s < e) {
+                        volatile unsigned char *ptr = (unsigned char *)s;
+                        unsigned char d;
+                        d = *ptr;
+                        if (perms[1] == 'w') *ptr = d;
+                        s += pgsize;
+                }
+        }
+        fclose(maps);
 }
 
+/* The following functions control the locking, unlocking and preemption
+ * of the SBUS and aplications that use the SBUS.  It is recommended to only
+ * acquire the SBUS lock when your application needs it.  The lock can
+ * immediately be released or sbuspreempt() can be called to give up the lock
+ * temporarily to any other applications if they are waiting on it.  The act
+ * of locking and unlocking can be CPU intensive, if possible it is
+ * recommended to use sbuspreempt() at strategic locations in the end
+ * application so the application only has the lock when it is needed and it
+ * can be given up to other applications easily.
+ *
+ * These functions should NOT be modified in any way!
+ */
 
 static int semid = -1;
-static int sbuslocked = 0;
 void sbuslock(void) {
 	int r;
 	struct sembuf sop;
@@ -146,7 +388,10 @@ void sbuslock(void) {
 	sop.sem_num = 0;
 	sop.sem_op = -1;
 	sop.sem_flg = SEM_UNDO;
-	r = semop(semid, &sop, 1);
+
+	/*Wrapper added to retry in case of EINTR*/
+	r = TEMP_FAILURE_RETRY(semop(semid, &sop, 1));
+
 	assert (r == 0);
 	if (inited == 0) {
 		int i;
@@ -192,256 +437,4 @@ void sbuspreempt(void) {
 		sched_yield();
 		sbuslock();
 	}
-}
-
-/*******************************************************************************
-* setdiopin: accepts a DIO register and value to place in that DIO pin.
-*   Values can be 0 (low), 1 (high), or 2 (z - high impedance).
-*******************************************************************************/
-void setdiopin(int pin, int val)
-{
-   int pinOffSet;
-   int dirPinOffSet; // For Register 0x66 only
-   int outPinOffSet; // For Register 0x66 only
-   
-   // First, check for the high impedance case
-   if (val == 2)
-   {
-      if (pin <= 40 && pin >= 37)
-      {
-         dirPinOffSet = pin - 33;
-         sbus_poke16(0x66, sbus_peek16(0x66) & ~(1 << dirPinOffSet));
-      }
-      else if (pin <= 36 && pin >= 21)
-      {
-         pinOffSet = pin - 21;
-         sbus_poke16(0x6c, sbus_peek16(0x6c) & ~(1 << pinOffSet));
-      }
-      else if (pin <= 20 && pin >= 5)   
-      {
-         pinOffSet = pin - 5;
-         sbus_poke16(0x72, sbus_peek16(0x72) & ~(1 << pinOffSet));
-      }
-   }
-   
-   /******************************************************************* 
-   *0x66: DIO and tagmem control (RW)
-   *  bit 15-12: DIO input for pins 40(MSB)-37(LSB) (RO)
-   *  bit 11-8: DIO output for pins 40(MSB)-37(LSB) (RW)
-   *  bit 7-4: DIO direction for pins 40(MSB)-37(LSB) (1 - output) (RW)
-   ********************************************************************/
-   else if (pin <= 40 && pin >= 37) 
-   {
-      dirPinOffSet = pin - 33; // -37 + 4 = Direction; -37 + 8 = Output
-      outPinOffSet = pin - 29;
-      
-      // set bit [pinOffset] to [val] of register [0x66] 
-      if(val)
-         sbus_poke16(0x66, (sbus_peek16(0x66) | (1 << outPinOffSet)));
-      else
-         sbus_poke16(0x66, (sbus_peek16(0x66) & ~(1 << outPinOffSet)));      
-
-      // Make the specified pin into an output in direction bits
-      sbus_poke16(0x66, sbus_peek16(0x66) | (1 << dirPinOffSet)); ///
-
-   }
-   
-   /********************************************************************* 
-   *0x68: DIO input for pins 36(MSB)-21(LSB) (RO)    
-   *0x6a: DIO output for pins 36(MSB)-21(LSB) (RW)
-   *0x6c: DIO direction for pins 36(MSB)-21(LSB) (1 - output) (RW)
-   *********************************************************************/
-   else if (pin <= 36 && pin >= 21)
-   {
-      pinOffSet = pin - 21;
-      
-      // set bit [pinOffset] to [val] of register [0x6a] 
-      if(val)
-         sbus_poke16(0x6a, (sbus_peek16(0x6a) | (1 << pinOffSet)));
-      else
-         sbus_poke16(0x6a, (sbus_peek16(0x6a) & ~(1 << pinOffSet)));      
-
-      // Make the specified pin into an output in direction register
-      sbus_poke16(0x6c, sbus_peek16(0x6c) | (1 << pinOffSet)); ///
-   }
-
-   /********************************************************************* 
-   *0x6e: DIO input for pins 20(MSB)-5(LSB) (RO)    
-   *0x70: DIO output for pins 20(MSB)-5(LSB) (RW)
-   *0x72: DIO direction for pins 20(MSB)-5(LSB) (1 - output) (RW)
-   *********************************************************************/
-   else if (pin <= 20 && pin >= 5)
-   {
-      pinOffSet = pin - 5;
-
-      if(val)
-         sbus_poke16(0x70, (sbus_peek16(0x70) | (1 << pinOffSet)));
-      else
-         sbus_poke16(0x70, (sbus_peek16(0x70) & ~(1 << pinOffSet)));     
-               
-      // Make the specified pin into an output in direction register
-      sbus_poke16(0x72, sbus_peek16(0x72) | (1 << pinOffSet));
-   }
-
-}
-
-/*******************************************************************************
-* getdiopin: accepts a DIO pin number and returns its value.  
-*******************************************************************************/
-int getdiopin(int pin)
-{
-   int pinOffSet;
-   int pinValue = 99999;
-
-   /******************************************************************* 
-   *0x66: DIO and tagmem control (RW)
-   *  bit 15-12: DIO input for pins 40(MSB)-37(LSB) (RO)
-   *  bit 11-8: DIO output for pins 40(MSB)-37(LSB) (RW)
-   *  bit 7-4: DIO direction for pins 40(MSB)-37(LSB) (1 - output) (RW)
-   ********************************************************************/
-   if (pin <= 40 && pin >= 37) 
-   {
-      pinOffSet = pin - 25; // -37 to get to 0, + 10 to correct offset
-
-      // Obtain the specific pin value (1 or 0)
-      pinValue = (sbus_peek16(0x66) >> pinOffSet) & 0x0001;
-   }
-   
-   /*********************************************************************   
-   *0x68: DIO input for pins 36(MSB)-21(LSB) (RO)  
-   *0x6a: DIO output for pins 36(MSB)-21(LSB) (RW)
-   *0x6c: DIO direction for pins 36(MSB)-21(LSB) (1 - output) (RW)
-   *********************************************************************/
-   else if (pin <= 36 && pin >= 21)
-   {
-      pinOffSet = pin - 21; // Easier to understand when LSB = 0 and MSB = 15
-
-      // Obtain the specific pin value (1 or 0)
-      pinValue = (sbus_peek16(0x68) >> pinOffSet) & 0x0001;
-   }
-
-   /*********************************************************************   
-   *0x6e: DIO input for pins 20(MSB)-5(LSB) (RO)  
-   *0x70: DIO output for pins 20(MSB)-5(LSB) (RW)
-   *0x72: DIO direction for pins 20(MSB)-5(LSB) (1 - output) (RW)
-   *********************************************************************/
-   else if (pin <= 20 && pin >= 5)
-   {
-      pinOffSet = pin - 5;  // Easier to understand when LSB = 0 and MSB = 15
-
-      // Obtain the specific pin value (1 or 0)
-      pinValue = (sbus_peek16(0x6e) >> pinOffSet) & 0x0001;
-   }
-   return pinValue;
-}
-
-/*******************************************************************************
-* gettemp: returns the CPU temperature in celcius
-*******************************************************************************/
-float gettemp(void)
-{
-   int n = 0;
-   int x = 0;
-   int val = 0;
-   float temp = 0; 
-   
-   setdiopin(22,0);
-   setdiopin(12,2);
-   n=0;
-   while(n < 13)
-   {
-      setdiopin(14,0);
-      setdiopin(14,1);
-      x = getdiopin(12);
-      if (x == 0)
-         val = val << 1;
-      else
-         val = (val << 1) | 1;
-      
-      n++;
-    }
-
-    setdiopin(22,2);
-    setdiopin(14,2);
-
-    if((val & 0x1000) != 0)
-    {
-      val=((~(val & 0xfff) & 0xfff) + 1);
-      temp = val * -62500;
-      return(temp / 1000000);
-    }
-    else
-    {
-      temp = val * 62500;
-      return(temp / 1000000);
-    }
-}
-
-static void poke32(unsigned int adr, unsigned int dat) {
-	if (!cvspiregs) *(unsigned int *)adr = dat;
-	else {
-		sbus_poke16(adr, dat & 0xffff);
-		sbus_poke16(adr + 2, dat >> 16);
-	}
-}
-
-
-static unsigned int peek32(unsigned int adr) {
-	unsigned int ret;
-	if (!cvspiregs) ret = *(unsigned int *)adr;
-	else {
-		unsigned short l, h;
-		l = sbus_peek16(adr);
-		h = sbus_peek16(adr + 2);
-		ret = (l|(h<<16));
-	}
-	return ret;
-}
-
-
-int getdiopin32(int pin)
-{
-   int pinOffSet;
-   int pinValue = 99999;
-
-   /******************************************************************* 
-   *0x66: DIO and tagmem control (RW)
-   *  bit 15-12: DIO input for pins 40(MSB)-37(LSB) (RO)
-   *  bit 11-8: DIO output for pins 40(MSB)-37(LSB) (RW)
-   *  bit 7-4: DIO direction for pins 40(MSB)-37(LSB) (1 - output) (RW)
-   ********************************************************************/
-   if (pin <= 40 && pin >= 37) 
-   {
-      pinOffSet = pin - 25; // -37 to get to 0, + 10 to correct offset
-
-      // Obtain the specific pin value (1 or 0)
-      pinValue = (peek32(0x66) >> pinOffSet) & 0x0001;
-   }
-   
-   /*********************************************************************   
-   *0x68: DIO input for pins 36(MSB)-21(LSB) (RO)  
-   *0x6a: DIO output for pins 36(MSB)-21(LSB) (RW)
-   *0x6c: DIO direction for pins 36(MSB)-21(LSB) (1 - output) (RW)
-   *********************************************************************/
-   else if (pin <= 36 && pin >= 21)
-   {
-      pinOffSet = pin - 21; // Easier to understand when LSB = 0 and MSB = 15
-
-      // Obtain the specific pin value (1 or 0)
-      pinValue = (peek32(0x68) >> pinOffSet) & 0x0001;
-   }
-
-   /*********************************************************************   
-   *0x6e: DIO input for pins 20(MSB)-5(LSB) (RO)  
-   *0x70: DIO output for pins 20(MSB)-5(LSB) (RW)
-   *0x72: DIO direction for pins 20(MSB)-5(LSB) (1 - output) (RW)
-   *********************************************************************/
-   else if (pin <= 20 && pin >= 5)
-   {
-      pinOffSet = pin - 5;  // Easier to understand when LSB = 0 and MSB = 15
-
-      // Obtain the specific pin value (1 or 0)
-      pinValue = (peek32(0x6e) >> pinOffSet) & 0x0001;
-   }
-   return pinValue;
 }
