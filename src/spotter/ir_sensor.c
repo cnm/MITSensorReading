@@ -28,8 +28,8 @@ static time_t DELTA_MOVEMENT = 3;
 static uint64_t entradas,saidas;
 static unsigned int presencas;
 
-static unsigned short INSIDE_PIN = 34;
-static unsigned short OUTSIDE_PIN = 35;
+static unsigned short INSIDE_PIN = 21;
+static unsigned short OUTSIDE_PIN = 25;
 static bool sensor_loop = true;
 static pthread_t sense_loop;
 
@@ -90,9 +90,9 @@ void * loop(){
 	SensorData data;
 	while(sensor_loop){
 		printf("getpin i\n");
+		i = getpin(INSIDE_PIN);
 		printf("getpin o\n");
-		//i = getpin(INSIDE_PIN);
-		//o = getpin(OUTSIDE_PIN);
+		o = getpin(OUTSIDE_PIN);
 
 		if (i == LOW){
 			time(&in_t);
