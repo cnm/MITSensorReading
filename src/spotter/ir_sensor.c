@@ -127,16 +127,16 @@ int getpin(int pin){
 }
 
 void * loop(){
-	short i=1;
-	short o=1;
+	short i=1,last_i=0;
+	short o=1,last_o=0;
 	SensorData data;
 	while(sensor_loop){
-		printf("getpin i\n");
+		//printf("getpin i\n");
 		i = getpin(INSIDE_PIN);
-		printf("getpin o\n");
+		//printf("getpin o\n");
 		o = getpin(OUTSIDE_PIN);
 
-		if (i == LOW){
+		if (i == LOW && lasti == HIGH){
 			time(&in_t);
 			printf("LOW NO DE DENTRO!\n");
 			if ((in_t - out_t) <= DELTA_MOVEMENT){
@@ -146,7 +146,7 @@ void * loop(){
 				sensor_result(&data);
 			}
 		}
-		if(o == LOW){
+		if(o == LOW && lasto == HIGH){
 			time(&out_t);
 			printf("LOW NO DE FORA!\n");
 			if ((out_t - in_t)  <= DELTA_MOVEMENT){
@@ -157,7 +157,8 @@ void * loop(){
 			}
 
 		}
-
+		last_i=i;
+		last_o=o;
 		presencas = (entradas - saidas < 0 ? 0 : entradas - saidas);
 		wait_miliseconds(50);
 	}
