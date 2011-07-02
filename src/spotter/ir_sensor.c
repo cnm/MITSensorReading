@@ -135,15 +135,17 @@ void * loop(){
 	short o=1,last_o=0;
 	SensorData data;
 	sbuslock();
-	char result[2];
+	char result[11];
 	FILE * fp;
 	while(sensor_loop){
- 		fp = popen("dio get 21","r");
+		printf("going to get dio 21\n");
+ 		fp = popen("./dio get 21","r");
  		fgets(result,sizeof(result),fp);
- 		i = atoi(result);
- 		fp = popen("dio get 25","r");
+ 		i = atoi(result[strlen(result) - 1]);
+ 		printf("going to get dio 25\n");
+ 		fp = popen("./dio get 25","r");
  		fgets(result,sizeof(result),fp);
- 		o = atoi(result);
+ 		o = atoi(result[strlen(result) - 1]);
 		//i = getdiopin(INSIDE_PIN);
 		//o = getdiopin(OUTSIDE_PIN);
 		printf("getpins i:%d  o:%d\n",i,o);
