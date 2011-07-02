@@ -134,6 +134,7 @@ void * loop(){
 	short i=1,last_i=0;
 	short o=1,last_o=0;
 	SensorData data;
+	sbuslock();
 	//char result[11];
 	//FILE * fp;
 	while(sensor_loop){
@@ -176,6 +177,7 @@ void * loop(){
 		presencas = (entradas - saidas < 0 ? 0 : entradas - saidas);
 		wait_miliseconds(50);
 	}
+	sbusunlock();
 }
 
 void start_cb(void (* sensor_result_cb)(SensorData *)){
