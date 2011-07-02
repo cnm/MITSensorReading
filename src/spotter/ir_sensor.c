@@ -26,7 +26,7 @@ static time_t in_t,out_t;
 static time_t DELTA_MOVEMENT = 3;
 
 static uint64_t entradas,saidas;
-static unsigned int presencas;
+static int presencas;
 
 static unsigned short INSIDE_PIN = 21;
 static unsigned short OUTSIDE_PIN = 25;
@@ -92,12 +92,8 @@ void wait_miliseconds(int miliseconds){
     interval.tv_nsec = miliseconds * MICRO_SECONDS * NANO_SECONDS;
 
     if (nanosleep(&interval, &left) == -1) {
-        if (errno == EINTR) {
-            printf("nanosleep interrupted\n");
-            printf("Remaining secs: %d\n", left.tv_sec);
-            printf("Remaining nsecs: %d\n", left.tv_nsec);
-        }
-        else perror("nanosleep");
+        if (errno != EINTR)
+        	perror("nanosleep");
     }
 }
 
@@ -109,29 +105,30 @@ void wait_seconds(int seconds){
     interval.tv_nsec = 0;
 
     if (nanosleep(&interval, &left) == -1) {
-        if (errno == EINTR) {
-            printf("nanosleep interrupted\n");
-            printf("Remaining secs: %d\n", left.tv_sec);
-            printf("Remaining nsecs: %d\n", left.tv_nsec);
-        }
-        else perror("nanosleep");
+        if (errno != EINTR)
+        	perror("nanosleep");
     }
 }
 int getpin(int pin){
     int value;
-    printf("GOING TO DO SBUSLOCK!\n");
-
-    printf("DONE SBUSLOCK! GOING TO GETDIOPIN\n");
+    /*
+	sbuslock();
     value = getdiopin(pin);
-    printf("DONE GETDIOPIN! GOING TO SBUSUNLOCK!\n");
     sbusunlock();
-    printf("UNLOCKEDD!!!");
+    */
+    char command[13];
+    sprintf(command,"./dio get %d",pin);
+
+    fp = popen(command,"r");
+	fgets(result,sizeof(result),fp);
+	pclose(fp);
+	value = atoi(&result[strlen(result) - 1]);
 
     return value;
 }
 
 void print_state(){
-	printf("IR_SENSOR PLUGIN: ENTRADAS - %lu  ;  SAIDAS - %lu ; PRESENCAS - %u \n",entradas,saidas, presencas);
+	printf("IR_SENSOR PLUGIN: ENTRADAS - %lu  ;  SAIDAS - %lu ; PRESENCAS - %d \n",(unsigned long) entradas, (unsigned long) saidas, presencas);
 }
 
 void * loop(){
@@ -142,21 +139,9 @@ void * loop(){
 	char result[11];
 	FILE * fp;
 	while(sensor_loop){
-		//printf("going to get dio 21\n");
- 		fp = popen("./dio get 21","r");
- 		fgets(result,sizeof(result),fp);
- 		pclose(fp);
- 		i = atoi(&result[strlen(result) - 1]);
- 		//printf("going to get dio 25\n");
- 		fp = popen("./dio get 25","r");
- 		fgets(result,sizeof(result),fp);
- 		pclose(fp);
- 		o = atoi(&result[strlen(result) - 1]);
-		/*printf("vou ler os pins\n");
-		i = getdiopin(INSIDE_PIN);
-		o = getdiopin(OUTSIDE_PIN);
-		*/
-		//printf("getpins i:%d  o:%d\n",i,o);
+ 		i = getpin(INSIDE_PIN);
+ 		o = getpin(OUTSIDE_PIN);
+
 		if (i == LOW && last_i == HIGH){
 			time(&in_t);
 			printf("LOW NO DE DENTRO!\n");
@@ -187,6 +172,7 @@ void * loop(){
 		wait_miliseconds(50);
 	}
 	//sbusunlock();
+	return NULL;
 }
 
 void start_cb(void (* sensor_result_cb)(SensorData *)){
@@ -198,7 +184,6 @@ void stop_cb(){
 	sbusunlock();
 	sensor_result = NULL;
 	sensor_loop = false;
-	pthread_kill(sense_loop,0);
 }
 /*
 int main(int argc, char * argv[]){
