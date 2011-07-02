@@ -164,6 +164,7 @@ void * loop(){
 				printf("NOVA ENTRADA\n");
 				data.entrances = 1;
 				entradas++;
+				presencas++;
 				sensor_result(&data);
 				print_state();
 			}
@@ -174,15 +175,15 @@ void * loop(){
 			if ((out_t - in_t)  <= DELTA_MOVEMENT){
 				printf("NOVA SAIDA\n");
 				data.entrances = -1;
-				sensor_result(&data);
 				saidas++;
+				presencas--;
+				sensor_result(&data);
 				print_state();
 			}
 
 		}
 		last_i=i;
 		last_o=o;
-		presencas = (entradas - saidas < 0 ? 0 : entradas - saidas);
 		wait_miliseconds(50);
 	}
 	//sbusunlock();
