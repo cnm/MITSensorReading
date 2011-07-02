@@ -256,10 +256,19 @@ int main(int argc, char ** argv) {
 	int op = 0;
 	LElement * item;
 	pthread_t sense_loop, update_manager_loop;
+	char * handler_file;
+	char * spotter_file;
 
-	if (argc != 3) {
+	if (argc != 3 && argc != 1) {
 		printf("USAGE: spotter <Handler_file> <spotter_file>\n");
 		return 0;
+	}
+	if (argc == 1){
+		handler_file = "../../config/spotter_handler.cfg";
+		spotter_file = "../../config/spotter.cfg";
+	}else{
+		handler_file = argv[1];
+		spotter_file = argv[2];
 	}
 
 	CreateList(&plugins);
@@ -268,7 +277,7 @@ int main(int argc, char ** argv) {
 	logger("Main - Reading Config file\n");
 
 	//LER CONFIGS DO FICHEIRO
-	if (!(config_file = fopen(argv[2], "rt"))) {
+	if (!(config_file = fopen(spotter_file, "rt"))) {
 		printf("Invalid spotter config file\n");
 		return 0;
 	}
@@ -312,7 +321,7 @@ int main(int argc, char ** argv) {
 	logger("Main - Configuration concluded\n");
 
 	//REGISTER HANDLER
-	handler = __tp(create_handler_based_on_file)(argv[1], receive);
+	handler = __tp(create_handler_based_on_file)(handler_file, receive);
 
 	//FUTURE WORK: REGISTER SERVICE GSD
 
