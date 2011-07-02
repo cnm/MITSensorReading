@@ -110,7 +110,9 @@ void wait_seconds(int seconds){
     }
 }
 int getpin(int pin){
+	FILE * fp;
     int value;
+	char result[11];
     /*
 	sbuslock();
     value = getdiopin(pin);
@@ -136,8 +138,7 @@ void * loop(){
 	short o=HIGH,last_o=LOW;
 	SensorData data;
 	//sbuslock();
-	char result[11];
-	FILE * fp;
+
 	while(sensor_loop){
  		i = getpin(INSIDE_PIN);
  		o = getpin(OUTSIDE_PIN);
