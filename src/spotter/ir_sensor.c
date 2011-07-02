@@ -148,6 +148,7 @@ void * loop(){
  		pclose(fp);
  		fgets(result,sizeof(result),fp);
  		o = atoi(&result[strlen(result) - 1]);*/
+		printf("vou ler os pins\n");
 		i = getdiopin(INSIDE_PIN);
 		o = getdiopin(OUTSIDE_PIN);
 		printf("getpins i:%d  o:%d\n",i,o);
