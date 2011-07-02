@@ -138,12 +138,12 @@ void * loop(){
 	char result[11];
 	FILE * fp;
 	while(sensor_loop){
-		printf("going to get dio 21\n");
+		//printf("going to get dio 21\n");
  		fp = popen("./dio get 21","r");
  		fgets(result,sizeof(result),fp);
  		pclose(fp);
  		i = atoi(&result[strlen(result) - 1]);
- 		printf("going to get dio 25\n");
+ 		//printf("going to get dio 25\n");
  		fp = popen("./dio get 25","r");
  		fgets(result,sizeof(result),fp);
  		pclose(fp);
@@ -152,7 +152,7 @@ void * loop(){
 		i = getdiopin(INSIDE_PIN);
 		o = getdiopin(OUTSIDE_PIN);
 		*/
-		printf("getpins i:%d  o:%d\n",i,o);
+		//printf("getpins i:%d  o:%d\n",i,o);
 		if (i == LOW && last_i == HIGH){
 			time(&in_t);
 			printf("LOW NO DE DENTRO!\n");
