@@ -131,12 +131,12 @@ int getpin(int pin){
 }
 
 void print_state(){
-	printf("IR_SENSOR PLUGIN: ENTRADAS - %lu  ;  SAIDAS - %lu ; PRESENCAS - %u",entradas,saidas, presencas);
+	printf("IR_SENSOR PLUGIN: ENTRADAS - %lu  ;  SAIDAS - %lu ; PRESENCAS - %u \n",entradas,saidas, presencas);
 }
 
 void * loop(){
-	short i=1,last_i=0;
-	short o=1,last_o=0;
+	short i=HIGH,last_i=LOW;
+	short o=HIGH,last_o=LOW;
 	SensorData data;
 	//sbuslock();
 	char result[11];
@@ -185,7 +185,7 @@ void * loop(){
 		presencas = (entradas - saidas < 0 ? 0 : entradas - saidas);
 		wait_miliseconds(50);
 	}
-	sbusunlock();
+	//sbusunlock();
 }
 
 void start_cb(void (* sensor_result_cb)(SensorData *)){
