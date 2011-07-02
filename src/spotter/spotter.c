@@ -40,7 +40,6 @@ void SensorResult(SensorData * data){
 			FOR_EACH(elem,cached_data){
 				if (((SensorData *)elem->data)->type == ENTRY){
 					((SensorData *)elem->data)->entrances += data->entrances;
-					free(data);
 					got_in = true;
 					break;
 				}
@@ -52,7 +51,6 @@ void SensorResult(SensorData * data){
 			FOR_EACH(elem,cached_data){
 				if (((SensorData *)elem->data)->type == COUNT){
 					((SensorData *)elem->data)->people = data->people;
-					free(data);
 					got_in = true;
 					break;
 				}
