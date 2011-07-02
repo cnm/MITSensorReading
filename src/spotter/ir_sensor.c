@@ -134,10 +134,10 @@ void * loop(){
 	short i=1,last_i=0;
 	short o=1,last_o=0;
 	SensorData data;
-	char result[11];
-	FILE * fp;
+	//char result[11];
+	//FILE * fp;
 	while(sensor_loop){
-		printf("going to get dio 21\n");
+		/*printf("going to get dio 21\n");
  		fp = popen("./dio get 21","r");
  		pclose(fp);
  		fgets(result,sizeof(result),fp);
@@ -146,9 +146,9 @@ void * loop(){
  		fp = popen("./dio get 25","r");
  		pclose(fp);
  		fgets(result,sizeof(result),fp);
- 		o = atoi(&result[strlen(result) - 1]);
-		//i = getdiopin(INSIDE_PIN);
-		//o = getdiopin(OUTSIDE_PIN);
+ 		o = atoi(&result[strlen(result) - 1]);*/
+		i = getdiopin(INSIDE_PIN);
+		o = getdiopin(OUTSIDE_PIN);
 		printf("getpins i:%d  o:%d\n",i,o);
 		if (i == LOW && last_i == HIGH){
 			time(&in_t);
