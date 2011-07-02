@@ -139,7 +139,7 @@ void sbus_poke16(unsigned int adr, unsigned short dat) {
 
 unsigned short sbus_peek16(unsigned int adr) {
 	unsigned short ret = 0;
-	//assert(sbuslocked == 1);
+	assert(sbuslocked == 1);
 
 	if (last_gpio_adr != adr >> 5) {
 		last_gpio_adr = adr >> 5;
