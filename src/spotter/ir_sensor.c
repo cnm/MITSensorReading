@@ -139,10 +139,12 @@ void * loop(){
 	while(sensor_loop){
 		printf("going to get dio 21\n");
  		fp = popen("./dio get 21","r");
+ 		pclose(fp);
  		fgets(result,sizeof(result),fp);
  		i = atoi(result[strlen(result) - 1]);
  		printf("going to get dio 25\n");
  		fp = popen("./dio get 25","r");
+ 		pclose(fp);
  		fgets(result,sizeof(result),fp);
  		o = atoi(result[strlen(result) - 1]);
 		//i = getdiopin(INSIDE_PIN);
