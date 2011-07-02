@@ -120,7 +120,7 @@ void wait_seconds(int seconds){
 int getpin(int pin){
     int value;
     printf("GOING TO DO SBUSLOCK!\n");
-    sbuslock();
+
     printf("DONE SBUSLOCK! GOING TO GETDIOPIN\n");
     value = getdiopin(pin);
     printf("DONE GETDIOPIN! GOING TO SBUSUNLOCK!\n");
@@ -134,11 +134,12 @@ void * loop(){
 	short i=1,last_i=0;
 	short o=1,last_o=0;
 	SensorData data;
+	sbuslock();
 	while(sensor_loop){
 		//printf("getpin i\n");
-		i = getpin(INSIDE_PIN);
+		i = getdiopin(INSIDE_PIN);
 		//printf("getpin o\n");
-		o = getpin(OUTSIDE_PIN);
+		o = getdiopin(OUTSIDE_PIN);
 
 		if (i == LOW && last_i == HIGH){
 			time(&in_t);
@@ -166,6 +167,7 @@ void * loop(){
 		presencas = (entradas - saidas < 0 ? 0 : entradas - saidas);
 		wait_miliseconds(50);
 	}
+	sbusunlock();
 }
 
 void start_cb(void (* sensor_result_cb)(SensorData *)){
@@ -174,6 +176,7 @@ void start_cb(void (* sensor_result_cb)(SensorData *)){
 }
 
 void stop_cb(){
+	sbusunlock();
 	sensor_result = NULL;
 	sensor_loop = false;
 	pthread_kill(sense_loop,0);
