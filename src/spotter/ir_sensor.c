@@ -119,9 +119,13 @@ void wait_seconds(int seconds){
 }
 int getpin(int pin){
     int value;
+    printf("GOING TO DO SBUSLOCK!\n");
     sbuslock();
+    printf("DONE SBUSLOCK! GOING TO GETDIOPIN\n");
     value = getdiopin(pin);
+    printf("DONE GETDIOPIN! GOING TO SBUSUNLOCK!\n");
     sbusunlock();
+    printf("UNLOCKEDD!!!");
 
     return value;
 }

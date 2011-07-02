@@ -337,7 +337,7 @@ int main(int argc, char ** argv) {
 	int index = 1;
 	FOR_EACH(item, plugins) {
 		plugin = (Plugin *) item->data;
-		handle = dlopen(plugin->location, RTLD_LAZY);
+		handle = dlopen(plugin->location, RTLD_NOW);
 		if (!handle) {
 			fprintf(stderr, "%s\n", dlerror());
 			//free_elements();
