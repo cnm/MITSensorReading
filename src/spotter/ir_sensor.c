@@ -136,11 +136,9 @@ void * loop(){
 	SensorData data;
 	sbuslock();
 	while(sensor_loop){
-		//printf("getpin i\n");
 		i = getdiopin(INSIDE_PIN);
-		//printf("getpin o\n");
 		o = getdiopin(OUTSIDE_PIN);
-
+		printf("getpins i:%d  o:%d\n",i,o);
 		if (i == LOW && last_i == HIGH){
 			time(&in_t);
 			printf("LOW NO DE DENTRO!\n");
