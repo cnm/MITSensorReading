@@ -229,7 +229,7 @@ void print_current_data(){
 	unsigned short i;
 	FOR_EACH(item,cached_data){
 		sensor = (SensorData *) item->data;
-		printf("-------------------- SENSOR DATA -------------------------");
+		printf("-------------------- SENSOR DATA -------------------------\n");
 		switch(sensor->type){
 			case ENTRY:
 				printf("--- TYPE: ENTRIES - VALUE: %ld \n", sensor->entrances);

@@ -130,6 +130,10 @@ int getpin(int pin){
     return value;
 }
 
+void print_state(){
+	printf("IR_SENSOR PLUGIN: ENTRADAS - %lu  ;  SAIDAS - %lu ; PRESENCAS - %u",entradas,saidas, presencas);
+}
+
 void * loop(){
 	short i=1,last_i=0;
 	short o=1,last_o=0;
@@ -161,6 +165,7 @@ void * loop(){
 				data.entrances = 1;
 				entradas++;
 				sensor_result(&data);
+				print_state();
 			}
 		}
 		if(o == LOW && last_o == HIGH){
@@ -171,6 +176,7 @@ void * loop(){
 				data.entrances = -1;
 				sensor_result(&data);
 				saidas++;
+				print_state();
 			}
 
 		}
