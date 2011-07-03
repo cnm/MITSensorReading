@@ -34,6 +34,7 @@ void SensorResult(SensorData * data){
 	short index = 1;
 	LElement * elem;
 	bool got_in = false;
+	SensorData * data_to_keep;
 	printf("GOT ONE RESULT!!! \n");
 	switch(data->type){
 		case ENTRY:
@@ -44,8 +45,7 @@ void SensorResult(SensorData * data){
 					break;
 				}
 			}
-			if (!got_in)
-				AddToList(data,&cached_data);
+
 			break;
 		case COUNT:
 			FOR_EACH(elem,cached_data){
@@ -55,19 +55,24 @@ void SensorResult(SensorData * data){
 					break;
 				}
 			}
-			if (!got_in)
-				AddToList(data,&cached_data);
 			break;
 		case RSS:
-			pthread_mutex_lock(&dataToSend);
 			FOR_EACH(elem,cached_data){
 				if (((SensorData *)elem->data)->type == RSS){
+					pthread_mutex_lock(&dataToSend);
 					DelFromList(index, &cached_data);
+					pthread_mutex_unlock(&dataToSend);
 				}
 			}
-			AddToList(data, &cached_data);
-			pthread_mutex_unlock(&dataToSend);
 			break;
+	}
+
+	if (!got_in){
+		data_to_keep = (SensorData *) malloc(sizeof(SensorData));
+		memcpy(data_to_keep,data,sizeof(SensorData));
+		pthread_mutex_lock(&dataToSend);
+		AddToList(data_to_keep,&cached_data);
+		pthread_mutex_unlock(&dataToSend);
 	}
 
 }
