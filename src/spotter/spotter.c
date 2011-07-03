@@ -39,7 +39,7 @@ void SensorResult(SensorData * data){
 		case ENTRY:
 			FOR_EACH(elem,cached_data){
 				if (((SensorData *)elem->data)->type == ENTRY){
-					((SensorData *)elem->data)->entrances += data->entrances;
+					((SensorData *)elem->data)->entrances = ((SensorData *)elem->data)->entrances + data->entrances;
 					got_in = true;
 					break;
 				}
