@@ -13,6 +13,5 @@ clean:
 
 plugins: 
 	gcc -I../../include -fPIC -g -c -Wall ir_sensor.c  
-	gcc -I../../include -fPIC -g -c -Wall sbus.c 
-	gcc --export-dynamic -shared -Wl,-soname,libir_sensor.so.1 -o libir_sensor.so.1.0.1 ir_sensor.o sbus.o -lc
+	gcc --export-dynamic -shared -Wl,-soname,libir_sensor.so.1 -o libir_sensor.so.1.0.1 ir_sensor.o -lc
 	mv libir_sensor.so.1.0.1 ../../lib/spot_plugins/

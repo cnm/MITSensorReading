@@ -14,7 +14,6 @@
 #include <fred/handler.h>
 #include "spotter.h"
 #include "location.h"
-#include "sbus.h"
 
 #define MICRO_SECONDS 1000
 #define NANO_SECONDS 1000
@@ -35,55 +34,6 @@ static pthread_t sense_loop;
 
 void (* sensor_result)(SensorData *);
 
-/*******************************************************************************
-* getdiopin: accepts a DIO pin number and returns its value.
-*******************************************************************************/
-int getdiopin(int pin)
-{
-   int pinOffSet;
-   int pinValue = 99999;
-
-   /*******************************************************************
-   *0x66: DIO and tagmem control (RW)
-   *  bit 15-12: DIO input for pins 40(MSB)-37(LSB) (RO)
-   *  bit 11-8: DIO output for pins 40(MSB)-37(LSB) (RW)
-   *  bit 7-4: DIO direction for pins 40(MSB)-37(LSB) (1 - output) (RW)
-   ********************************************************************/
-   if (pin <= 40 && pin >= 37)
-   {
-      pinOffSet = pin - 25; // -37 to get to 0, + 10 to correct offset
-
-      // Obtain the specific pin value (1 or 0)
-      pinValue = (sbus_peek16(0x66) >> pinOffSet) & 0x0001;
-   }
-
-   /*********************************************************************
-   *0x68: DIO input for pins 36(MSB)-21(LSB) (RO)
-   *0x6a: DIO output for pins 36(MSB)-21(LSB) (RW)
-   *0x6c: DIO direction for pins 36(MSB)-21(LSB) (1 - output) (RW)
-   *********************************************************************/
-   else if (pin <= 36 && pin >= 21)
-   {
-      pinOffSet = pin - 21; // Easier to understand when LSB = 0 and MSB = 15
-
-      // Obtain the specific pin value (1 or 0)
-      pinValue = (sbus_peek16(0x68) >> pinOffSet) & 0x0001;
-   }
-
-   /*********************************************************************
-   *0x6e: DIO input for pins 20(MSB)-5(LSB) (RO)
-   *0x70: DIO output for pins 20(MSB)-5(LSB) (RW)
-   *0x72: DIO direction for pins 20(MSB)-5(LSB) (1 - output) (RW)
-   *********************************************************************/
-   else if (pin <= 20 && pin >= 5)
-   {
-      pinOffSet = pin - 5;  // Easier to understand when LSB = 0 and MSB = 15
-
-      // Obtain the specific pin value (1 or 0)
-      pinValue = (sbus_peek16(0x6e) >> pinOffSet) & 0x0001;
-   }
-   return pinValue;
-}
 
 void wait_miliseconds(int miliseconds){
     struct timespec interval, left;
@@ -97,28 +47,12 @@ void wait_miliseconds(int miliseconds){
     }
 }
 
-void wait_seconds(int seconds){
-
-    struct timespec interval, left;
-
-    interval.tv_sec = seconds;
-    interval.tv_nsec = 0;
-
-    if (nanosleep(&interval, &left) == -1) {
-        if (errno != EINTR)
-        	perror("nanosleep");
-    }
-}
 int getpin(int pin){
 	FILE * fp;
     int value;
 	char result[11];
-    /*
-	sbuslock();
-    value = getdiopin(pin);
-    sbusunlock();
-    */
     char command[13];
+
     sprintf(command,"./dio get %d",pin);
 
     fp = popen(command,"r");
@@ -130,14 +64,13 @@ int getpin(int pin){
 }
 
 void print_state(){
-	printf("IR_SENSOR PLUGIN: ENTRADAS - %lu  ;  SAIDAS - %lu ; PRESENCAS - %d \n",(unsigned long) entradas, (unsigned long) saidas, presencas);
+	printf("----ESTADO DENTRO DO PLUGIN IR_SENSOR: ENTRADAS - %lu  ;  SAIDAS - %lu ; PRESENCAS - %d \n",(unsigned long) entradas, (unsigned long) saidas, presencas);
 }
 
 void * loop(){
 	short i=HIGH,last_i=LOW;
 	short o=HIGH,last_o=LOW;
 	SensorData data;
-	//sbuslock();
 
 	while(sensor_loop){
  		i = getpin(INSIDE_PIN);
@@ -145,9 +78,8 @@ void * loop(){
 
 		if (i == LOW && last_i == HIGH){
 			time(&in_t);
-			printf("LOW NO DE DENTRO!\n");
+
 			if ((in_t - out_t) <= DELTA_MOVEMENT){
-				printf("NOVA ENTRADA\n");
 				data.entrances = 1;
 				entradas++;
 				presencas++;
@@ -155,11 +87,11 @@ void * loop(){
 				print_state();
 			}
 		}
+
 		if(o == LOW && last_o == HIGH){
 			time(&out_t);
-			printf("LOW NO DE FORA!\n");
+
 			if ((out_t - in_t)  <= DELTA_MOVEMENT){
-				printf("NOVA SAIDA\n");
 				data.entrances = -1;
 				saidas++;
 				presencas--;
@@ -172,42 +104,17 @@ void * loop(){
 		last_o=o;
 		wait_miliseconds(50);
 	}
-	//sbusunlock();
+
 	return NULL;
 }
 
 void start_cb(void (* sensor_result_cb)(SensorData *)){
 	sensor_result = sensor_result_cb;
+	sensor_loop = true;
 	pthread_create(&sense_loop,NULL,loop,NULL);
 }
 
 void stop_cb(){
-	sbusunlock();
 	sensor_result = NULL;
 	sensor_loop = false;
 }
-/*
-int main(int argc, char * argv[]){
-	int duration_limit = atoi(argv[1]);
-	int limit = 16*duration_limit;
-	int val = 0;
-	int pin = atoi(argv[2]);
-	int beforeVal = 0;
-	time_t start, end;
-	double duration = 0;
-	time(&start);
-	while(--limit>0 && duration <= duration_limit){
-		val = getpin(pin);
-		if (beforeVal != val){
-			time(&end);
-			duration = difftime(end, start);
-			printf("time: %.2f; Value: %d\n",duration,val);
-			beforeVal = val;
-		}
-		wait_miliseconds(50);
-	}
-	time(&end);
-	duration = difftime(end, start);
-	printf("limit : %d ; Total time: %.2f\n", limit,duration);
-}
-*/
