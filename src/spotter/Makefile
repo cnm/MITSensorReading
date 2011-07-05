@@ -14,4 +14,6 @@ clean:
 plugins: 
 	gcc -I../../include -fPIC -g -c -Wall ir_sensor.c  
 	gcc --export-dynamic -shared -Wl,-soname,libir_sensor.so.1 -o libir_sensor.so.1.0.1 ir_sensor.o -lc
-	mv libir_sensor.so.1.0.1 ../../lib/spot_plugins/
+	gcc -I../../include -fPIC -g -c -Wall -lbluetooth bt_sensor.c
+	gcc --export-dynamic -shared -Wl,-soname,libbt_sensor.so.1 -o libbt_sensor.so.1.0.1 bt_sensor.o -lc
+	mv *.so* ../../lib/spot_plugins/
