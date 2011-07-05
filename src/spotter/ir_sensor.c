@@ -84,6 +84,8 @@ void * loop(){
 				entradas++;
 				presencas++;
 				sensor_result(&data);
+				in_t = 0;
+				out_t = 0;
 				print_state();
 			}
 		}
@@ -96,6 +98,8 @@ void * loop(){
 				saidas++;
 				presencas--;
 				sensor_result(&data);
+				in_t = 0;
+				out_t = 0;
 				print_state();
 			}
 
