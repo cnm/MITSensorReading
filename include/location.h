@@ -34,8 +34,8 @@ typedef struct sensor_data{
 		struct rss{
 			RSSType type;
 			unsigned short node_number;
-			unsigned int * rss;
-			long * nodes;
+			int8_t * rss;
+			unsigned char ** nodes;
 		}RSS;
 	};
 }SensorData;

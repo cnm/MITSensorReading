@@ -140,6 +140,7 @@ void * sensor_loop(){
 	int index = 1;
 	char * error;
 	while(true){
+		sleep(SENSE_FREQUENCY);
 		index = 1;
 		FOR_EACH(item, plugins){
 			index++;
@@ -155,7 +156,6 @@ void * sensor_loop(){
 				start_sense();
 			}
 		}
-		sleep(SENSE_FREQUENCY);
 	}
 	return NULL;
 }
@@ -245,7 +245,7 @@ void print_current_data(){
 			case RSS:
 				printf("--- TYPE: RSS - NUM_NODES: %hu \n", sensor->RSS.node_number);
 				for (i=0; i < sensor->RSS.node_number; i++){
-					printf("- ID: %ld , RSS: %u \n", sensor->RSS.nodes[i], sensor->RSS.rss[i]);
+					printf("- ID: %s , RSS: %d \n", sensor->RSS.nodes[i], sensor->RSS.rss[i]);
 				}
 				break;
 		}
