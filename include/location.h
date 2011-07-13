@@ -16,15 +16,15 @@ typedef enum message_type { REQUEST_INSTANT, REQUEST_FREQUENT, REGISTER_SENSOR, 
 
 typedef LList SensorDataList;
 
-typedef struct location{
-	float x;
-	float y;
-}Location;
-
 typedef struct area{
 	//TODO: Por definir
 }Area;
 
+typedef struct location{
+	float x;
+	float y;
+	Area a;
+}Location;
 
 typedef struct sensor_data{
 	DataType type;

@@ -27,14 +27,14 @@
 __tp(handler)* handler = NULL;
 unsigned short MIN_UPDATE_FREQUENCY = 15;
 unsigned short UPDATE_FREQUENCY = 15;
-uint16_t MY_ADDRESS, aggregator_address;
+uint16_t MY_ADDRESS, server_address;
 Area self;
-bool aggregator_available = false;
+bool server_available = false;
 pthread_mutex_t aggregator, dataToSend;
 
-void AddAggregator(uint16_t address, unsigned short frequence){
+void AddServer(uint16_t address, unsigned short frequence){
 
-	//TODO Add Aggregator logic
+	//TODO Add Server logic
 
 	/*pthread_mutex_lock(&manager);
 	manager_address = address;
@@ -51,7 +51,7 @@ void ServiceFound(uint16_t dest_handler) {
 	//TODO: Distinguish between spotter and aggregator. In case of spotter, add it to the list of spotters and consequent location computation info. If aggregator spontaneous register
 }
 
-void SendManagerData(uint16_t address){
+void SendAggregatorData(uint16_t address){
 	//TODO SEND MANAGER DATA LOGIC
 /*
 	LocationPacket packet;
@@ -72,7 +72,7 @@ void SendManagerData(uint16_t address){
 */
 }
 
-void * manager_send_loop(){
+void * aggregator_send_loop(){
 
 	while(true){
 
@@ -87,13 +87,13 @@ void * manager_send_loop(){
 	return NULL;
 }
 
-void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uint16_t src_id){
+void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int64_t air_time, uint16_t src_id){
 	LocationPacket * packet = (LocationPacket *) malloc(sizeof(LocationPacket));
 	generate_packet_from_JSON(data, packet);
 
 	switch(packet->type){
-		case REGISTER_SENSOR:
-			SpontaneousSpotter(src_id,packet->required_frequency);
+		case REGISTER_MANAGER:
+			SpontaneousManager(src_id,packet->required_frequency);
 			break;
 		case REQUEST_FREQUENT:
 			RequestFrequent(src_id,packet->required_frequency);
@@ -101,9 +101,8 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uin
 		case REQUEST_INSTANT:
 			RequestInstant(src_id);
 			break;
-		case REGISTER_MANAGER:
-			break;
-		case SENSOR_DATA:
+		case MANAGER_DATA:
+			DeliverManagerData();
 			break;
 		default:
 				break;
@@ -124,14 +123,13 @@ int main(int argc, char ** argv){
 	char * var_value;
 	FILE * config_file;
 	void * handle;
-	void (*start_cb)();
 	char * error;
 	int op = 0;
 	LElement * item;
 	pthread_t update_aggregator_loop;
 
 	if (argc != 3) {
-		printf("USAGE: manager <Handler_file> <manager_file>\n");
+		printf("USAGE: manager <Handler_file> <aggregator_file>\n");
 		return 0;
 	}
 
@@ -152,9 +150,6 @@ int main(int argc, char ** argv){
 
 		if (!memcmp(var_value, "MY_ADDRESS",strlen("MY_ADDRESS")))
 			MY_ADDRESS = atoi(strtok(NULL, "=\n"));
-		else if(!memcmp(var_value, "AREA", strlen("AREA")))
-			//TODO
-			;
 		else if (!memcmp(var_value, "MIN_UPDATE_FREQUENCY", strlen("MIN_UPDATE_FREQUENCY")))
 			MIN_UPDATE_FREQUENCY = atoi(strtok(NULL, "=\n"));
 
@@ -168,20 +163,6 @@ int main(int argc, char ** argv){
 	handler = __tp(create_handler_based_on_file)(argv[1], receive);
 
 	//FUTURE WORK: REGISTER SERVICE GSD
-
-	//TODO: ALTERAR PARA IR BUSCAR ZONA CORRECTA
-	Service wanted;
-	char * group1 = "AGGREGATOR";
-	char * group2 = "PEOPLE_LOCATION";
-	char * group3 = "SERVICE";
-
-	wanted.description = "AGGREGATOR";
-	CreateList(&wanted.groups);
-	AddToList(group1,&wanted.groups);
-	AddToList(group2,&wanted.groups);
-	AddToList(group3,&wanted.groups);
-
-	RequestService(&wanted);
 
 	pthread_create(&update_aggregator_loop, NULL, manager_send_loop, NULL);
 

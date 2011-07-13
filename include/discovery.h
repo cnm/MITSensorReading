@@ -3,7 +3,6 @@
 
 #include "listType.h"
 #include <stdint.h>
-#include <arpa/inet.h>
 
 #define ENABLE_DEBUG 1
 

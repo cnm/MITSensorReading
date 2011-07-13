@@ -6,7 +6,7 @@
  */
 
 void RequestInstant(uint16_t address){
-	//TODO retornar ao address o estado actual do aggregator
+	SendAggregatorData(address);
 }
 
 void RequestFrequent(uint16_t aggregator_address, unsigned short frequency){

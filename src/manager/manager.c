@@ -87,7 +87,7 @@ void * manager_send_loop(){
 	return NULL;
 }
 
-void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uint16_t src_id){
+void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int64_t air_time, uint16_t src_id){
 	LocationPacket * packet = (LocationPacket *) malloc(sizeof(LocationPacket));
 	generate_packet_from_JSON(data, packet);
 
@@ -102,6 +102,7 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uin
 			RequestInstant(src_id);
 			break;
 		case REGISTER_MANAGER:
+			ConfirmSpotter(src_id,packet->RegSensor.sensor_location,packet->RegSensor.min_update_frequency);
 			break;
 		case SENSOR_DATA:
 			break;
@@ -124,7 +125,6 @@ int main(int argc, char ** argv){
 	char * var_value;
 	FILE * config_file;
 	void * handle;
-	void (*start_cb)();
 	char * error;
 	int op = 0;
 	LElement * item;

@@ -77,7 +77,7 @@ void SensorResult(SensorData * data){
 
 }
 
-void AddManager(uint16_t address, unsigned short frequence){
+unsigned short AddManager(uint16_t address, unsigned short frequence){
 	pthread_mutex_lock(&manager);
 	manager_address = address;
 	if (frequence >= MIN_UPDATE_FREQUENCY)
@@ -112,7 +112,11 @@ void ManagerLost(){
 	pthread_mutex_unlock(&manager);
 }
 
-void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uint16_t src_id){
+void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int64_t air_time, uint16_t src_id){
+
+	if (!memcmp(data,"LOCAL_GSD:",strlen("LOCAL_GSD:")))
+		GsdReceive(data);
+
 	LocationPacket * packet = (LocationPacket *) malloc(sizeof(LocationPacket));
 	generate_packet_from_JSON(data, packet);
 
@@ -336,18 +340,10 @@ int main(int argc, char ** argv) {
 	//FUTURE WORK: REGISTER SERVICE GSD
 
 	//TODO: ALTERAR PARA IR BUSCAR ZONA CORRECTA
-	Service wanted;
-	char * group1 = "MANAGER";
-	char * group2 = "PEOPLE_LOCATION";
-	char * group3 = "SERVICE";
 
-	wanted.description = "MANAGER:A";
-	CreateList(&wanted.groups);
-	AddToList(group1,&wanted.groups);
-	AddToList(group2,&wanted.groups);
-	AddToList(group3,&wanted.groups);
+	char * request_service = "MANAGER:A;MANAGER,PEOPLE_LOCATION,SERVICE";
 
-	RequestService(&wanted);
+	RequestService(request_service);
 
 	pthread_mutex_init(&manager,NULL);
 	pthread_mutex_init(&dataToSend,NULL);

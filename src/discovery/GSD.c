@@ -295,7 +295,7 @@ static void ServiceFound(GSDPacket * packet){
 	
 	FOR_EACH(request_item, local_requests){
 		if (((LocalRequest *) request_item->data)->broadcast_id == packet->broadcast_id){
-			sprintf(data,"SERVICE_FOUND:%d,%d", ((LocalRequest *) request_item->data)->request_id, packet->reply->dest_address);
+			sprintf(data,"LOCAL_GSD:%d,%d", ((LocalRequest *) request_item->data)->request_id, packet->reply->dest_address);
 			send_data(handler, data, strlen(data), ((LocalRequest *) request_item->data)->local_address);
 			DelFromList(i,&local_requests);
 			break;	
@@ -311,8 +311,8 @@ static void create_local_request(char * data, GSDPacket * packet){
 		Request * req = (Request *) malloc(sizeof(Request));
 		
 		logger("Parsing local request\n");
-	
-		parser = strtok(data,":");
+
+		parser = strtok(data,"<>");
 		parser = strtok(NULL,";");
 		packet->packet_type = GSD_REQUEST;
 		packet->source_address = MYADDRESS;
@@ -328,16 +328,15 @@ static void create_local_request(char * data, GSDPacket * packet){
 		
 		CreateList(&req->wanted_service.groups);
 		
-		
-		//TODO ISTO ESTA MAL FEITO N?
 		while((parser = strtok(NULL,",")) != NULL){
 			tmp_group = (char *) malloc(strlen(parser)+1);
+			memcpy(tmp_group,parser,strlen(parser)+1);
 			AddToList(tmp_group,&req->wanted_service.groups);
 		}
 		
 }
 
-void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uint16_t src_id){
+void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int64_t air_time, uint16_t src_id){
 	
 	GSDPacket * packet = (GSDPacket *) malloc(sizeof(GSDPacket));
 	
@@ -346,7 +345,7 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp, uin
 	
 	//CREATE PACKET; CHECK PACKET TYPE; CALL METHODS
 	
-	if(!memcmp(data, "LOCAL_REQUEST", strlen("LOCAL_REQUEST")))
+	if(!memcmp(data, "LOCAL_REQUEST<>", strlen("LOCAL_REQUEST<>")))
 		create_local_request(data,packet);
 	else
 		generate_packet_from_JSON(data, packet);
@@ -406,8 +405,8 @@ void * test(void * thread_id){
 
 /*static void simulate_cache_entries(){
 	
-	//TODO READ SERVICES FROM FILE
 	
+
 	ServiceCache * entry = (ServiceCache *) malloc(sizeof(ServiceCache));
 	
 	entry->source_address = MYADDRESS;
