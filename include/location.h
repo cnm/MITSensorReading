@@ -13,17 +13,34 @@
 typedef enum data_type{ ENTRY, COUNT, RSS} DataType;
 typedef enum rss_type{ WIFI, BLUETOOTH, RFID, OTHER} RSSType;
 typedef enum message_type { REQUEST_INSTANT, REQUEST_FREQUENT, REGISTER_SENSOR, REGISTER_MANAGER, SENSOR_DATA, MANAGER_DATA } MessageType;
-
 typedef LList SensorDataList;
 
-typedef struct area{
-	//TODO: Por definir
-}Area;
+typedef struct transition{
+	unsigned short area_id;
+	unsigned short x_cell;
+	unsigned short y_cell;
+}Transition;
+
+typedef struct cell{
+	unsigned short prob_location;
+	unsigned short prob_move[6];
+	bool transition_cell;
+	Transition transp;
+}Cell;
+
+typedef struct map{
+	unsigned short area_id;
+	Cell **cells;
+	unsigned short x_cells;
+	unsigned short y_cells;
+	unsigned short floor;
+	unsigned short cell_size;
+}Map;
 
 typedef struct location{
 	float x;
 	float y;
-	Area a;
+	Map a;
 }Location;
 
 typedef struct sensor_data{
@@ -48,7 +65,7 @@ typedef struct location_packet{
 			unsigned short min_update_frequency;
 		}RegSensor;
 		unsigned short required_frequency; //FOR Confirmation of spont. registry or for request frequent service
-		Area manager_area;
+		unsigned short manager_area_id;
 		SensorDataList data;
 	};
 }LocationPacket;

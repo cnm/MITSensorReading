@@ -68,10 +68,9 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 
 			break;
 		case REGISTER_MANAGER:
-			yajl_gen_string(g, (unsigned char *) "manager_area", strlen("manager_area"));
-			yajl_gen_map_open(g);
+			yajl_gen_string(g, (unsigned char *) "manager_area_id", strlen("manager_area_id"));
+			yajl_gen_integer(g, packet->manager_area_id);
 
-			//TODO: AREA DEPENDE DO QUE FOR DEFINIDO PARA AREA
 			break;
 		case SENSOR_DATA:
 			yajl_gen_string(g, (unsigned char *) "data", strlen("data"));
@@ -121,6 +120,7 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 			yajl_gen_array_close(g);
 			break;
 		case MANAGER_DATA:
+
 			//TODO: MANAGER DATA AINDA NAO ESTA DEFINIDO
 			break;
 		default: break;
@@ -189,7 +189,8 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 			}
 			break;
 		case REGISTER_MANAGER:
-			//TODO: NEED TO DEFINE AREA FIRST
+			path[1] = "manager_area_id";
+			packet->manager_area_id = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
 			break;
 		case MANAGER_DATA:
 			//TODO: NEED TO DEFINE MANAGER_DATA FIRST

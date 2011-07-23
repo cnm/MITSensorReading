@@ -24,7 +24,7 @@ unsigned short SENSE_FREQUENCY = 5;
 unsigned short MIN_UPDATE_FREQUENCY = 15;
 unsigned short UPDATE_FREQUENCY = 15;
 LList plugins;
-uint16_t MY_ADDRESS, manager_address;
+uint16_t MY_ADDRESS, manager_address, MAP;
 Location self;
 bool manager_available = false;
 pthread_mutex_t manager, dataToSend;
@@ -86,6 +86,8 @@ unsigned short AddManager(uint16_t address, unsigned short frequence){
 		UPDATE_FREQUENCY = MIN_UPDATE_FREQUENCY;
 	manager_available = true;
 	pthread_mutex_unlock(&manager);
+
+	return UPDATE_FREQUENCY;
 }
 
 void ServiceFound(uint16_t dest_handler) {
@@ -320,6 +322,8 @@ int main(int argc, char ** argv) {
 			AddToList(plugin, &plugins);
 		}else if (!memcmp(var_value, "MY_ADDRESS",strlen("MY_ADDRESS")))
 			MY_ADDRESS = atoi(strtok(NULL, "=\n"));
+		else if (!memcmp(var_value, "MAP",strlen("MAP")))
+			MAP = atoi(strtok(NULL, "=\n"));
 		else if(!memcmp(var_value, "LOCATION", strlen("LOCATION"))){
 			self.x = atof(strtok(NULL, ";"));
 			self.y = atof(strtok(NULL, "\n"));
@@ -339,9 +343,8 @@ int main(int argc, char ** argv) {
 
 	//FUTURE WORK: REGISTER SERVICE GSD
 
-	//TODO: ALTERAR PARA IR BUSCAR ZONA CORRECTA
-
-	char * request_service = "MANAGER:A;MANAGER,PEOPLE_LOCATION,SERVICE";
+	char request_service[255];
+	sprintf(request_service,"MANAGER:%d;MANAGER,PEOPLE_LOCATION,SERVICE", MAP);
 
 	RequestService(request_service);
 
