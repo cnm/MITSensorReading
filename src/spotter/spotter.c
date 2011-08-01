@@ -199,12 +199,6 @@ void * spotter_send_loop(){
 	return NULL;
 }
 
-/*
- void ServiceUnavailable(){
- //Retry in X seconds??
- }
- */
-
 void free_elements(){
 	LElement * elem;
 	unregister_handler_address(MY_ADDRESS,handler->module_communication.regd);
@@ -341,8 +335,8 @@ int main(int argc, char ** argv) {
 	//REGISTER HANDLER
 	handler = __tp(create_handler_based_on_file)(handler_file, receive);
 
-	//FUTURE WORK: REGISTER SERVICE GSD
 
+	//REQUEST MANAGER
 	char request_service[255];
 	sprintf(request_service,"MANAGER:%d;MANAGER,PEOPLE_LOCATION,SERVICE", MAP);
 

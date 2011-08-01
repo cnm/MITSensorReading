@@ -38,9 +38,9 @@ typedef struct map{
 }Map;
 
 typedef struct location{
-	float x;
-	float y;
-	Map a;
+	unsigned short x;
+	unsigned short y;
+	unsigned short area_id;
 }Location;
 
 typedef struct sensor_data{

@@ -23,14 +23,16 @@
 #include "location_json.h"
 #include "gsd_api.h"
 #include "manager_services.h"
+#include "red_black_tree.h"
 
 __tp(handler)* handler = NULL;
 unsigned short MIN_UPDATE_FREQUENCY = 15;
 unsigned short UPDATE_FREQUENCY = 15;
-uint16_t MY_ADDRESS, aggregator_address;
-Area self;
+uint16_t MY_ADDRESS, aggregator_address, MAP;
 bool aggregator_available = false;
 pthread_mutex_t aggregator, dataToSend;
+unsigned short people_in_area;
+rb_red_blk_tree * people_located;
 
 void AddAggregator(uint16_t address, unsigned short frequence){
 
@@ -113,6 +115,11 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int6
 	free(packet);
 }
 
+void PrintLocation(void * info){
+	Location * loc = (Location *) info;
+	printf("x: %d \ny: %d \nmap id: %d \n", loc->x, loc->y,loc->area_id);
+}
+
 void free_elements(){
 	unregister_handler_address(MY_ADDRESS,handler->module_communication.regd);
 	//TODO: free all elements
@@ -152,9 +159,8 @@ int main(int argc, char ** argv){
 
 		if (!memcmp(var_value, "MY_ADDRESS",strlen("MY_ADDRESS")))
 			MY_ADDRESS = atoi(strtok(NULL, "=\n"));
-		else if(!memcmp(var_value, "AREA", strlen("AREA")))
-			//TODO
-			;
+		else if(!memcmp(var_value, "MAP", strlen("MAP")))
+			MAP = atoi(strtok(NULL,"=\n"));
 		else if (!memcmp(var_value, "MIN_UPDATE_FREQUENCY", strlen("MIN_UPDATE_FREQUENCY")))
 			MIN_UPDATE_FREQUENCY = atoi(strtok(NULL, "=\n"));
 
@@ -162,26 +168,18 @@ int main(int argc, char ** argv){
 
 	fclose(config_file);
 
+	people_located = RBTreeCreate(strcmp,free,free,NullFunction,PrintLocation);
+
 	logger("Main - Configuration concluded\n");
 
 	//REGISTER HANDLER
 	handler = __tp(create_handler_based_on_file)(argv[1], receive);
 
-	//FUTURE WORK: REGISTER SERVICE GSD
+	//REQUEST AGGREGATOR
+	char request_service[255];
+	sprintf(request_service,"AGGREGATOR:%d;AGGREGATOR,PEOPLE_LOCATION,SERVICE", MAP);
 
-	//TODO: ALTERAR PARA IR BUSCAR ZONA CORRECTA
-	Service wanted;
-	char * group1 = "AGGREGATOR";
-	char * group2 = "PEOPLE_LOCATION";
-	char * group3 = "SERVICE";
-
-	wanted.description = "AGGREGATOR";
-	CreateList(&wanted.groups);
-	AddToList(group1,&wanted.groups);
-	AddToList(group2,&wanted.groups);
-	AddToList(group3,&wanted.groups);
-
-	RequestService(&wanted);
+	RequestService(request_service);
 
 	pthread_create(&update_aggregator_loop, NULL, manager_send_loop, NULL);
 
