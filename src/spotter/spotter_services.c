@@ -25,7 +25,7 @@ void RequestFrequent(uint16_t manager_address, unsigned short required_frequence
 	size_t len;
 
 	LocationPacket packet;
-	packet.type = REGISTER_MANAGER;
+	packet.type = CONFIRM_SENSOR;
 
 	packet.RegSensor.min_update_frequency = AddManager(manager_address,required_frequence);
 	packet.RegSensor.sensor_location = self;

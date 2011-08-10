@@ -9,39 +9,17 @@
 #define LOCATION_H_
 
 #include "listType.h"
+#include "map.h"
 
 typedef enum data_type{ ENTRY, COUNT, RSS} DataType;
 typedef enum rss_type{ WIFI, BLUETOOTH, RFID, OTHER} RSSType;
-typedef enum message_type { REQUEST_INSTANT, REQUEST_FREQUENT, REGISTER_SENSOR, REGISTER_MANAGER, SENSOR_DATA, MANAGER_DATA } MessageType;
+typedef enum message_type { REQUEST_INSTANT, REQUEST_FREQUENT, REGISTER_SENSOR, REGISTER_MANAGER, CONFIRM_SENSOR, CONFIRM_MANAGER, SENSOR_DATA, MANAGER_DATA } MessageType;
 typedef LList SensorDataList;
 
-typedef struct transition{
-	unsigned short area_id;
-	unsigned short x_cell;
-	unsigned short y_cell;
-}Transition;
-
-typedef struct cell{
-	unsigned short prob_location;
-	unsigned short prob_move[6];
-	bool transition_cell;
-	Transition transp;
-}Cell;
-
-typedef struct map{
-	unsigned short area_id;
-	Cell **cells;
-	unsigned short x_cells;
-	unsigned short y_cells;
-	unsigned short floor;
-	unsigned short cell_size;
-}Map;
-
-typedef struct location{
-	unsigned short x;
-	unsigned short y;
-	unsigned short area_id;
-}Location;
+typedef struct spotter{
+	uint16_t id;
+	Location location;
+}Spotter;
 
 typedef struct sensor_data{
 	DataType type;

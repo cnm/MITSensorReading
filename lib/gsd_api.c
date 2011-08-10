@@ -13,12 +13,13 @@
 
 static uint16_t address = 0;
 static __tp(handler)* handler = NULL;
-static void (* callback)(uint16_t) = NULL;
+static void (* callback)(uint16_t,uint16_t) = NULL;
+static uint16_t request_id = 0;
 
 //uint8_t requests[];
 //char * descriptions[];
 
-bool RegisterService(Service * provide, __tp(handler)* handler_th, uint16_t handler_id, void (* service_found_cb)(uint16_t)){
+bool RegisterService(Service * provide, __tp(handler)* handler_th, uint16_t handler_id, void (* service_found_cb)(uint16_t,uint16_t)){
 	//TODO:FUTURE WORK - DINAMICALLY REGISTER IN GSD; FOR NOW JUST LOCALLY SAVE THE POINTER TO THE CALLBACK FUNCTION
 	address = handler_id;
 	handler = handler_th;
@@ -27,7 +28,10 @@ bool RegisterService(Service * provide, __tp(handler)* handler_th, uint16_t hand
 	return true;
 }
 
-bool RequestService(char * wanted){
+/**
+ * Returns the request id so that the app knows which result is receiving
+ */
+uint16_t RequestService(char * wanted){
 	if (handler != NULL){
 
 	char message[1024];
@@ -39,12 +43,12 @@ bool RequestService(char * wanted){
 	int2dot(address,&node,&app);
 	gsd_handler = dot2int(node,1);
 
-	sprintf(message,"LOCAL_REQUEST<>%s",wanted);
+	sprintf(message,"LOCAL_REQUEST<>%d<>%s",++request_id,wanted);
 	send_data(handler,message,strlen(message),gsd_handler);
 
-		return true;
+		return request_id;
 	}
-	return false;
+	return 0;
 }
 
 bool StopProvidingService(uint16_t handler_id){
@@ -59,9 +63,10 @@ bool StopProvidingService(uint16_t handler_id){
 void GsdReceive(char * message){
 	char * parser = strtok(message,":");
 	parser = strtok(NULL,",");
+	uint16_t request_id = atoi(parser);
 	parser = strtok(NULL,",");
 	uint16_t destination = atoi(parser);
-	callback(destination);
+	callback(destination,request_id);
 }
 
 

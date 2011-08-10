@@ -33,23 +33,20 @@ bool aggregator_available = false;
 pthread_mutex_t aggregator, dataToSend;
 unsigned short people_in_area;
 rb_red_blk_tree * people_located;
+LList spotters;
 
 void AddAggregator(uint16_t address, unsigned short frequence){
-
-	//TODO Add Aggregator logic
-
-	/*pthread_mutex_lock(&manager);
-	manager_address = address;
+	pthread_mutex_lock(&aggregator);
+	aggregator_address = address;
 	if (frequence >= MIN_UPDATE_FREQUENCY)
 		UPDATE_FREQUENCY = frequence;
 	else
 		UPDATE_FREQUENCY = MIN_UPDATE_FREQUENCY;
-	manager_available = true;
-	pthread_mutex_unlock(&manager);
-	*/
+	aggregator_available= true;
+	pthread_mutex_unlock(&aggregator);
 }
 
-void ServiceFound(uint16_t dest_handler) {
+void ServiceFound(uint16_t dest_handler, uint16_t request_id) {
 	//TODO: Distinguish between spotter and aggregator. In case of spotter, add it to the list of spotters and consequent location computation info. If aggregator spontaneous register
 }
 
@@ -95,7 +92,7 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int6
 
 	switch(packet->type){
 		case REGISTER_SENSOR:
-			SpontaneousSpotter(src_id,packet->required_frequency);
+			SpontaneousSpotter(src_id,packet->RegSensor.sensor_location, packet->RegSensor.min_update_frequency);
 			break;
 		case REQUEST_FREQUENT:
 			RequestFrequent(src_id,packet->required_frequency);
@@ -103,10 +100,14 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int6
 		case REQUEST_INSTANT:
 			RequestInstant(src_id);
 			break;
-		case REGISTER_MANAGER:
+		case CONFIRM_SENSOR:
 			ConfirmSpotter(src_id,packet->RegSensor.sensor_location,packet->RegSensor.min_update_frequency);
 			break;
+		case CONFIRM_MANAGER:
+			ConfirmSpontaneousRegister(src_id, packet->required_frequency);
+			break;
 		case SENSOR_DATA:
+			DeliverSpotterData(src_id, packet, timestamp - air_time);
 			break;
 		default:
 				break;
@@ -122,7 +123,11 @@ void PrintLocation(void * info){
 
 void free_elements(){
 	unregister_handler_address(MY_ADDRESS,handler->module_communication.regd);
-	//TODO: free all elements
+	RBTreeDestroy(people_located);
+	FreeList(&spotters);
+	pthread_mutex_destroy(&aggregator);
+	pthread_mutex_destroy(&dataToSend);
+	//TODO More elements to free
 }
 
 int main(int argc, char ** argv){
@@ -169,17 +174,24 @@ int main(int argc, char ** argv){
 	fclose(config_file);
 
 	people_located = RBTreeCreate(strcmp,free,free,NullFunction,PrintLocation);
+	CreateList(&spotters);
 
 	logger("Main - Configuration concluded\n");
 
 	//REGISTER HANDLER
 	handler = __tp(create_handler_based_on_file)(argv[1], receive);
 
+	//REGISTER SERVICE
+	RegisterService(NULL,handler,MY_ADDRESS,ServiceFound);
+
 	//REQUEST AGGREGATOR
 	char request_service[255];
 	sprintf(request_service,"AGGREGATOR:%d;AGGREGATOR,PEOPLE_LOCATION,SERVICE", MAP);
 
 	RequestService(request_service);
+
+	pthread_mutex_init(&aggregator,NULL);
+	pthread_mutex_init(&dataToSend,NULL);
 
 	pthread_create(&update_aggregator_loop, NULL, manager_send_loop, NULL);
 

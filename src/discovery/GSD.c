@@ -304,20 +304,26 @@ static void ServiceFound(GSDPacket * packet){
 	}		
 }
 
-static void create_local_request(char * data, GSDPacket * packet){
+static void create_local_request(char * data, GSDPacket * packet,uint16_t address){
 		char * parser;
 		char * tmp_group;
 		
 		Request * req = (Request *) malloc(sizeof(Request));
+		LocalRequest * local = (LocalRequest *) malloc(sizeof(LocalRequest));
 		
 		logger("Parsing local request\n");
 
 		parser = strtok(data,"<>");
-		parser = strtok(NULL,";");
+		parser = strtok(NULL,"<>");
+
+		local->local_address = address;
+		local->request_id = atoi(parser);
+		local->broadcast_id = BROADCAST_ID;
+
 		packet->packet_type = GSD_REQUEST;
 		packet->source_address = MYADDRESS;
 		packet->hop_count = 0;
-		packet->broadcast_id = BROADCAST_ID;
+		packet->broadcast_id = BROADCAST_ID++;
 		packet->request = req;
 		packet->gsd_ip_address = MYIPADDRESS;
 		
@@ -333,6 +339,8 @@ static void create_local_request(char * data, GSDPacket * packet){
 			memcpy(tmp_group,parser,strlen(parser)+1);
 			AddToList(tmp_group,&req->wanted_service.groups);
 		}
+
+
 		
 }
 
@@ -346,7 +354,7 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int6
 	//CREATE PACKET; CHECK PACKET TYPE; CALL METHODS
 	
 	if(!memcmp(data, "LOCAL_REQUEST<>", strlen("LOCAL_REQUEST<>")))
-		create_local_request(data,packet);
+		create_local_request(data,packet,src_id);
 	else
 		generate_packet_from_JSON(data, packet);
 	

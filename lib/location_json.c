@@ -72,12 +72,36 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 			yajl_gen_integer(g, packet->manager_area_id);
 
 			break;
+		case CONFIRM_SENSOR:
+			yajl_gen_string(g, (unsigned char *) "RegSensor", strlen("RegSensor"));
+			yajl_gen_map_open(g);
+
+				yajl_gen_string(g, (unsigned char *) "min_update_frequency", strlen("min_update_frequency"));
+				yajl_gen_integer(g, packet->RegSensor.min_update_frequency);
+
+				yajl_gen_string(g, (unsigned char *) "sensor_location", strlen("sensor_location"));
+				yajl_gen_map_open(g);
+
+					yajl_gen_string(g, (unsigned char *) "x", strlen("x"));
+					yajl_gen_double(g, packet->RegSensor.sensor_location.x);
+
+					yajl_gen_string(g, (unsigned char *) "y", strlen("y"));
+					yajl_gen_double(g, packet->RegSensor.sensor_location.y);
+
+				yajl_gen_map_close(g);
+			yajl_gen_map_close(g);
+
+			break;
+		case CONFIRM_MANAGER:
+			yajl_gen_string(g, (unsigned char *) "required_frequency", strlen("required_frequency"));
+			yajl_gen_integer(g, packet->required_frequency);
+			break;
 		case SENSOR_DATA:
 			yajl_gen_string(g, (unsigned char *) "data", strlen("data"));
 			yajl_gen_array_open(g);
 				LElement * elem;
 				SensorData * sensor;
-				FOR_EACH(elem, packet->data){
+				FOR_EACH(elem, *(packet->data)){
 					sensor = (SensorData *) elem->data;
 					yajl_gen_map_open(g);
 						yajl_gen_string(g, (unsigned char *) "type", strlen("type"));
@@ -120,8 +144,13 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 			yajl_gen_array_close(g);
 			break;
 		case MANAGER_DATA:
-
 			//TODO: MANAGER DATA AINDA NAO ESTA DEFINIDO
+			yajl_gen_string(g, (unsigned char *) "data", strlen("data"));
+			yajl_gen_array_open(g);
+
+			RB
+
+
 			break;
 		default: break;
 	}
@@ -191,6 +220,28 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 		case REGISTER_MANAGER:
 			path[1] = "manager_area_id";
 			packet->manager_area_id = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
+			break;
+		case CONFIRM_SENSOR:
+			path[1] = "RegSensor";
+			yajl_val object = yajl_tree_get(node, path, yajl_t_object);
+			short j,z;
+			for (j=0; j < YAJL_GET_OBJECT(object)->len; j++){
+				if (!strcmp(YAJL_GET_OBJECT(object)->keys[j],"min_update_frequency"))
+					packet->RegSensor.min_update_frequency = YAJL_GET_INTEGER(YAJL_GET_OBJECT(object)->values[j]);
+				else{
+					yajl_val location = YAJL_GET_OBJECT(object)->values[j];
+					for (z=0; z < YAJL_GET_OBJECT(location)->len; z++){
+						if (!strcmp(YAJL_GET_OBJECT(location)->keys[z],"x"))
+							packet->RegSensor.sensor_location.x = YAJL_GET_DOUBLE(YAJL_GET_OBJECT(location)->values[z]);
+						else
+							packet->RegSensor.sensor_location.y = YAJL_GET_DOUBLE(YAJL_GET_OBJECT(location)->values[z]);
+					}
+				}
+			}
+			break;
+		case CONFIRM_MANAGER:
+			path[1] = "required_frequency";
+			packet->required_frequency = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
 			break;
 		case MANAGER_DATA:
 			//TODO: NEED TO DEFINE MANAGER_DATA FIRST

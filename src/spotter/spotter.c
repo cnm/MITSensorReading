@@ -90,7 +90,7 @@ unsigned short AddManager(uint16_t address, unsigned short frequence){
 	return UPDATE_FREQUENCY;
 }
 
-void ServiceFound(uint16_t dest_handler) {
+void ServiceFound(uint16_t dest_handler, uint16_t request_id) {
 	if (!manager_available){
 		//Send to Service Manager self location and maximum sense frequency
 		unsigned char * data;
@@ -123,7 +123,7 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int6
 	generate_packet_from_JSON(data, packet);
 
 	switch(packet->type){
-		case REGISTER_SENSOR:
+		case CONFIRM_MANAGER:
 			ConfirmSpontaneousRegister(src_id,packet->required_frequency);
 			break;
 		case REQUEST_FREQUENT:
@@ -335,6 +335,8 @@ int main(int argc, char ** argv) {
 	//REGISTER HANDLER
 	handler = __tp(create_handler_based_on_file)(handler_file, receive);
 
+	//REGISTER SERVICE
+	RegisterServi
 
 	//REQUEST MANAGER
 	char request_service[255];
