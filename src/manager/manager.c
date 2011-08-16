@@ -24,15 +24,17 @@
 #include "gsd_api.h"
 #include "manager_services.h"
 #include "red_black_tree.h"
+#include "map.h"
 
 __tp(handler)* handler = NULL;
 unsigned short MIN_UPDATE_FREQUENCY = 15;
 unsigned short UPDATE_FREQUENCY = 15;
-uint16_t MY_ADDRESS, aggregator_address, MAP, request_aggregator;
+uint16_t MY_ADDRESS, aggregator_address, map_id, request_aggregator;
 bool aggregator_available = false;
 pthread_mutex_t aggregator, dataToSend;
 unsigned short people_in_area;
 rb_red_blk_tree * people_located;
+Map * my_map;
 LList spotters;
 
 void AddAggregator(uint16_t address, unsigned short frequence){
@@ -54,7 +56,7 @@ void ServiceFound(uint16_t dest_handler, uint16_t request_id) {
 		if (!aggregator_available){
 			//Send to Service Manager self location and maximum sense frequency
 			location.type = REGISTER_MANAGER;
-			location.manager_area_id = MAP;
+			location.manager_area_id = map_id;
 
 			generate_JSON(&location,&data,&length);
 
@@ -80,7 +82,7 @@ void SendManagerData(uint16_t address){
 	
 	unsigned char * data;
 	size_t length;
-	
+
 	packet.type = MANAGER_DATA;
 
 	packet.Manager_data.num_people = people_in_area;
@@ -151,7 +153,7 @@ int CompareNodes(const void * key1, const void * key2){
 
 void PrintLocation(void * info){
 	Location * loc = (Location *) info;
-	printf("x: %d \ny: %d \nmap id: %d \n", loc->x, loc->y,loc->area_id);
+	printf("x: %d \ny: %d \nmap_id id: %d \n", loc->x, loc->y,loc->area_id);
 }
 
 void free_elements(){
@@ -194,8 +196,8 @@ int main(int argc, char ** argv){
 
 		if (!memcmp(var_value, "MY_ADDRESS",strlen("MY_ADDRESS")))
 			MY_ADDRESS = atoi(strtok(NULL, "=\n"));
-		else if(!memcmp(var_value, "MAP", strlen("MAP")))
-			MAP = atoi(strtok(NULL,"=\n"));
+		else if(!memcmp(var_value, "map_id", strlen("map_id")))
+			map_id = atoi(strtok(NULL,"=\n"));
 		else if (!memcmp(var_value, "MIN_UPDATE_FREQUENCY", strlen("MIN_UPDATE_FREQUENCY")))
 			MIN_UPDATE_FREQUENCY = atoi(strtok(NULL, "=\n"));
 
@@ -216,7 +218,7 @@ int main(int argc, char ** argv){
 
 	//REQUEST AGGREGATOR
 	char request_service[255];
-	sprintf(request_service,"AGGREGATOR:%d;AGGREGATOR,PEOPLE_LOCATION,SERVICE", MAP);
+	sprintf(request_service,"AGGREGATOR:%d;AGGREGATOR,PEOPLE_LOCATION,SERVICE", map_id);
 
 	request_aggregator = RequestService(request_service);
 

@@ -264,7 +264,7 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 			packet->required_frequency = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
 			break;
 		case MANAGER_DATA:
-			//TODO: NEED TO DEFINE MANAGER_DATA FIRST
+			
 			path[1] = "Manager_data";
 			object = yajl_tree_get(node, path, yajl_t_object);
 

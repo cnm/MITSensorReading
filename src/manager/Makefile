@@ -1,5 +1,5 @@
 CC=gcc
-LIBS = -lpthread -lfred -lyajl -ldl
+LIBS = -lpthread -lfred -lyajl -ldl -lm
 FLAGS = -Wall -g -I../../include
 EXECS = manager
 

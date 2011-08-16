@@ -8,6 +8,8 @@
 #ifndef MAP_H_
 #define MAP_H_
 
+#include "vec3d.h"
+
 typedef struct transition{
 	unsigned short area_id;
 	unsigned short x_cell;
@@ -38,6 +40,6 @@ typedef struct location{
 
 Map * LoadMap(char * map_info);
 void DestroyMap(Map * map);
-Location * InfoToCell(Map * map, float x, float y);
+Location * InfoToCell(Map * map, vec3d * rs1, vec3d * rs2);
 
 #endif /* MAP_H_ */

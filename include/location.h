@@ -25,6 +25,13 @@ typedef struct rss{
 	unsigned char ** nodes;
 }RSSInfo;
 
+typedef struct tri_info{
+	unsigned char * node;
+	Location s1,s2,s3;
+	int8_t r1,r2,r3;
+	bool b2,b3;
+}TriInfo;
+
 typedef struct sensor_data{
 	DataType type;
 	union{

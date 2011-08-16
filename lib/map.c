@@ -16,6 +16,7 @@
 #include "location.h"
 #include "location_json.h"
 #include <fred/handler.h>
+#include "map.h"
 
 
 
@@ -103,7 +104,7 @@ void DestroyMap(Map * map){
 	free(map);
 }
 
-Location * InfoToCell(Map * map, float x, float y){
+Location * InfoToCell(Map * map, vec3d * rs1, vec3d * rs2){
 	//Todo calc the cell Correspondent to the computed info
 	return NULL;
 }

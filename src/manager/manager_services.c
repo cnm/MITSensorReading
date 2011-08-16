@@ -6,20 +6,22 @@
  */
 #include <stdio.h>
 #include <stdint.h>
-#include<stdbool.h>
-#include<fred/handler.h>
+#include <stdbool.h>
+#include <fred/handler.h>
 #include <openssl/md5.h>
 #include "red_black_tree.h"
 #include "listType.h"
-#include"location.h"
-#include"location_json.h"
-#include"manager.h"
-#include"manager_services.h"
-
+#include "location.h"
+#include "location_json.h"
+#include "manager.h"
+#include "manager_services.h"
+#include "vec3d.h"
+#include "map.h"
 
 extern rb_red_blk_tree * people_located;
 extern unsigned short people_in_area;
-extern uint16_t MAP;
+extern uint16_t map_id;
+extern Map * my_map;
 extern LList spotters;
 extern __tp(handler)* handler;
 
@@ -36,7 +38,7 @@ void RequestFrequent(uint16_t aggregator_address, unsigned short frequency){
 	LocationPacket packet;
 	packet.type = REGISTER_MANAGER;
 
-	packet.manager_area_id = MAP;
+	packet.manager_area_id = map_id;
 	AddAggregator(aggregator_address,frequency);
 
 	generate_JSON(&packet,&message,&len);
@@ -150,15 +152,91 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 
 					//When we have info from all nodes (or if missed an info from a node) we compute the location of people with the info we have
 					if (compute || num_ready == spotters.NumEl){
-						//TODO: ALL THE MAGIC! compute the location of people in this area!
-						//Remove spotter current_info
+						
+						unsigned short i;
+						LList raw_list;
+						CreateList(&raw_list);
+						bool in_list = false;
+
 						FOR_EACH(node,spotters){
 							Spotter * spotter = (Spotter *) node->data;
 							if (spotter->current_info != NULL){
+								for (i=0; i < spotter->current_info->node_number; i++){
+
+									FOR_EACH(elem, raw_list){
+										TriInfo * tri = (TriInfo *) elem->data;
+										 if (!strcmp((const char *) tri->node,(const char *) *(spotter->current_info->nodes+MD5_DIGEST_LENGTH*i))){
+										 	in_list = true;
+										 	if (!tri->b2){
+										 		tri->b2 = true;
+										 		tri->r2 = spotter->current_info->rss[i];
+											 }else{										 	
+										 		tri->r3 = spotter->current_info->rss[i];
+										 		tri->b3 = true;
+										 	}
+										 }
+									}
+
+									if (!in_list){
+										TriInfo * new = (TriInfo *) malloc(sizeof(TriInfo));
+										new->node = (unsigned char *) malloc(MD5_DIGEST_LENGTH + 1);
+										strcpy((char *) new->node, (char *) *(spotter->current_info->nodes+MD5_DIGEST_LENGTH*i));
+										new->s1 = spotter->location;
+										new->r1 = spotter->current_info->rss[i];
+										AddToList(new, &raw_list);
+									}
+
+									in_list = false;
+								}
+
 								FreeRSS(spotter->current_info);
 								spotter->current_info = NULL;
 							}
 						}
+						
+						FOR_EACH(elem,raw_list){
+							TriInfo * tri = (TriInfo *) elem->data;
+
+							if(!tri->b2)
+								break;
+
+							vec3d v1,v2,v3,result1,result2;
+							double r1,r2,r3;
+
+							v1.x = (double) tri->s1.x * my_map->cell_size;
+							v1.y = (double) tri->s1.y * my_map->cell_size;
+							v1.z = 0;
+							r1 = (double) tri->r1;
+
+							v2.x = (double) tri->s2.x * my_map->cell_size;
+							v2.y = (double) tri->s2.y * my_map->cell_size;
+							v2.z = 0;
+
+							r2 = (double) tri->r2;
+
+							if(tri->b3){
+								v3.x = (double) tri->s3.x * my_map->cell_size;
+								v3.y = (double) tri->s3.y * my_map->cell_size;
+								r3 = (double) tri->r3;
+							}else{
+								v3.x = 0;
+								v3.y = 0;	
+								r3 = my_map->cell_size;
+							}
+							v3.z = 0;
+
+							
+							
+							if (trilateration(&result1,&result2,v1,r1,v2,r2,v3,r3,0.00001)==0){
+								Location * location = InfoToCell(my_map, &result1, &result2);
+
+								RBTreeInsert(people_located, tri->node, location);
+							}
+							
+							
+						}
+
+						FreeList(&raw_list);
 					}
 				}
 				break;
