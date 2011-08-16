@@ -28,7 +28,7 @@
 __tp(handler)* handler = NULL;
 unsigned short MIN_UPDATE_FREQUENCY = 15;
 unsigned short UPDATE_FREQUENCY = 15;
-uint16_t MY_ADDRESS, aggregator_address, MAP;
+uint16_t MY_ADDRESS, aggregator_address, MAP, request_aggregator;
 bool aggregator_available = false;
 pthread_mutex_t aggregator, dataToSend;
 unsigned short people_in_area;
@@ -47,28 +47,50 @@ void AddAggregator(uint16_t address, unsigned short frequence){
 }
 
 void ServiceFound(uint16_t dest_handler, uint16_t request_id) {
-	//TODO: Distinguish between spotter and aggregator. In case of spotter, add it to the list of spotters and consequent location computation info. If aggregator spontaneous register
+	unsigned char * data;
+	size_t length;
+	LocationPacket location;
+	if (request_id == request_aggregator){
+		if (!aggregator_available){
+			//Send to Service Manager self location and maximum sense frequency
+			location.type = REGISTER_MANAGER;
+			location.manager_area_id = MAP;
+
+			generate_JSON(&location,&data,&length);
+
+			send_data(handler, (char *)&data,length,dest_handler);
+
+			free(data);
+		}
+	}else{
+		location.type = REQUEST_FREQUENT;
+		location.required_frequency = MIN_UPDATE_FREQUENCY;
+
+		generate_JSON(&location,&data,&length);
+
+		send_data(handler, (char *)&data,length,dest_handler);
+
+		free(data);
+	}
 }
 
 void SendManagerData(uint16_t address){
-	//TODO SEND MANAGER DATA LOGIC
-/*
+
 	LocationPacket packet;
 	LElement * elem;
 	unsigned char * data;
 	size_t length;
 	packet.type = MANAGER_DATA;
 
-	CreateList(&packet.data);
-	FOR_EACH(elem, cached_data){
-		AddToList(elem,&packet.data);
-	}
-	generate_JSON(&packet, &data,&length);
+	packet.Manager_data.num_people = people_in_area;
+	packet.Manager_data.people = people_located;
 
-	send_data(handler, (char *)&data,length,aggregator_address);
+	generate_JSON(&packet, &data, &length);
+
+	send_data(handler, (char *)&data,length,address);
 
 	free(data);
-*/
+
 }
 
 void * manager_send_loop(){
@@ -84,6 +106,12 @@ void * manager_send_loop(){
 	}
 
 	return NULL;
+}
+
+void FreePacket(LocationPacket * packet){
+	if(packet->type == SENSOR_DATA)
+		FreeList(&packet->data);
+	free(packet);
 }
 
 void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int64_t air_time, uint16_t src_id){
@@ -113,7 +141,11 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int6
 				break;
 	}
 
-	free(packet);
+	FreePacket(packet);
+}
+
+int CompareNodes(const void * key1, const void * key2){
+	return strcmp((const char *) key1, (const char *) key2);
 }
 
 void PrintLocation(void * info){
@@ -136,10 +168,7 @@ int main(int argc, char ** argv){
 	char line[80];
 	char * var_value;
 	FILE * config_file;
-	void * handle;
-	char * error;
 	int op = 0;
-	LElement * item;
 	pthread_t update_aggregator_loop;
 
 	if (argc != 3) {
@@ -173,7 +202,7 @@ int main(int argc, char ** argv){
 
 	fclose(config_file);
 
-	people_located = RBTreeCreate(strcmp,free,free,NullFunction,PrintLocation);
+	people_located = RBTreeCreate(CompareNodes,free,free,NullFunction,PrintLocation);
 	CreateList(&spotters);
 
 	logger("Main - Configuration concluded\n");
@@ -188,7 +217,7 @@ int main(int argc, char ** argv){
 	char request_service[255];
 	sprintf(request_service,"AGGREGATOR:%d;AGGREGATOR,PEOPLE_LOCATION,SERVICE", MAP);
 
-	RequestService(request_service);
+	request_aggregator = RequestService(request_service);
 
 	pthread_mutex_init(&aggregator,NULL);
 	pthread_mutex_init(&dataToSend,NULL);

@@ -336,7 +336,7 @@ int main(int argc, char ** argv) {
 	handler = __tp(create_handler_based_on_file)(handler_file, receive);
 
 	//REGISTER SERVICE
-	RegisterServi
+	RegisterService(NULL,handler,MY_ADDRESS,ServiceFound);
 
 	//REQUEST MANAGER
 	char request_service[255];

@@ -5,9 +5,18 @@
  *      Author: root
  */
 
-#include "location.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 #include <yajl/yajl_parse.h>
 #include <yajl/yajl_tree.h>
+#include "listType.h"
+#include "location.h"
+#include "location_json.h"
+#include <fred/handler.h>
+
 
 
 Map * LoadMap(char * map_info){
@@ -22,7 +31,7 @@ Map * LoadMap(char * map_info){
 
 	//logger("Parsing packet from JSON message");
 
-	node = yajl_tree_parse(( char *) data, errbuf, sizeof(errbuf));
+	node = yajl_tree_parse(( char *) map_info, errbuf, sizeof(errbuf));
 
 	 if (node == NULL) {
 	        fprintf(stderr,"parse_error: ");
@@ -73,11 +82,11 @@ Map * LoadMap(char * map_info){
 			 }else{
 				 for (i = 0; i < YAJL_GET_OBJECT(cell)->len; i++){
 					 if (!strcmp(YAJL_GET_OBJECT(cell)->keys[i], "area_id"))
-						 map->cells[x][y].transp.area_id = YAJL_GET_OBJECT(cell)->values[i];
+						 map->cells[x][y].transp.area_id = YAJL_GET_INTEGER(YAJL_GET_OBJECT(cell)->values[i]);
 					 else if (!strcmp(YAJL_GET_OBJECT(cell)->keys[i], "x_cell"))
-						 map->cells[x][y].transp.x_cell = YAJL_GET_OBJECT(cell)->values[i];
+						 map->cells[x][y].transp.x_cell = YAJL_GET_INTEGER(YAJL_GET_OBJECT(cell)->values[i]);
 					 else if (!strcmp(YAJL_GET_OBJECT(cell)->keys[i], "y_cell"))
-						 map->cells[x][y].transp.y_cell = YAJL_GET_OBJECT(cell)->values[i];
+						 map->cells[x][y].transp.y_cell = YAJL_GET_INTEGER(YAJL_GET_OBJECT(cell)->values[i]);
 				 }
 			 }
 		 }
@@ -94,6 +103,7 @@ void DestroyMap(Map * map){
 	free(map);
 }
 
-Location InfoToCell(Map * map, float x, float y){
+Location * InfoToCell(Map * map, float x, float y){
 	//Todo calc the cell Correspondent to the computed info
+	return NULL;
 }

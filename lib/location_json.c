@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 #include <yajl/yajl_parse.h>
 #include <yajl/yajl_gen.h>
@@ -17,6 +18,46 @@
 #include "location_json.h"
 #include <fred/handler.h>
 #include <syslog.h>
+#include "red_black_tree.h"
+#include "map.h"
+
+static void PrintNodeJSON(yajl_gen g, rb_red_blk_node* x){
+	yajl_gen_map_open(g);
+		yajl_gen_string(g, (unsigned char *) "Key", strlen("Key"));
+		yajl_gen_string(g, (char *) x->key, strlen((char *) x->key));
+
+		yajl_gen_string(g, (unsigned char *) "x" , strlen("x"));
+		yajl_gen_integer(g, ((Location *) x->info)->x);
+
+		yajl_gen_string(g, (unsigned char *) "y" , strlen("y"));
+		yajl_gen_integer(g, ((Location *) x->info)->y);
+
+		yajl_gen_string(g, (unsigned char *) "area_id" , strlen("area_id"));
+		yajl_gen_integer(g, ((Location *) x->info)->area_id);
+	yajl_gen_map_close(g);
+}
+
+
+
+static void InorderTreeJSON(yajl_gen g, rb_red_blk_tree* tree, rb_red_blk_node* x) {
+  rb_red_blk_node* nil=tree->nil;
+  rb_red_blk_node* root=tree->root;
+  if (x != tree->nil) {
+    InorderTreeJSON(g, tree,x->left);
+
+    PrintNodeJSON(g, x);
+    
+    InorderTreeJSON(g, tree,x->right);
+  }
+}
+
+
+
+static void RBTreeJSON(yajl_gen g, rb_red_blk_tree* tree) {
+  InorderTreeJSON(g, tree,tree->root->left);
+}
+
+
 
 bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * length){
 
@@ -47,7 +88,10 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 			yajl_gen_string(g, (unsigned char *) "required_frequency", strlen("required_frequency"));
 			yajl_gen_integer(g,packet->required_frequency);
 			break;
+
 		case REGISTER_SENSOR:
+		case CONFIRM_SENSOR:
+
 			yajl_gen_string(g, (unsigned char *) "RegSensor", strlen("RegSensor"));
 			yajl_gen_map_open(g);
 
@@ -58,10 +102,10 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 				yajl_gen_map_open(g);
 
 					yajl_gen_string(g, (unsigned char *) "x", strlen("x"));
-					yajl_gen_double(g, packet->RegSensor.sensor_location.x);
+					yajl_gen_integer(g, packet->RegSensor.sensor_location.x);
 
 					yajl_gen_string(g, (unsigned char *) "y", strlen("y"));
-					yajl_gen_double(g, packet->RegSensor.sensor_location.y);
+					yajl_gen_integer(g, packet->RegSensor.sensor_location.y);
 
 				yajl_gen_map_close(g);
 			yajl_gen_map_close(g);
@@ -70,26 +114,6 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 		case REGISTER_MANAGER:
 			yajl_gen_string(g, (unsigned char *) "manager_area_id", strlen("manager_area_id"));
 			yajl_gen_integer(g, packet->manager_area_id);
-
-			break;
-		case CONFIRM_SENSOR:
-			yajl_gen_string(g, (unsigned char *) "RegSensor", strlen("RegSensor"));
-			yajl_gen_map_open(g);
-
-				yajl_gen_string(g, (unsigned char *) "min_update_frequency", strlen("min_update_frequency"));
-				yajl_gen_integer(g, packet->RegSensor.min_update_frequency);
-
-				yajl_gen_string(g, (unsigned char *) "sensor_location", strlen("sensor_location"));
-				yajl_gen_map_open(g);
-
-					yajl_gen_string(g, (unsigned char *) "x", strlen("x"));
-					yajl_gen_double(g, packet->RegSensor.sensor_location.x);
-
-					yajl_gen_string(g, (unsigned char *) "y", strlen("y"));
-					yajl_gen_double(g, packet->RegSensor.sensor_location.y);
-
-				yajl_gen_map_close(g);
-			yajl_gen_map_close(g);
 
 			break;
 		case CONFIRM_MANAGER:
@@ -101,7 +125,7 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 			yajl_gen_array_open(g);
 				LElement * elem;
 				SensorData * sensor;
-				FOR_EACH(elem, *(packet->data)){
+				FOR_EACH(elem, packet->data){
 					sensor = (SensorData *) elem->data;
 					yajl_gen_map_open(g);
 						yajl_gen_string(g, (unsigned char *) "type", strlen("type"));
@@ -144,12 +168,21 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 			yajl_gen_array_close(g);
 			break;
 		case MANAGER_DATA:
-			//TODO: MANAGER DATA AINDA NAO ESTA DEFINIDO
-			yajl_gen_string(g, (unsigned char *) "data", strlen("data"));
-			yajl_gen_array_open(g);
+			
+			yajl_gen_string(g, (unsigned char *) "Manager_data", strlen("Manager_data"));
+			yajl_gen_map_open(g);
 
-			RB
+				yajl_gen_string(g, (unsigned char *) "num_people", strlen("num_people"));
+				yajl_gen_integer(g, sensor->Manager_data.num_people);
 
+				yajl_gen_string(g, (unsigned char *) "people", strlen("people"));
+				yajl_gen_array_open(g);
+					
+					RBTreeJSON(g, sensor->Manager_data.people);
+
+				yajl_gen_array_close(g);
+
+			yajl_gen_map_close(g);
 
 			break;
 		default: break;
@@ -193,26 +226,32 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
     const char * path[] = { "Packet", "MessageType", ( char *) 0 };
     packet->type = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
 
+    yajl_val object,location,array,info;
+    short j,z,i;
+
     switch(packet->type){
 		case REQUEST_INSTANT: break;
 		case REQUEST_FREQUENT:
 			path[1] = "required_frequency";
 			packet->required_frequency = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
 			break;
+
 		case REGISTER_SENSOR:
+		case CONFIRM_SENSOR:
+
 			path[1] = "RegSensor";
-			yajl_val object = yajl_tree_get(node, path, yajl_t_object);
-			short j,z;
+			object = yajl_tree_get(node, path, yajl_t_object);
+
 			for (j=0; j < YAJL_GET_OBJECT(object)->len; j++){
 				if (!strcmp(YAJL_GET_OBJECT(object)->keys[j],"min_update_frequency"))
 					packet->RegSensor.min_update_frequency = YAJL_GET_INTEGER(YAJL_GET_OBJECT(object)->values[j]);
 				else{
-					yajl_val location = YAJL_GET_OBJECT(object)->values[j];
+					location = YAJL_GET_OBJECT(object)->values[j];
 					for (z=0; z < YAJL_GET_OBJECT(location)->len; z++){
 						if (!strcmp(YAJL_GET_OBJECT(location)->keys[z],"x"))
-							packet->RegSensor.sensor_location.x = YAJL_GET_DOUBLE(YAJL_GET_OBJECT(location)->values[z]);
+							packet->RegSensor.sensor_location.x = YAJL_GET_INTEGER(YAJL_GET_OBJECT(location)->values[z]);
 						else
-							packet->RegSensor.sensor_location.y = YAJL_GET_DOUBLE(YAJL_GET_OBJECT(location)->values[z]);
+							packet->RegSensor.sensor_location.y = YAJL_GET_INTEGER(YAJL_GET_OBJECT(location)->values[z]);
 					}
 				}
 			}
@@ -221,30 +260,47 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 			path[1] = "manager_area_id";
 			packet->manager_area_id = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
 			break;
-		case CONFIRM_SENSOR:
-			path[1] = "RegSensor";
-			yajl_val object = yajl_tree_get(node, path, yajl_t_object);
-			short j,z;
-			for (j=0; j < YAJL_GET_OBJECT(object)->len; j++){
-				if (!strcmp(YAJL_GET_OBJECT(object)->keys[j],"min_update_frequency"))
-					packet->RegSensor.min_update_frequency = YAJL_GET_INTEGER(YAJL_GET_OBJECT(object)->values[j]);
-				else{
-					yajl_val location = YAJL_GET_OBJECT(object)->values[j];
-					for (z=0; z < YAJL_GET_OBJECT(location)->len; z++){
-						if (!strcmp(YAJL_GET_OBJECT(location)->keys[z],"x"))
-							packet->RegSensor.sensor_location.x = YAJL_GET_DOUBLE(YAJL_GET_OBJECT(location)->values[z]);
-						else
-							packet->RegSensor.sensor_location.y = YAJL_GET_DOUBLE(YAJL_GET_OBJECT(location)->values[z]);
-					}
-				}
-			}
-			break;
 		case CONFIRM_MANAGER:
 			path[1] = "required_frequency";
 			packet->required_frequency = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
 			break;
 		case MANAGER_DATA:
 			//TODO: NEED TO DEFINE MANAGER_DATA FIRST
+			path[1] = "Manager_data";
+			object = yajl_tree_get(node, path, yajl_t_object);
+
+			packet->Manager_data.people = RBTreeCreate(CompareNodes,free,free,NullFunction,PrintLocation);
+
+			for (j=0; j < YAJL_GET_OBJECT(object)->len; j++){
+				if (!strcmp(YAJL_GET_OBJECT(object)->keys[j],"num_people"))
+					packet->Manager_data.num_people = YAJL_GET_INTEGER(YAJL_GET_OBJECT(object)->values[j]);
+				else{
+					array = YAJL_GET_OBJECT(object)->values[j];
+					for(z=0; z < YAJL_GET_ARRAY(array)->len; z++){
+						info = YAJL_GET_OBJECT(array)->values[z];
+						char * rb_key = (char *) malloc(MD5_DIGEST_LENGTH + 1);
+						Location * rb_info = (Location *) malloc(sizeof(Location));
+						for (i=0; z < YAJL_GET_OBJECT(info)->len; z++){
+							if (!strcmp(YAJL_GET_OBJECT(info)->keys[i],"x"))
+								rb_info->x = YAJL_GET_INTEGER(YAJL_GET_OBJECT(info)->values[i]);
+							if (!strcmp(YAJL_GET_OBJECT(info)->keys[i],"y"))
+								rb_info->y = YAJL_GET_INTEGER(YAJL_GET_OBJECT(info)->values[i]);
+							if (!strcmp(YAJL_GET_OBJECT(info)->keys[i],"area_id"))
+								rb_info->area_id = YAJL_GET_INTEGER(YAJL_GET_OBJECT(info)->values[i]);
+							if (!strcmp(YAJL_GET_OBJECT(info)->keys[i],"Key")){
+								char * tmp;
+								rb_key = YAJL_GET_STRING(YAJL_GET_OBJECT(info)->values[i]);
+								tmp = YAJL_GET_STRING(YAJL_GET_ARRAY(info)->values[i]);
+								strcpy(rb_key, tmp);
+							}
+
+						}
+						RBTreeInsert(packet->Manager_data.people, rb_key, rb_info);
+					}
+				}
+
+			}
+
 			break;
 		case SENSOR_DATA:
 			path[1] = "data";
@@ -268,7 +324,7 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 						yajl_val rss_node = YAJL_GET_OBJECT(sensor_obj)->values[1];
 						sensor_data->RSS.type = YAJL_GET_INTEGER(YAJL_GET_OBJECT(rss_node)->values[0]);
 						sensor_data->RSS.node_number = YAJL_GET_INTEGER(YAJL_GET_OBJECT(rss_node)->values[1]);
-						sensor_data->RSS.nodes = (unsigned char **) malloc(MD5_DIGEST_LENGTH*sensor_data->RSS.node_number);
+						sensor_data->RSS.nodes = (unsigned char **) malloc(MD5_DIGEST_LENGTH*sensor_data->RSS.node_number + 1);
 						sensor_data->RSS.rss = (int8_t *) malloc(sizeof(int8_t)*sensor_data->RSS.node_number);
 						yajl_val node_array = YAJL_GET_OBJECT(rss_node)->values[2];
 

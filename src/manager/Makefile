@@ -5,7 +5,7 @@ EXECS = manager
 
 all: $(EXECS)
 
-spotter: *.c ../../lib/*.c
+manager: *.c ../../lib/*.c ../../lib/rbtree/*.c
 		$(CC) $(FLAGS) -o $@ $? $(LIBS)
 
 clean: 

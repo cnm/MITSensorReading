@@ -44,7 +44,7 @@ unsigned int broadcast_id = 0;
 static char * MatchService(GSDPacket * req){
 	LElement * cache_item;
 	LElement * service_item;
-	//TODO CHECK THIS COMPARE AND REMAKE ALL DESCRIPTIONS TO BE OWL
+	//TODO FUTURE WORK: CHECK THIS COMPARE AND REMAKE ALL DESCRIPTIONS TO BE OWL
 	FOR_EACH(cache_item,cache){
 		if (((ServiceCache *)cache_item->data)->local){
 			FOR_EACH(service_item, (((ServiceCache *)cache_item->data)->services)){

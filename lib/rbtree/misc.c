@@ -57,4 +57,4 @@ void * SafeMalloc(size_t size) {
 /*  as a function to RBTreeCreate when no other suitable function has */
 /*  been defined */
 
-void NullFunction(void * junk) { ; }
+void NullFunction(const void * junk) { ; }
