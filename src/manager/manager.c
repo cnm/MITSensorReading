@@ -77,9 +77,10 @@ void ServiceFound(uint16_t dest_handler, uint16_t request_id) {
 void SendManagerData(uint16_t address){
 
 	LocationPacket packet;
-	LElement * elem;
+	
 	unsigned char * data;
 	size_t length;
+	
 	packet.type = MANAGER_DATA;
 
 	packet.Manager_data.num_people = people_in_area;

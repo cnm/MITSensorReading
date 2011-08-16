@@ -36,4 +36,8 @@ typedef struct location{
 	unsigned short area_id;
 }Location;
 
+Map * LoadMap(char * map_info);
+void DestroyMap(Map * map);
+Location * InfoToCell(Map * map, float x, float y);
+
 #endif /* MAP_H_ */

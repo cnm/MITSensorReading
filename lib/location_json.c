@@ -20,11 +20,12 @@
 #include <syslog.h>
 #include "red_black_tree.h"
 #include "map.h"
+#include "manager.h"
 
 static void PrintNodeJSON(yajl_gen g, rb_red_blk_node* x){
 	yajl_gen_map_open(g);
 		yajl_gen_string(g, (unsigned char *) "Key", strlen("Key"));
-		yajl_gen_string(g, (char *) x->key, strlen((char *) x->key));
+		yajl_gen_string(g, (unsigned char *) x->key, strlen((char *) x->key));
 
 		yajl_gen_string(g, (unsigned char *) "x" , strlen("x"));
 		yajl_gen_integer(g, ((Location *) x->info)->x);
@@ -40,8 +41,6 @@ static void PrintNodeJSON(yajl_gen g, rb_red_blk_node* x){
 
 
 static void InorderTreeJSON(yajl_gen g, rb_red_blk_tree* tree, rb_red_blk_node* x) {
-  rb_red_blk_node* nil=tree->nil;
-  rb_red_blk_node* root=tree->root;
   if (x != tree->nil) {
     InorderTreeJSON(g, tree,x->left);
 
@@ -173,12 +172,12 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 			yajl_gen_map_open(g);
 
 				yajl_gen_string(g, (unsigned char *) "num_people", strlen("num_people"));
-				yajl_gen_integer(g, sensor->Manager_data.num_people);
+				yajl_gen_integer(g, packet->Manager_data.num_people);
 
 				yajl_gen_string(g, (unsigned char *) "people", strlen("people"));
 				yajl_gen_array_open(g);
 					
-					RBTreeJSON(g, sensor->Manager_data.people);
+					RBTreeJSON(g, packet->Manager_data.people);
 
 				yajl_gen_array_close(g);
 

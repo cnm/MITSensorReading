@@ -10,6 +10,7 @@
 
 #include "listType.h"
 #include "map.h"
+#include "red_black_tree.h"
 
 typedef enum data_type{ ENTRY, COUNT, RSS} DataType;
 typedef enum rss_type{ WIFI, BLUETOOTH, RFID, OTHER} RSSType;

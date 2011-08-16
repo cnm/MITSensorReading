@@ -1,6 +1,10 @@
 #ifdef DMALLOC
 #include <dmalloc.h>
 #endif
+
+#ifndef __H_red_black__
+#define __H_red_black__
+
 #include"misc.h"
 #include"stack.h"
 
@@ -65,3 +69,5 @@ rb_red_blk_node* TreeSuccessor(rb_red_blk_tree*,rb_red_blk_node*);
 rb_red_blk_node* RBExactQuery(rb_red_blk_tree*, void*);
 stk_stack * RBEnumerate(rb_red_blk_tree* tree,void* low, void* high);
 void NullFunction(const void*);
+
+#endif /* __H_red_black__ */

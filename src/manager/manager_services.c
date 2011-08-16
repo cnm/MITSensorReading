@@ -115,47 +115,49 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 					people_in_area = sensor->people;
 				break;
 			case RSS:
-				uint8_t num_ready = 0;
-				bool compute = false;
+				{
+					uint8_t num_ready = 0;
+					bool compute = false;
 
 
-				FOR_EACH(node,spotters){
-					Spotter * spotter = (Spotter *) node->data;
-
-					//Check if it is a past event
-					if (spotter->id == spotter_address){
-						if (time_sent < spotter->last_received)
-							break;
-
-						//Allocate it as the last info for this node till we have all the info from all nodes
-						if (spotter->current_info == NULL){
-							RSSInfo * rss = (RSSInfo *) malloc(sizeof(RSSInfo));
-							rss->nodes = (unsigned char **) malloc(MD5_DIGEST_LENGTH*sensor->RSS.node_number);
-							rss->rss = (int8_t *) malloc(sizeof(int8_t)*sensor->RSS.node_number);
-							memcpy(rss,&(sensor->RSS),sizeof(RSSInfo));
-							memcpy(rss->nodes, sensor->RSS.nodes,MD5_DIGEST_LENGTH*sensor->RSS.node_number);
-							memcpy(rss->rss,sensor->RSS.rss,sizeof(int8_t)*sensor->RSS.node_number);
-							spotter->current_info = rss;
-							spotter->last_received = time_sent;
-						}else{
-							compute = true;
-							break;
-						}
-					}
-
-					if(spotter->current_info != NULL)
-						num_ready++;
-				}
-
-				//When we have info from all nodes (or if missed an info from a node) we compute the location of people with the info we have
-				if (compute || num_ready == spotters.NumEl){
-					//TODO: ALL THE MAGIC! compute the location of people in this area!
-					//Remove spotter current_info
 					FOR_EACH(node,spotters){
 						Spotter * spotter = (Spotter *) node->data;
-						if (spotter->current_info != NULL){
-							FreeRSS(spotter->current_info);
-							spotter->current_info = NULL;
+
+						//Check if it is a past event
+						if (spotter->id == spotter_address){
+							if (time_sent < spotter->last_received)
+								break;
+
+							//Allocate it as the last info for this node till we have all the info from all nodes
+							if (spotter->current_info == NULL){
+								RSSInfo * rss = (RSSInfo *) malloc(sizeof(RSSInfo));
+								rss->nodes = (unsigned char **) malloc(MD5_DIGEST_LENGTH*sensor->RSS.node_number);
+								rss->rss = (int8_t *) malloc(sizeof(int8_t)*sensor->RSS.node_number);
+								memcpy(rss,&(sensor->RSS),sizeof(RSSInfo));
+								memcpy(rss->nodes, sensor->RSS.nodes,MD5_DIGEST_LENGTH*sensor->RSS.node_number);
+								memcpy(rss->rss,sensor->RSS.rss,sizeof(int8_t)*sensor->RSS.node_number);
+								spotter->current_info = rss;
+								spotter->last_received = time_sent;
+							}else{
+								compute = true;
+								break;
+							}
+						}
+
+						if(spotter->current_info != NULL)
+							num_ready++;
+					}
+
+					//When we have info from all nodes (or if missed an info from a node) we compute the location of people with the info we have
+					if (compute || num_ready == spotters.NumEl){
+						//TODO: ALL THE MAGIC! compute the location of people in this area!
+						//Remove spotter current_info
+						FOR_EACH(node,spotters){
+							Spotter * spotter = (Spotter *) node->data;
+							if (spotter->current_info != NULL){
+								FreeRSS(spotter->current_info);
+								spotter->current_info = NULL;
+							}
 						}
 					}
 				}
