@@ -111,13 +111,13 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 
 			break;
 		case REGISTER_MANAGER:
+		case CONFIRM_MANAGER:
 			yajl_gen_string(g, (unsigned char *) "manager_area_id", strlen("manager_area_id"));
 			yajl_gen_integer(g, packet->manager_area_id);
-
-			break;
-		case CONFIRM_MANAGER:
+			
 			yajl_gen_string(g, (unsigned char *) "required_frequency", strlen("required_frequency"));
 			yajl_gen_integer(g, packet->required_frequency);
+
 			break;
 		case SENSOR_DATA:
 			yajl_gen_string(g, (unsigned char *) "data", strlen("data"));
@@ -230,6 +230,7 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 
     switch(packet->type){
 		case REQUEST_INSTANT: break;
+
 		case REQUEST_FREQUENT:
 			path[1] = "required_frequency";
 			packet->required_frequency = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
@@ -255,14 +256,16 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 				}
 			}
 			break;
+
 		case REGISTER_MANAGER:
+		case CONFIRM_MANAGER:
+
 			path[1] = "manager_area_id";
 			packet->manager_area_id = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
-			break;
-		case CONFIRM_MANAGER:
 			path[1] = "required_frequency";
 			packet->required_frequency = YAJL_GET_INTEGER(yajl_tree_get(node, path, yajl_t_number));
 			break;
+
 		case MANAGER_DATA:
 			
 			path[1] = "Manager_data";
@@ -301,6 +304,7 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 			}
 
 			break;
+			
 		case SENSOR_DATA:
 			path[1] = "data";
 			yajl_val array = yajl_tree_get(node,path,yajl_t_array);

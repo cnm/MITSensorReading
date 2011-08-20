@@ -17,8 +17,49 @@
 #include "location_json.h"
 #include <fred/handler.h>
 #include "map.h"
+#include <dirent.h>
+
+void LoadMultiMaps(char * folder, LList * maps_loaded){
+	
+	DIR *dir;
+   	struct dirent *de;
+   	FILE *fp;
+   	long lSize;
+   	char *buffer;
+
+   	CreateList(maps_loaded);
+
+    dir = opendir(folder); 
+    while(dir)
+    {
+        de = readdir(dir);
+        if (!de) break;
+        fp = fopen(de->d_name, "rb");
+        if (!fp) continue;
+
+        fseek(fp,0L,SEEK_END);
+        lSize = ftell(fp);
+        rewind(fp);
+
+        buffer = calloc(1, lSize+1);
+        if (!buffer) fclose(fp),fputs("ERROR: memory alloc fails", stderr),exit(1);
+
+        if (1!=fread(buffer, lSize, 1, fp))
+        	fclose(fp),free(buffer),fputs("ERROR: error reading map file", stderr),exit(1);
+
+        fclose(fp);
+
+        Map * new_map = LoadMap(buffer);
+        AddToList(new_map,maps_loaded);
+
+        free(buffer);
 
 
+
+    }
+    closedir(dir);
+
+}
 
 Map * LoadMap(char * map_info){
 

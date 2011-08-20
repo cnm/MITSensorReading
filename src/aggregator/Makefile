@@ -1,11 +1,11 @@
 CC=gcc
-LIBS = -lpthread -lfred -lyajl -ldl
+LIBS = -lpthread -lfred -lyajl -ldl -lm
 FLAGS = -Wall -g -I../../include
-EXECS = aggregator
+EXECS = agg
 
 all: $(EXECS)
 
-spotter: *.c ../../lib/*.c
+agg: *.c ../../lib/*.c ../../lib/rbtree/*.c
 		$(CC) $(FLAGS) -o $@ $? $(LIBS)
 
 clean: 

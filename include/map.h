@@ -9,6 +9,7 @@
 #define MAP_H_
 
 #include "vec3d.h"
+#include "red_black_tree.h"
 
 typedef struct transition{
 	unsigned short area_id;
@@ -30,6 +31,8 @@ typedef struct map{
 	unsigned short y_cells;
 	unsigned short floor;
 	unsigned short cell_size;
+	unsigned short num_people;
+	rb_red_blk_tree * people;
 }Map;
 
 typedef struct location{
@@ -38,6 +41,16 @@ typedef struct location{
 	unsigned short area_id;
 }Location;
 
+typedef struct global_location{
+	Location current;
+	Location previous;
+	bool changed_map;
+	bool forced_mantain;
+	bool has_previous;
+	uint64_t last_update;
+}GlobalLocation;
+
+void LoadMultiMaps(char * folder, LList * maps_loaded);
 Map * LoadMap(char * map_info);
 void DestroyMap(Map * map);
 Location * InfoToCell(Map * map, vec3d * rs1, vec3d * rs2);

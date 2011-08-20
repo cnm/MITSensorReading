@@ -48,6 +48,14 @@ typedef struct spotter{
 	uint64_t last_received;
 }Spotter;
 
+typedef struct manager{
+	uint16_t id;
+	uint8_t map_id;
+	rb_red_blk_tree * current_info;
+	unsigned short num_people;
+	uint64_t last_received;
+}Manager;
+
 
 typedef struct location_packet{
 	MessageType type;
@@ -56,7 +64,6 @@ typedef struct location_packet{
 			Location sensor_location;
 			unsigned short min_update_frequency;
 		}RegSensor;
-		unsigned short required_frequency; //FOR Confirmation of spont. registry or for request frequent service
 		unsigned short manager_area_id;
 		SensorDataList data;
 		struct {
@@ -64,6 +71,7 @@ typedef struct location_packet{
 			unsigned short num_people;
 		}Manager_data;
 	};
+	unsigned short required_frequency; //FOR Confirmation of spont. registry or for request frequent service
 }LocationPacket;
 
 #endif /* LOCATION_H_ */
