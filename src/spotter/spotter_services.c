@@ -4,14 +4,15 @@
  *  Created on: Jun 22, 2011
  *      Author: root
  */
-#include<stdio.h>
-#include<stdint.h>
-#include<stdbool.h>
-#include<fred/handler.h>
-#include"location.h"
-#include"location_json.h"
-#include"spotter.h"
-#include"spotter_services.h"
+
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <fred/handler.h>
+#include "location.h"
+#include "location_json.h"
+#include "spotter.h"
+#include "spotter_services.h"
 
 extern Location self;
 extern __tp(handler)* handler;
