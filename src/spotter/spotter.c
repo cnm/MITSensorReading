@@ -11,6 +11,7 @@
 #include <syslog.h>
 #include <dlfcn.h>
 #include <fred/handler.h>
+#include <fred/addr_convert.h>
 #include <openssl/md5.h>
 #include "listType.h"
 #include "spotter.h"
@@ -202,13 +203,22 @@ void * spotter_send_loop(){
 
 void free_elements(){
 	LElement * elem;
-	unregister_handler_address(MY_ADDRESS,handler->module_communication.regd);
+	char * error;
+	void (* stop_cb)();
+	unregister_handler_address(dot2int(MY_ADDRESS/1000,MY_ADDRESS%1000),handler->module_communication.regd);
 	pthread_mutex_destroy(&manager);
 	pthread_mutex_destroy(&dataToSend);
 	FOR_EACH(elem, plugins){
 		Plugin * p = (Plugin *)elem->data;
+		stop_cb = dlsym(p->handle, "stop_cb");
+		if ((error = dlerror()) != NULL) {
+			fprintf(stderr, "%s\n", error);
+			continue;
+		}
+		
+		stop_cb();
 		dlclose(p->handle);
-	}
+	}	
 	FreeList(&plugins);
 	FreeList(&cached_data);
 }

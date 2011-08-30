@@ -90,7 +90,7 @@ extern char *optarg;
 static int p_inquiry = 0;
 static int run = 0;
 static int done = 0;
-int debug = 0;
+int debug = 1;
 
 static unsigned char buf[HCI_MAX_FRAME_SIZE];
 static unsigned char controlbuf[100];
@@ -100,6 +100,8 @@ short do_finger = 0;
 short num_fingers;
 short finger_min[20];
 short finger_max[20];
+
+static int dd;
 
 
 static int print_data(SensorData * data){
@@ -536,7 +538,7 @@ static int inquisition(int dd, int length) {
 }
 
 void * sense(){
-	int dd,length = 0x08,dongle_n = -1;
+	int length = 0x08,dongle_n = -1;
 
 	dongle_n = hci_get_route(NULL);
 
@@ -568,6 +570,8 @@ void start_sense(){
 
 void stop_cb(){
 	sensor_result = NULL;
+	if (dd>0)
+		hci_close_dev(dd);
 }
 
 static void fingerprint(){

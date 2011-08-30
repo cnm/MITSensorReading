@@ -17,6 +17,7 @@
 #include <syslog.h>
 #include <dlfcn.h>
 #include <fred/handler.h>
+#include <fred/addr_convert.h>
 #include "listType.h"
 #include "aggregator.h"
 #include "location.h"
@@ -142,7 +143,7 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int6
 }
 
 void free_elements(){
-	unregister_handler_address(MY_ADDRESS,handler->module_communication.regd);
+	unregister_handler_address(dot2int(MY_ADDRESS/1000,MY_ADDRESS%1000),handler->module_communication.regd);
 	FreeList(&maps);
 	FreeList(&managers);
 	//TODO: free all elements
