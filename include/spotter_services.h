@@ -1,10 +1,3 @@
-/*
- * spotter_services.h
- *
- *  Created on: Jun 24, 2011
- *      Author: root
- */
-
 #ifndef SPOTTER_SERVICES_H_
 #define SPOTTER_SERVICES_H_
 

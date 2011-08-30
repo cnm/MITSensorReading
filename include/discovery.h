@@ -1,8 +1,8 @@
 #ifndef __DISCOVERY_H__
 #define __DISCOVERY_H__
 
-#include "listType.h"
 #include <stdint.h>
+#include "listType.h"
 
 #define ENABLE_DEBUG 1
 
@@ -12,7 +12,6 @@
 
 #ifdef ENABLE_DEBUG
 	#define debugger(...) printf(__VA_ARGS__);
-	//#define debugger(...) openlog(DEBUG_FILE, LOG_PID|LOG_CONS, LOG_USER); syslog(LOG_INFO, __VA_ARGS__); closelog();
 #else
 	#define debugger(...)
 #endif

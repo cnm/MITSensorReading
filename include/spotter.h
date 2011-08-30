@@ -1,10 +1,3 @@
-/*
- * spotter.h
- *
- *  Created on: Jun 10, 2011
- *      Author: novais
- */
-
 #ifndef SPOTTER_H_
 #define SPOTTER_H_
 

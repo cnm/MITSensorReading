@@ -1,10 +1,3 @@
-/*
- * location_json.h
- *
- *  Created on: Jun 14, 2011
- *      Author: root
- */
-
 #ifndef LOCATION_JSON_H_
 #define LOCATION_JSON_H_
 
@@ -16,6 +9,6 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet);
 
 int CompareNodes(const void * key1, const void * key2);
 
-void PrintLocation(void * info)
+void PrintLocation(void * info);
 
 #endif /* LOCATION_JSON_H_ */

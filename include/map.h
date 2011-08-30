@@ -1,10 +1,3 @@
-/*
- * map.h
- *
- *  Created on: Aug 4, 2011
- *      Author: root
- */
-
 #ifndef MAP_H_
 #define MAP_H_
 

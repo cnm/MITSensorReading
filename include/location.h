@@ -1,10 +1,3 @@
-/*
- * location.h
- *
- *  Created on: Jun 13, 2011
- *      Author: root
- */
-
 #ifndef LOCATION_H_
 #define LOCATION_H_
 
