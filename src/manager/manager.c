@@ -17,6 +17,7 @@
 #include <syslog.h>
 #include <dlfcn.h>
 #include <fred/handler.h>
+#include <fred/addr_convert.h>
 #include "listType.h"
 #include "manager.h"
 #include "location.h"
@@ -147,17 +148,8 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int6
 	FreePacket(packet);
 }
 
-int CompareNodes(const void * key1, const void * key2){
-	return strcmp((const char *) key1, (const char *) key2);
-}
-
-void PrintLocation(void * info){
-	Location * loc = (Location *) info;
-	printf("x: %d \ny: %d \nmap_id id: %d \n", loc->x, loc->y,loc->area_id);
-}
-
 void free_elements(){
-	unregister_handler_address(MY_ADDRESS,handler->module_communication.regd);
+	unregister_handler_address(dot2int(MY_ADDRESS/1000,MY_ADDRESS%1000),handler->module_communication.regd);
 	RBTreeDestroy(people_located);
 	FreeList(&spotters);
 	pthread_mutex_destroy(&aggregator);
@@ -170,19 +162,29 @@ int main(int argc, char ** argv){
 	//LER CONFIGS
 	char line[80];
 	char * var_value;
-	FILE * config_file;
+	FILE * config_file, * fp;
 	int op = 0;
 	pthread_t update_aggregator_loop;
+	char * handler_file, * manager_file;
+	char * map_file, * map_tmp, * buffer;
+	long lSize;
 
-	if (argc != 3) {
+	if (argc != 3 && argc != 1) {
 		printf("USAGE: manager <Handler_file> <manager_file>\n");
 		return 0;
+	}
+	if (argc == 1){
+		handler_file = "../../config/manager_handler.cfg";
+		manager_file = "../../config/manager.cfg";
+	}else{
+		handler_file = argv[1];
+		manager_file = argv[2];
 	}
 
 	logger("Main - Reading Config file\n");
 
 	//LER CONFIGS DO FICHEIRO
-	if (!(config_file = fopen(argv[2], "rt"))) {
+	if (!(config_file = fopen(manager_file, "rt"))) {
 		printf("Invalid manager config file\n");
 		return 0;
 	}
@@ -196,10 +198,15 @@ int main(int argc, char ** argv){
 
 		if (!memcmp(var_value, "MY_ADDRESS",strlen("MY_ADDRESS")))
 			MY_ADDRESS = atoi(strtok(NULL, "=\n"));
-		else if(!memcmp(var_value, "map_id", strlen("map_id")))
+		else if(!memcmp(var_value, "MAP_ID", strlen("MAP_ID")))
 			map_id = atoi(strtok(NULL,"=\n"));
 		else if (!memcmp(var_value, "MIN_UPDATE_FREQUENCY", strlen("MIN_UPDATE_FREQUENCY")))
 			MIN_UPDATE_FREQUENCY = atoi(strtok(NULL, "=\n"));
+		else if (!memcmp(var_value, "MAP_FILE", strlen("MAP_FILE"))){
+			map_tmp = strtok(NULL, " \n");
+			map_file = (char *) malloc(strlen(map_tmp) + 1);
+			memcpy(map_file,map_tmp,strlen(map_tmp) + 1);
+		}
 
 	}
 
@@ -208,10 +215,27 @@ int main(int argc, char ** argv){
 	people_located = RBTreeCreate(CompareNodes,free,free,NullFunction,PrintLocation);
 	CreateList(&spotters);
 
+	fp = fopen(map_file, "rb");
+    if (!fp) fputs("ERROR: couldn't open map file\n", stderr),exit(1);
+
+    fseek(fp,0L,SEEK_END);
+    lSize = ftell(fp);
+    rewind(fp);
+
+    buffer = calloc(1, lSize+1);
+    if (!buffer) fclose(fp),fputs("ERROR: memory alloc fails\n", stderr),exit(1);
+
+    if (1!=fread(buffer, lSize, 1, fp))
+    	fclose(fp),free(buffer),fputs("ERROR: error reading map file\n", stderr),exit(1);
+
+    fclose(fp);
+
+    my_map = LoadMap(buffer);
+
 	logger("Main - Configuration concluded\n");
 
 	//REGISTER HANDLER
-	handler = __tp(create_handler_based_on_file)(argv[1], receive);
+	handler = __tp(create_handler_based_on_file)(handler_file, receive);
 
 	//REGISTER SERVICE
 	RegisterService(NULL,handler,MY_ADDRESS,ServiceFound);

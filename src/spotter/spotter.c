@@ -11,6 +11,7 @@
 #include <syslog.h>
 #include <dlfcn.h>
 #include <fred/handler.h>
+#include <openssl/md5.h>
 #include "listType.h"
 #include "spotter.h"
 #include "location.h"
@@ -245,7 +246,7 @@ void print_current_data(){
 			case RSS:
 				printf("--- TYPE: RSS - NUM_NODES: %hu \n", sensor->RSS.node_number);
 				for (i=0; i < sensor->RSS.node_number; i++){
-					printf("- ID: %s , RSS: %d \n", sensor->RSS.nodes[i], sensor->RSS.rss[i]);
+					printf("- ID: %s , RSS: %d \n", sensor->RSS.nodes + i*(MD5_DIGEST_LENGTH+1), sensor->RSS.rss[i]);
 				}
 				break;
 		}

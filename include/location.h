@@ -21,14 +21,14 @@ typedef LList SensorDataList;
 typedef struct rss{
 	RSSType type;
 	unsigned short node_number;
-	int8_t * rss;
-	unsigned char ** nodes;
+	uint16_t * rss;
+	unsigned char * nodes;
 }RSSInfo;
 
 typedef struct tri_info{
 	unsigned char * node;
 	Location s1,s2,s3;
-	int8_t r1,r2,r3;
+	uint16_t r1,r2,r3;
 	bool b2,b3;
 }TriInfo;
 

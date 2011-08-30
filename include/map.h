@@ -44,8 +44,7 @@ typedef struct location{
 typedef struct global_location{
 	Location current;
 	Location previous;
-	bool changed_map;
-	bool forced_mantain;
+	bool conflicted;
 	bool has_previous;
 	uint64_t last_update;
 }GlobalLocation;
@@ -54,5 +53,6 @@ void LoadMultiMaps(char * folder, LList * maps_loaded);
 Map * LoadMap(char * map_info);
 void DestroyMap(Map * map);
 Location * InfoToCell(Map * map, vec3d * rs1, vec3d * rs2);
+bool CheckTransition(LList * maps, Location * previous, Location  * comitted_pos, Location * conflicted_pos, bool prev_conflicted);
 
 #endif /* MAP_H_ */

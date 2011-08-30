@@ -114,15 +114,6 @@ void FreePacket(LocationPacket * packet){
 	free(packet);
 }
 
-int CompareNodes(const void * key1, const void * key2){
-	return strcmp((const char *) key1, (const char *) key2);
-}
-
-void PrintLocation(void * info){
-	Location * loc = (Location *) info;
-	printf("x: %d \ny: %d \nmap_id id: %d \n", loc->x, loc->y,loc->area_id);
-}
-
 void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int64_t air_time, uint16_t src_id){
 	LocationPacket * packet = (LocationPacket *) malloc(sizeof(LocationPacket));
 	generate_packet_from_JSON(data, packet);
@@ -166,16 +157,25 @@ int main(int argc, char ** argv){
 	FILE * config_file;
 	int op = 0;
 	pthread_t update_server_loop;
+	char * handler_file, * agg_file;
 
-	if (argc != 3) {
+	if (argc != 3 && argc != 1) {
 		printf("USAGE: agg <Handler_file> <aggregator_file>\n");
 		return 0;
 	}
+	if (argc == 1){
+		handler_file = "../../config/aggregator_handler.cfg";
+		agg_file = "../../config/aggregator.cfg";
+	}else{
+		handler_file = argv[1];
+		agg_file = argv[2];
+	}
+
 
 	logger("Main - Reading Config file\n");
 
 	//LER CONFIGS DO FICHEIRO
-	if (!(config_file = fopen(argv[2], "rt"))) {
+	if (!(config_file = fopen(agg_file, "rt"))) {
 		printf("Invalid manager config file\n");
 		return 0;
 	}
@@ -208,7 +208,7 @@ int main(int argc, char ** argv){
 	LoadMultiMaps(MAP_FOLDER,&maps);
 
 	//REGISTER HANDLER
-	handler = __tp(create_handler_based_on_file)(argv[1], receive);
+	handler = __tp(create_handler_based_on_file)(handler_file, receive);
 
 	//REGISTER SERVICE
 	RegisterService(NULL,handler,MY_ADDRESS,ServiceFound);

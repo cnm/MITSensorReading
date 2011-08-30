@@ -20,16 +20,18 @@
 #include "ReverseRoute.h"
 #include "GSD_JSON_handler.h"
 #include <fred/handler.h>
+#include <fred/addr_convert.h>
 
 unsigned short ADV_TIME_INTERVAL = 30;
 unsigned short ADV_LIFE_TIME = 180;
 unsigned short ADV_MAX_DIAMETER = 1;
 unsigned short ADV_CACHE_SIZE = 20;
 unsigned short REV_ROUTE_TIMEOUT = 60;
-uint16_t BROADCAST_ID = 1;
+uint16_t BROADCAST_HANDLER_ID = 1000;
 uint16_t MYADDRESS = 1001;
-uint16_t MYPORT = 57432;
+uint16_t MYPORT = 32120;
 char * INTERFACE = "wlan0";
+char * BROADCAST_IP = "255.255.255.255:32120";
 char * MYIPADDRESS;
 char * porto;
 
@@ -85,7 +87,7 @@ static void SelectiveForward(GSDPacket * req){
 		
 		if (!forwarded){
 			logger("No available match, broadcasting request");
-			send_data(handler, (char *) data, length, BROADCAST_ID); 
+			send_data(handler, (char *) data, length, BROADCAST_HANDLER_ID); 
 		}else
 			logger("Encountered possible match to service. Forwarding request unicast");
 	}
@@ -188,7 +190,8 @@ void *SendAdvertisement(void * thread_id){
 		size_t length;
 		generate_JSON(&packet, &data, &length);
 			
-		send_data(handler, (char *) data, length, BROADCAST_ID);
+		send_data(handler, (char *) data, length, BROADCAST_HANDLER_ID
+		);
 		
 		logger("Advertisement Sent");
 		
@@ -277,7 +280,7 @@ static void P2PCacheAndForwardAdvertisement(GSDPacket * message){
 		
 		if (message->hop_count<message->advertise->diameter){
 			logger("Forwarding advertise\n");
-			send_data(handler, (char *) data, size, BROADCAST_ID);
+			send_data(handler, (char *) data, size, BROADCAST_HANDLER_ID);
 		}
 
 	}
@@ -318,12 +321,12 @@ static void create_local_request(char * data, GSDPacket * packet,uint16_t addres
 
 		local->local_address = address;
 		local->request_id = atoi(parser);
-		local->broadcast_id = BROADCAST_ID;
+		local->broadcast_id = broadcast_id;
 
 		packet->packet_type = GSD_REQUEST;
 		packet->source_address = MYADDRESS;
 		packet->hop_count = 0;
-		packet->broadcast_id = BROADCAST_ID++;
+		packet->broadcast_id = broadcast_id++;
 		packet->request = req;
 		packet->gsd_ip_address = MYIPADDRESS;
 		
@@ -383,6 +386,7 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int6
 	free(packet);
 }
 
+/*
 void * test(void * thread_id){
 	GSDPacket message;
 	sleep(2);
@@ -410,7 +414,7 @@ void * test(void * thread_id){
 	pthread_exit(NULL);
 	return NULL;
 }
-
+*/
 /*static void simulate_cache_entries(){
 	
 	
@@ -487,10 +491,21 @@ int main(int argc, char **argv)
     struct ifaddrs * ifa=NULL;
     void * tmpAddrPtr=NULL;
     FILE * config_file;
+    char * handler_file, * gsd_file, * services_file = NULL;
     
-    if (argc < 3 || argc > 4){
+    if (argc != 1 && argc != 3 && argc != 4){
 		printf("USAGE: gsd <Handler_file> <GSD_file> [<Local_Services_file>]\n");
 		return 0;
+	}
+	if (argc == 1){
+		handler_file = "../../config/gsd_handler.cfg";
+		gsd_file = "../../config/gsd.cfg";
+		services_file = "../../config/gsd_services.cfg";
+	}else{
+		handler_file = argv[1];
+		gsd_file = argv[2];
+		if (argc == 4)
+			services_file = argv[3];
 	}
 	
 	CreateList(&cache);
@@ -499,7 +514,7 @@ int main(int argc, char **argv)
 	logger("Main - Reading Config file\n");
 	
 	//LER CONFIGS DO FICHEIRO
-	if (!(config_file = fopen(argv[2],"rt"))){
+	if (!(config_file = fopen(gsd_file,"rt"))){
 		printf("Invalid GSD config file\n");
 		return 0;
 	}
@@ -523,17 +538,23 @@ int main(int argc, char **argv)
 		if (memcmp(var_value,"REV_ROUTE_TIMEOUT", strlen("REV_ROUTE_TIMEOUT")) == 0)
 			REV_ROUTE_TIMEOUT = atoi(strtok(NULL,"=\n"));
 		if (memcmp(var_value,"BROADCAST_ID", strlen("BROADCAST_ID")) == 0)
-			BROADCAST_ID = atoi(strtok(NULL,"=\n"));
+			BROADCAST_HANDLER_ID = atoi(strtok(NULL,"=\n"));
 		if (memcmp(var_value,"MYPORT", strlen("MYPORT")) == 0)
 			MYPORT = atoi(strtok(NULL,"=\n"));
 		if (memcmp(var_value,"MYADDRESS", strlen("MYADDRESS")) == 0)
 			MYADDRESS = atoi(strtok(NULL,"=\n"));
 		if (memcmp(var_value,"INTERFACE", strlen("INTERFACE")) == 0)
 			INTERFACE = strtok(NULL, "=\n");
+		
 			
 	}
 	
 	fclose(config_file);
+
+	MYADDRESS = dot2int(MYADDRESS / 1000, MYADDRESS % 1000);
+	BROADCAST_HANDLER_ID = dot2int(BROADCAST_HANDLER_ID / 1000, 0);
+
+	printf("%d; %d", MYADDRESS, BROADCAST_HANDLER_ID);
 	
 	//VERIFICAR IP
     getifaddrs(&ifAddrStruct);
@@ -557,10 +578,10 @@ int main(int argc, char **argv)
     
     debugger("Main - MYADDRESS: %d\n",MYADDRESS);
     
-    if (argc == 4){
+    if (services_file != NULL){
 		
-		if(!(config_file = fopen(argv[3], "rt"))) {
-			printf("Invalid Local Services File");
+		if(!(config_file = fopen(services_file, "rt"))) {
+			printf("Invalid Local Services File\n");
 			return 0;
 		}
 		
@@ -587,13 +608,11 @@ int main(int argc, char **argv)
     
 //    if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
 
-	handler = __tp(create_handler_based_on_file)(argv[1], receive);	
+	handler = __tp(create_handler_based_on_file)(handler_file, receive);	
 	
 	// ############## TEST SEGMENT ############### 
 	
-	char ip[22] = "255.255.255.255:57432";
-	
-	Register_Handler(ip, BROADCAST_ID);
+
 	
 	//pthread_create(&thread2, NULL, test, NULL);
 	//simulate_cache_entries();

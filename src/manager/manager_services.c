@@ -76,10 +76,6 @@ void SpontaneousSpotter(uint16_t spotter_address, Location location, unsigned sh
 }
 
 void FreeRSS(RSSInfo * rss){
-	short i;
-	for (i = 0; i < rss->node_number; i++){
-		free(rss->nodes[i]);
-	}
 	free(rss->nodes);
 	free(rss->rss);
 	free(rss);
@@ -134,11 +130,11 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 							//Allocate it as the last info for this node till we have all the info from all nodes
 							if (spotter->current_info == NULL){
 								RSSInfo * rss = (RSSInfo *) malloc(sizeof(RSSInfo));
-								rss->nodes = (unsigned char **) malloc(MD5_DIGEST_LENGTH*sensor->RSS.node_number);
-								rss->rss = (int8_t *) malloc(sizeof(int8_t)*sensor->RSS.node_number);
+								rss->nodes = (unsigned char *) malloc((MD5_DIGEST_LENGTH+1)*sensor->RSS.node_number);
+								rss->rss = (uint16_t *) malloc(sizeof(uint16_t)*sensor->RSS.node_number);
 								memcpy(rss,&(sensor->RSS),sizeof(RSSInfo));
-								memcpy(rss->nodes, sensor->RSS.nodes,MD5_DIGEST_LENGTH*sensor->RSS.node_number);
-								memcpy(rss->rss,sensor->RSS.rss,sizeof(int8_t)*sensor->RSS.node_number);
+								memcpy(rss->nodes, sensor->RSS.nodes,(MD5_DIGEST_LENGTH+1)*sensor->RSS.node_number);
+								memcpy(rss->rss,sensor->RSS.rss,sizeof(uint16_t)*sensor->RSS.node_number);
 								spotter->current_info = rss;
 								spotter->last_received = time_sent;
 							}else{
@@ -166,7 +162,7 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 
 									FOR_EACH(elem, raw_list){
 										TriInfo * tri = (TriInfo *) elem->data;
-										 if (!strcmp((const char *) tri->node,(const char *) *(spotter->current_info->nodes+MD5_DIGEST_LENGTH*i))){
+										 if (!memcmp((const char *) tri->node,(const char *) spotter->current_info->nodes+(MD5_DIGEST_LENGTH+1)*i, MD5_DIGEST_LENGTH)){
 										 	in_list = true;
 										 	if (!tri->b2){
 										 		tri->b2 = true;
@@ -181,7 +177,7 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 									if (!in_list){
 										TriInfo * new = (TriInfo *) malloc(sizeof(TriInfo));
 										new->node = (unsigned char *) malloc(MD5_DIGEST_LENGTH + 1);
-										strcpy((char *) new->node, (char *) *(spotter->current_info->nodes+MD5_DIGEST_LENGTH*i));
+										memcpy((char *) new->node, (char *) spotter->current_info->nodes+(MD5_DIGEST_LENGTH+1)*i,MD5_DIGEST_LENGTH+1);
 										new->s1 = spotter->location;
 										new->r1 = spotter->current_info->rss[i];
 										AddToList(new, &raw_list);

@@ -114,7 +114,7 @@ Map * LoadMap(char * map_info){
 
 			 yajl_val cell = YAJL_GET_ARRAY(YAJL_GET_ARRAY((yajl_tree_get(node,path, yajl_t_array)))->values[x])->values[y];
 
-			 if (YAJL_IS_INTEGER(cell)){
+			 if (YAJL_IS_NUMBER(cell)){
 				 map->cells[x][y].prob_location = YAJL_GET_INTEGER(YAJL_GET_ARRAY(YAJL_GET_ARRAY((yajl_tree_get(node,path, yajl_t_array)))->values[x])->values[y]);
 			 	 map->cells[x][y].transition_cell = false;
 			 }else if (YAJL_IS_NULL(cell)){
@@ -137,6 +137,53 @@ Map * LoadMap(char * map_info){
 
 }
 
+static bool AdjacentTransition(Map * map, Location * location){
+
+	if (map->cells[location->x][location->y].transition_cell || (location->x + 1 <= map->x_cells && map->cells[location->x + 1][location->y].transition_cell) || (location->x - 1 >= 0 && map->cells[location->x - 1][location->y].transition_cell) || (location->y + 1 <= map->y_cells && map->cells[location->x][location->y + 1].transition_cell) || (location->y - 1 >= 0 && map->cells[location->x][location->y - 1].transition_cell))
+		return true;
+	
+	if (location->y % 2 == 0){
+		return (location->x - 1 >= 0 && location->y+1 <= map->y_cells && map->cells[location->x - 1][location->y + 1].transition_cell) || (location->x - 1 >= 0 && location->y - 1 >= 0 && map->cells[location->x - 1][location->y - 1].transition_cell);
+	}else{
+		return (location->x + 1 <= map->x_cells && location->y - 1 >= 0 && map->cells[location->x + 1][location->y - 1].transition_cell) || (location->x +1 <= map->x_cells && location->y + 1 <= map->y_cells && map->cells[location->x + 1][location->y + 1].transition_cell);
+	}
+}
+
+bool CheckTransition(LList * maps, Location * previous, Location  * comitted_pos, Location * conflicted_pos, bool prev_conflicted){
+	//TODO: Check for transition cells around previous and decide if it should assume the conflicted position
+
+	uint8_t old_area = previous->area_id;
+	uint8_t new_area = comitted_pos->area_id;
+	uint8_t conf_area = conflicted_pos->area_id;
+	Map * map, *old_map, *new_map, *conf_map;
+	LElement * elem;
+	LList maps_for = *maps;
+
+	if (new_area == conf_area)
+		return false;
+
+	if (prev_conflicted)
+		return true;
+
+	FOR_EACH(elem, maps_for){
+		map = (Map *) elem->data;
+		if (map->area_id == old_area)
+			old_map = map;
+		if (map->area_id == new_area)
+			new_map = map;
+		if (map->area_id == conf_area)
+			conf_map = map;
+	}
+
+	if (old_area != conf_area)
+		return (AdjacentTransition(old_map, previous) || AdjacentTransition(new_map, comitted_pos)) && AdjacentTransition(conf_map, conflicted_pos);
+	else
+		return !(AdjacentTransition(old_map, previous) || AdjacentTransition(conf_map, conflicted_pos)) && AdjacentTransition(new_map, comitted_pos);	
+	
+
+	return false;
+}
+
 void DestroyMap(Map * map){
 	short x;
 	for (x=0; x < map->x_cells ; x++)
@@ -146,6 +193,312 @@ void DestroyMap(Map * map){
 }
 
 Location * InfoToCell(Map * map, vec3d * rs1, vec3d * rs2){
-	//Todo calc the cell Correspondent to the computed info
-	return NULL;
+
+
+	Location * location = (Location *) malloc(sizeof(Location));
+	location->area_id = map->area_id;
+
+	double x1 = rs1->x/map->cell_size;
+	double y1 = rs1->y/map->cell_size;
+	double x2 = rs2->x/map->cell_size;
+	double y2 = rs2->y/map->cell_size;
+
+	unsigned int cell_x1 = (unsigned int) x1;
+	unsigned int cell_y1 = (unsigned int) y1;
+	unsigned int cell_x2 = (unsigned int) x2;
+	unsigned int cell_y2 = (unsigned int) y2;
+		
+	double x1c = x1 - cell_x1;
+	double y1c = y1 - cell_y1;
+	double x2c = x2 - cell_x2;
+	double y2c = y2 - cell_y2;
+
+	if (cell_x1 >= 0 && cell_x1 <= map->x_cells && cell_y1 >= 0 && cell_y1 <= map->y_cells){
+
+		if (map->cells[cell_x1][cell_y1].prob_location == 1){
+			location->x = cell_x1;
+			location->y = cell_y1;
+			return location;
+		}else{
+			
+			if (cell_y1 % 2 == 0){
+				//EVEN
+				//(i+1, j), (i-1, j), (i, j-1), (i, j+1), (i-1, j-1), (i-1, j+1)
+
+				
+
+				if (x1c <= 0.5 && y1c <= 0.5){
+					if (cell_x1 - 1 >= 0 && cell_y1 -1 >= 0 && map->cells[cell_x1 - 1][cell_y1 - 1].prob_location == 1){
+						location->x = cell_x1 - 1;
+						location->y = cell_y1 - 1;
+						return location;
+					}
+					if (cell_x1 -1 >= 0 && map->cells[cell_x1 - 1][cell_y1].prob_location == 1){
+						location->x = cell_x1 - 1;
+						location->y = cell_y1;
+						return location;
+					}
+					if (cell_y1 -1 >= 0 && map->cells[cell_x1][cell_y1 - 1].prob_location == 1){
+						location->x = cell_x1;
+						location->y = cell_y1 - 1;
+						return location;
+					}
+				}
+				if (x1c <= 0.5 && y1c >= 0.5){
+					if (cell_x1 -1 >= 0 && cell_y1 + 1 <= map->y_cells && map->cells[cell_x1][cell_y1 + 1].prob_location == 1){
+						location->x = cell_x1 - 1;
+						location->y = cell_y1 + 1;
+						return location;
+					}
+					if (cell_y1 + 1 <= map->y_cells && map->cells[cell_x1][cell_y1 + 1].prob_location == 1){
+						location->x = cell_x1;
+						location->y = cell_y1 + 1;
+						return location;
+					}
+					if (cell_x1 - 1 >= 0 && map->cells[cell_x1 - 1][cell_y1].prob_location == 1){
+						location->x = cell_x1 - 1;
+						location->y = cell_y1;
+						return location;
+					}
+				}
+				if (x1c >= 0.5 && y1c <= 0.5){
+					if (cell_x1 + 1 <= map->x_cells && map->cells[cell_x1 + 1][cell_y1].prob_location == 1){
+						location->x = cell_x1 + 1;
+						location->y = cell_y1;
+						return location;
+					}
+					if (cell_y1 - 1 >= 0 && map->cells[cell_x1][cell_y1 - 1].prob_location == 1){
+						location->x = cell_x1;
+						location->y = cell_y1 - 1;
+						return location;
+					}
+				}
+
+				if (x1c >= 0.5 && y1c >= 0.5){
+					if (cell_x1 + 1 <= map->x_cells && map->cells[cell_x1 + 1][cell_y1].prob_location == 1){
+						location->x = cell_x1 + 1;
+						location->y = cell_y1;
+						return location;
+					}
+					if (cell_y1 + 1 <= map->y_cells && map->cells[cell_x1][cell_y1 + 1].prob_location == 1){
+						location->x = cell_x1;
+						location->y = cell_y1 + 1;
+						return location;
+					}
+				}
+			}else{
+				//ODD
+				//(i+1, j), (i-1, j), (i, j-1), (i, j+1), (i+1, j-1), (i+1, j+1)
+
+				if (x1c <= 0.5 && y1c <= 0.5){
+					if (cell_x1 -1 >= 0 && map->cells[cell_x1 - 1][cell_y1].prob_location == 1){
+						location->x = cell_x1 - 1;
+						location->y = cell_y1;
+						return location;
+					}
+					if (cell_y1 -1 >= 0 && map->cells[cell_x1][cell_y1 - 1].prob_location == 1){
+						location->x = cell_x1;
+						location->y = cell_y1 - 1;
+						return location;
+					}
+				}
+				if (x1c <= 0.5 && y1c >= 0.5){
+					if (cell_y1 + 1 <= map->y_cells && map->cells[cell_x1][cell_y1 + 1].prob_location == 1){
+						location->x = cell_x1;
+						location->y = cell_y1 + 1;
+						return location;
+					}
+					if (cell_x1 - 1 >= 0 && map->cells[cell_x1 - 1][cell_y1].prob_location == 1){
+						location->x = cell_x1 - 1;
+						location->y = cell_y1;
+						return location;
+					}
+				}
+				if (x1c >= 0.5 && y1c <= 0.5){
+					if (cell_x1 + 1 <= map->x_cells &&  cell_y1 -1 >= 0 && map->cells[cell_x1 + 1][cell_y1 - 1].prob_location == 1){
+						location->x = cell_x1 + 1;
+						location->y = cell_y1 - 1;
+						return location;
+					}
+					if (cell_x1 + 1 <= map->x_cells && map->cells[cell_x1 + 1][cell_y1].prob_location == 1){
+						location->x = cell_x1 + 1;
+						location->y = cell_y1;
+						return location;
+					}
+					if (cell_y1 - 1 >= 0 && map->cells[cell_x1][cell_y1 - 1].prob_location == 1){
+						location->x = cell_x1;
+						location->y = cell_y1 - 1;
+						return location;
+					}
+				}
+
+				if (x1c >= 0.5 && y1c >= 0.5){
+					if (cell_x1 + 1 <= map->x_cells && cell_y1 + 1 <= map->y_cells && map->cells[cell_x1 + 1][cell_y1 + 1].prob_location == 1){
+						location->x = cell_x1 + 1;
+						location->y = cell_y1 + 1;
+						return location;
+					}
+					if (cell_x1 + 1 <= map->x_cells && map->cells[cell_x1 + 1][cell_y1].prob_location == 1){
+						location->x = cell_x1 + 1;
+						location->y = cell_y1;
+						return location;
+					}
+					if (cell_y1 + 1 <= map->y_cells && map->cells[cell_x1][cell_y1 + 1].prob_location == 1){
+						location->x = cell_x1;
+						location->y = cell_y1 + 1;
+						return location;
+					}
+				}
+
+
+			}
+				
+		}
+
+		
+	}else if (cell_x2 >= 0 && cell_x2 <= map->x_cells && cell_y2 >= 0 && cell_y2 <= map->y_cells){
+		if (map->cells[cell_x2][cell_y2].prob_location == 1){
+			location->x = cell_x2;
+			location->y = cell_y2;
+			return location;
+		}else{
+			if (cell_y2 % 2 == 0){
+				//EVEN
+				//(i+1, j), (i-1, j), (i, j-1), (i, j+1), (i-1, j-1), (i-1, j+1)
+
+				
+
+				if (x2c <= 0.5 && y2c <= 0.5){
+					if (cell_x2 - 1 >= 0 && cell_y2 -1 >= 0 && map->cells[cell_x2 - 1][cell_y2 - 1].prob_location == 1){
+						location->x = cell_x2 - 1;
+						location->y = cell_y2 - 1;
+						return location;
+					}
+					if (cell_x2 -1 >= 0 && map->cells[cell_x2 - 1][cell_y2].prob_location == 1){
+						location->x = cell_x2 - 1;
+						location->y = cell_y2;
+						return location;
+					}
+					if (cell_y2 -1 >= 0 && map->cells[cell_x2][cell_y2 - 1].prob_location == 1){
+						location->x = cell_x2;
+						location->y = cell_y2 - 1;
+						return location;
+					}
+				}
+				if (x2c <= 0.5 && y2c >= 0.5){
+					if (cell_x2 -1 >= 0 && cell_y2 + 1 <= map->y_cells && map->cells[cell_x2][cell_y2 + 1].prob_location == 1){
+						location->x = cell_x2 - 1;
+						location->y = cell_y2 + 1;
+						return location;
+					}
+					if (cell_y2 + 1 <= map->y_cells && map->cells[cell_x2][cell_y2 + 1].prob_location == 1){
+						location->x = cell_x2;
+						location->y = cell_y2 + 1;
+						return location;
+					}
+					if (cell_x2 - 1 >= 0 && map->cells[cell_x2 - 1][cell_y2].prob_location == 1){
+						location->x = cell_x2 - 1;
+						location->y = cell_y2;
+						return location;
+					}
+				}
+				if (x2c >= 0.5 && y2c <= 0.5){
+					if (cell_x2 + 1 <= map->x_cells && map->cells[cell_x2 + 1][cell_y2].prob_location == 1){
+						location->x = cell_x2 + 1;
+						location->y = cell_y2;
+						return location;
+					}
+					if (cell_y2 - 1 >= 0 && map->cells[cell_x2][cell_y2 - 1].prob_location == 1){
+						location->x = cell_x2;
+						location->y = cell_y2 - 1;
+						return location;
+					}
+				}
+
+				if (x2c >= 0.5 && y2c >= 0.5){
+					if (cell_x2 + 1 <= map->x_cells && map->cells[cell_x2 + 1][cell_y2].prob_location == 1){
+						location->x = cell_x2 + 1;
+						location->y = cell_y2;
+						return location;
+					}
+					if (cell_y2 + 1 <= map->y_cells && map->cells[cell_x2][cell_y2 + 1].prob_location == 1){
+						location->x = cell_x2;
+						location->y = cell_y2 + 1;
+						return location;
+					}
+				}
+			}else{
+				//ODD
+				//(i+1, j), (i-1, j), (i, j-1), (i, j+1), (i+1, j-1), (i+1, j+1)
+
+				if (x2c <= 0.5 && y2c <= 0.5){
+					if (cell_x2 -1 >= 0 && map->cells[cell_x2 - 1][cell_y2].prob_location == 1){
+						location->x = cell_x2 - 1;
+						location->y = cell_y2;
+						return location;
+					}
+					if (cell_y2 -1 >= 0 && map->cells[cell_x2][cell_y2 - 1].prob_location == 1){
+						location->x = cell_x2;
+						location->y = cell_y2 - 1;
+						return location;
+					}
+				}
+				if (x2c <= 0.5 && y2c >= 0.5){
+					if (cell_y2 + 1 <= map->y_cells && map->cells[cell_x2][cell_y2 + 1].prob_location == 1){
+						location->x = cell_x2;
+						location->y = cell_y2 + 1;
+						return location;
+					}
+					if (cell_x2 - 1 >= 0 && map->cells[cell_x2 - 1][cell_y2].prob_location == 1){
+						location->x = cell_x2 - 1;
+						location->y = cell_y2;
+						return location;
+					}
+				}
+				if (x2c >= 0.5 && y2c <= 0.5){
+					if (cell_x2 + 1 <= map->x_cells &&  cell_y2 -1 >= 0 && map->cells[cell_x2 + 1][cell_y2 - 1].prob_location == 1){
+						location->x = cell_x2 + 1;
+						location->y = cell_y2 - 1;
+						return location;
+					}
+					if (cell_x2 + 1 <= map->x_cells && map->cells[cell_x2 + 1][cell_y2].prob_location == 1){
+						location->x = cell_x2 + 1;
+						location->y = cell_y2;
+						return location;
+					}
+					if (cell_y2 - 1 >= 0 && map->cells[cell_x2][cell_y2 - 1].prob_location == 1){
+						location->x = cell_x2;
+						location->y = cell_y2 - 1;
+						return location;
+					}
+				}
+
+				if (x2c >= 0.5 && y2c >= 0.5){
+					if (cell_x2 + 1 <= map->x_cells && cell_y2 + 1 <= map->y_cells && map->cells[cell_x2 + 1][cell_y2 + 1].prob_location == 1){
+						location->x = cell_x2 + 1;
+						location->y = cell_y2 + 1;
+						return location;
+					}
+					if (cell_x2 + 1 <= map->x_cells && map->cells[cell_x2 + 1][cell_y2].prob_location == 1){
+						location->x = cell_x2 + 1;
+						location->y = cell_y2;
+						return location;
+					}
+					if (cell_y2 + 1 <= map->y_cells && map->cells[cell_x2][cell_y2 + 1].prob_location == 1){
+						location->x = cell_x2;
+						location->y = cell_y2 + 1;
+						return location;
+					}
+				}
+
+
+			}
+		}
+
+	}
+
+	location->x = 0;
+	location->y = 0;
+
+	return location;
 }

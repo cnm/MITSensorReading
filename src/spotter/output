@@ -1,0 +1,705 @@
+In file included from ../../include/gsd_api.h:12:0,
+                 from spotter.c:19:
+../../include/discovery.h: In function ‘PrintLocation’:
+../../include/discovery.h:20:16: error: storage class specified for parameter ‘Group’
+../../include/discovery.h:21:15: error: storage class specified for parameter ‘GroupList’
+../../include/discovery.h:22:15: error: storage class specified for parameter ‘ServiceList’
+../../include/discovery.h:23:15: error: storage class specified for parameter ‘RequestList’
+../../include/discovery.h:25:64: error: storage class specified for parameter ‘PacketType’
+../../include/discovery.h:31:2: error: expected specifier-qualifier-list before ‘GroupList’
+../../include/discovery.h:32:2: error: storage class specified for parameter ‘Service’
+../../include/discovery.h:37:2: error: storage class specified for parameter ‘ServiceReply’
+../../include/discovery.h:42:2: error: expected specifier-qualifier-list before ‘ServiceList’
+../../include/discovery.h:44:2: error: storage class specified for parameter ‘Advertisement’
+../../include/discovery.h:49:2: error: expected specifier-qualifier-list before ‘Service’
+../../include/discovery.h:50:2: error: storage class specified for parameter ‘Request’
+../../include/discovery.h:56:2: error: storage class specified for parameter ‘LocalRequest’
+../../include/discovery.h:60:2: error: expected specifier-qualifier-list before ‘PacketType’
+../../include/discovery.h:71:2: error: storage class specified for parameter ‘GSDPacket’
+In file included from spotter.c:19:0:
+../../include/gsd_api.h:14:30: error: expected ‘)’ before ‘*’ token
+spotter.c:23:1: error: parameter ‘handler’ is initialized
+spotter.c:24:1: error: parameter ‘SENSE_FREQUENCY’ is initialized
+spotter.c:25:1: error: parameter ‘MIN_UPDATE_FREQUENCY’ is initialized
+spotter.c:26:1: error: parameter ‘UPDATE_FREQUENCY’ is initialized
+spotter.c:30:1: error: parameter ‘manager_available’ is initialized
+spotter.c:34:37: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter.c:81:70: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter.c:94:63: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter.c:112:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter.c:118:111: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter.c:143:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter.c:170:38: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter.c:188:27: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter.c:203:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter.c:216:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter.c:232:26: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter.c:256:34: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../include/location_json.h:19:6: error: old-style parameter declarations in prototyped function definition
+spotter.c:395:1: error: expected ‘{’ at end of input
+In file included from spotter_services.c:13:0:
+../../include/spotter.h: In function ‘PrintLocation’:
+../../include/spotter.h:26:39: error: storage class specified for parameter ‘PluginType’
+../../include/spotter.h:30:2: error: expected specifier-qualifier-list before ‘PluginType’
+../../include/spotter.h:32:2: error: storage class specified for parameter ‘Plugin’
+spotter_services.c:16:17: error: storage class specified for parameter ‘self’
+spotter_services.c:17:23: error: storage class specified for parameter ‘handler’
+spotter_services.c:19:38: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter_services.c:23:82: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+spotter_services.c:38:90: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../include/location_json.h:19:6: error: old-style parameter declarations in prototyped function definition
+spotter_services.c:40:1: error: expected ‘{’ at end of input
+In file included from /usr/include/sys/socket.h:28:0,
+                 from /usr/include/fred/handler.h:5,
+                 from ../../lib/location_json.c:19:
+/usr/include/sys/uio.h: In function ‘PrintLocation’:
+/usr/include/sys/uio.h:40:16: error: storage class specified for parameter ‘readv’
+/usr/include/sys/uio.h:51:16: error: storage class specified for parameter ‘writev’
+/usr/include/sys/uio.h:66:16: error: storage class specified for parameter ‘preadv’
+/usr/include/sys/uio.h:78:16: error: storage class specified for parameter ‘pwritev’
+In file included from /usr/include/sys/socket.h:40:0,
+                 from /usr/include/fred/handler.h:5,
+                 from ../../lib/location_json.c:19:
+/usr/include/bits/socket.h:35:21: error: storage class specified for parameter ‘socklen_t’
+In file included from /usr/include/bits/socket.h:175:0,
+                 from /usr/include/sys/socket.h:40,
+                 from /usr/include/fred/handler.h:5,
+                 from ../../lib/location_json.c:19:
+/usr/include/bits/sockaddr.h:29:28: error: storage class specified for parameter ‘sa_family_t’
+In file included from /usr/include/sys/socket.h:40:0,
+                 from /usr/include/fred/handler.h:5,
+                 from ../../lib/location_json.c:19:
+/usr/include/bits/socket.h:180:5: error: expected specifier-qualifier-list before ‘sa_family_t’
+/usr/include/bits/socket.h:193:5: error: expected specifier-qualifier-list before ‘sa_family_t’
+/usr/include/bits/socket.h:254:5: error: expected specifier-qualifier-list before ‘socklen_t’
+/usr/include/bits/socket.h:308:24: error: storage class specified for parameter ‘__cmsg_nxthdr’
+In file included from /usr/include/sys/socket.h:40:0,
+                 from /usr/include/fred/handler.h:5,
+                 from ../../lib/location_json.c:19:
+/usr/include/bits/socket.h:429:12: error: storage class specified for parameter ‘recvmmsg’
+In file included from /usr/include/fred/handler.h:5:0,
+                 from ../../lib/location_json.c:19:
+/usr/include/sys/socket.h:105:12: error: storage class specified for parameter ‘socket’
+/usr/include/sys/socket.h:111:12: error: storage class specified for parameter ‘socketpair’
+/usr/include/sys/socket.h:115:57: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:115:12: error: storage class specified for parameter ‘bind’
+/usr/include/sys/socket.h:120:4: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:119:12: error: storage class specified for parameter ‘getsockname’
+/usr/include/sys/socket.h:129:60: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:129:12: error: storage class specified for parameter ‘connect’
+/usr/include/sys/socket.h:134:4: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:133:12: error: storage class specified for parameter ‘getpeername’
+/usr/include/sys/socket.h:141:16: error: storage class specified for parameter ‘send’
+/usr/include/sys/socket.h:148:16: error: storage class specified for parameter ‘recv’
+/usr/include/sys/socket.h:157:10: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:155:16: error: storage class specified for parameter ‘sendto’
+/usr/include/sys/socket.h:168:5: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:166:16: error: storage class specified for parameter ‘recvfrom’
+/usr/include/sys/socket.h:176:16: error: storage class specified for parameter ‘sendmsg’
+/usr/include/sys/socket.h:184:16: error: storage class specified for parameter ‘recvmsg’
+/usr/include/sys/socket.h:192:10: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:190:12: error: storage class specified for parameter ‘getsockopt’
+/usr/include/sys/socket.h:198:34: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:197:12: error: storage class specified for parameter ‘setsockopt’
+/usr/include/sys/socket.h:204:12: error: storage class specified for parameter ‘listen’
+/usr/include/sys/socket.h:215:6: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:214:12: error: storage class specified for parameter ‘accept’
+/usr/include/sys/socket.h:232:12: error: storage class specified for parameter ‘shutdown’
+/usr/include/sys/socket.h:237:12: error: storage class specified for parameter ‘sockatmark’
+/usr/include/sys/socket.h:245:12: error: storage class specified for parameter ‘isfdtype’
+In file included from /usr/include/sched.h:43:0,
+                 from /usr/include/pthread.h:25,
+                 from /usr/include/fred/handler.h:6,
+                 from ../../lib/location_json.c:19:
+/usr/include/bits/sched.h:83:12: error: storage class specified for parameter ‘clone’
+/usr/include/bits/sched.h:87:12: error: storage class specified for parameter ‘unshare’
+/usr/include/bits/sched.h:90:12: error: storage class specified for parameter ‘sched_getcpu’
+/usr/include/bits/sched.h:116:27: error: storage class specified for parameter ‘__cpu_mask’
+/usr/include/bits/sched.h:125:3: error: expected specifier-qualifier-list before ‘__cpu_mask’
+/usr/include/bits/sched.h:126:3: error: storage class specified for parameter ‘cpu_set_t’
+/usr/include/bits/sched.h:201:64: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/usr/include/bits/sched.h:203:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/bits/sched.h:204:40: error: expected ‘)’ before ‘*’ token
+In file included from /usr/include/pthread.h:25:0,
+                 from /usr/include/fred/handler.h:6,
+                 from ../../lib/location_json.c:19:
+/usr/include/sched.h:51:12: error: storage class specified for parameter ‘sched_setparam’
+/usr/include/sched.h:55:12: error: storage class specified for parameter ‘sched_getparam’
+/usr/include/sched.h:58:12: error: storage class specified for parameter ‘sched_setscheduler’
+/usr/include/sched.h:62:12: error: storage class specified for parameter ‘sched_getscheduler’
+/usr/include/sched.h:65:12: error: storage class specified for parameter ‘sched_yield’
+/usr/include/sched.h:68:12: error: storage class specified for parameter ‘sched_get_priority_max’
+/usr/include/sched.h:71:12: error: storage class specified for parameter ‘sched_get_priority_min’
+/usr/include/sched.h:74:12: error: storage class specified for parameter ‘sched_rr_get_interval’
+In file included from /usr/include/pthread.h:26:0,
+                 from /usr/include/fred/handler.h:6,
+                 from ../../lib/location_json.c:19:
+/usr/include/time.h:183:16: error: storage class specified for parameter ‘clock’
+/usr/include/time.h:186:15: error: storage class specified for parameter ‘time’
+/usr/include/time.h:189:15: error: storage class specified for parameter ‘difftime’
+/usr/include/time.h:193:15: error: storage class specified for parameter ‘mktime’
+/usr/include/time.h:199:15: error: storage class specified for parameter ‘strftime’
+/usr/include/time.h:217:15: error: storage class specified for parameter ‘strftime_l’
+/usr/include/time.h:233:19: error: storage class specified for parameter ‘gmtime’
+/usr/include/time.h:237:19: error: storage class specified for parameter ‘localtime’
+/usr/include/time.h:243:19: error: storage class specified for parameter ‘gmtime_r’
+/usr/include/time.h:248:19: error: storage class specified for parameter ‘localtime_r’
+/usr/include/time.h:255:14: error: storage class specified for parameter ‘asctime’
+/usr/include/time.h:258:14: error: storage class specified for parameter ‘ctime’
+/usr/include/time.h:266:14: error: storage class specified for parameter ‘asctime_r’
+/usr/include/time.h:270:14: error: storage class specified for parameter ‘ctime_r’
+/usr/include/time.h:276:14: error: storage class specified for parameter ‘__tzname’
+/usr/include/time.h:277:12: error: storage class specified for parameter ‘__daylight’
+/usr/include/time.h:278:17: error: storage class specified for parameter ‘__timezone’
+/usr/include/time.h:283:14: error: storage class specified for parameter ‘tzname’
+/usr/include/time.h:287:13: error: storage class specified for parameter ‘tzset’
+/usr/include/time.h:291:12: error: storage class specified for parameter ‘daylight’
+/usr/include/time.h:292:17: error: storage class specified for parameter ‘timezone’
+/usr/include/time.h:298:12: error: storage class specified for parameter ‘stime’
+/usr/include/time.h:313:15: error: storage class specified for parameter ‘timegm’
+/usr/include/time.h:316:15: error: storage class specified for parameter ‘timelocal’
+/usr/include/time.h:319:12: error: storage class specified for parameter ‘dysize’
+/usr/include/time.h:328:12: error: storage class specified for parameter ‘nanosleep’
+/usr/include/time.h:333:12: error: storage class specified for parameter ‘clock_getres’
+/usr/include/time.h:336:12: error: storage class specified for parameter ‘clock_gettime’
+/usr/include/time.h:339:12: error: storage class specified for parameter ‘clock_settime’
+/usr/include/time.h:347:12: error: storage class specified for parameter ‘clock_nanosleep’
+/usr/include/time.h:352:12: error: storage class specified for parameter ‘clock_getcpuclockid’
+/usr/include/time.h:357:12: error: storage class specified for parameter ‘timer_create’
+/usr/include/time.h:362:12: error: storage class specified for parameter ‘timer_delete’
+/usr/include/time.h:365:12: error: storage class specified for parameter ‘timer_settime’
+/usr/include/time.h:370:12: error: storage class specified for parameter ‘timer_gettime’
+/usr/include/time.h:374:12: error: storage class specified for parameter ‘timer_getoverrun’
+In file included from /usr/include/pthread.h:29:0,
+                 from /usr/include/fred/handler.h:6,
+                 from ../../lib/location_json.c:19:
+/usr/include/bits/setjmp.h:34:13: error: storage class specified for parameter ‘__jmp_buf’
+In file included from /usr/include/fred/handler.h:6:0,
+                 from ../../lib/location_json.c:19:
+/usr/include/pthread.h:225:12: error: storage class specified for parameter ‘pthread_create’
+/usr/include/pthread.h:234:13: error: storage class specified for parameter ‘pthread_exit’
+/usr/include/pthread.h:242:12: error: storage class specified for parameter ‘pthread_join’
+/usr/include/pthread.h:263:12: error: storage class specified for parameter ‘pthread_detach’
+/usr/include/pthread.h:267:18: error: storage class specified for parameter ‘pthread_self’
+/usr/include/pthread.h:270:12: error: storage class specified for parameter ‘pthread_equal’
+/usr/include/pthread.h:278:12: error: storage class specified for parameter ‘pthread_attr_init’
+/usr/include/pthread.h:281:12: error: storage class specified for parameter ‘pthread_attr_destroy’
+/usr/include/pthread.h:285:12: error: storage class specified for parameter ‘pthread_attr_getdetachstate’
+/usr/include/pthread.h:290:12: error: storage class specified for parameter ‘pthread_attr_setdetachstate’
+/usr/include/pthread.h:296:12: error: storage class specified for parameter ‘pthread_attr_getguardsize’
+/usr/include/pthread.h:301:12: error: storage class specified for parameter ‘pthread_attr_setguardsize’
+/usr/include/pthread.h:307:12: error: storage class specified for parameter ‘pthread_attr_getschedparam’
+/usr/include/pthread.h:313:12: error: storage class specified for parameter ‘pthread_attr_setschedparam’
+/usr/include/pthread.h:318:12: error: storage class specified for parameter ‘pthread_attr_getschedpolicy’
+/usr/include/pthread.h:323:12: error: storage class specified for parameter ‘pthread_attr_setschedpolicy’
+/usr/include/pthread.h:327:12: error: storage class specified for parameter ‘pthread_attr_getinheritsched’
+/usr/include/pthread.h:332:12: error: storage class specified for parameter ‘pthread_attr_setinheritsched’
+/usr/include/pthread.h:338:12: error: storage class specified for parameter ‘pthread_attr_getscope’
+/usr/include/pthread.h:343:12: error: storage class specified for parameter ‘pthread_attr_setscope’
+/usr/include/pthread.h:347:12: error: storage class specified for parameter ‘pthread_attr_getstackaddr’
+/usr/include/pthread.h:355:12: error: storage class specified for parameter ‘pthread_attr_setstackaddr’
+/usr/include/pthread.h:360:12: error: storage class specified for parameter ‘pthread_attr_getstacksize’
+/usr/include/pthread.h:367:12: error: storage class specified for parameter ‘pthread_attr_setstacksize’
+/usr/include/pthread.h:373:12: error: storage class specified for parameter ‘pthread_attr_getstack’
+/usr/include/pthread.h:381:12: error: storage class specified for parameter ‘pthread_attr_setstack’
+/usr/include/pthread.h:413:12: error: storage class specified for parameter ‘pthread_setschedparam’
+/usr/include/pthread.h:418:12: error: storage class specified for parameter ‘pthread_getschedparam’
+/usr/include/pthread.h:424:12: error: storage class specified for parameter ‘pthread_setschedprio’
+/usr/include/pthread.h:478:12: error: storage class specified for parameter ‘pthread_once’
+/usr/include/pthread.h:490:12: error: storage class specified for parameter ‘pthread_setcancelstate’
+/usr/include/pthread.h:494:12: error: storage class specified for parameter ‘pthread_setcanceltype’
+/usr/include/pthread.h:497:12: error: storage class specified for parameter ‘pthread_cancel’
+/usr/include/pthread.h:502:13: error: storage class specified for parameter ‘pthread_testcancel’
+/usr/include/pthread.h:511:5: error: expected specifier-qualifier-list before ‘__jmp_buf’
+/usr/include/pthread.h:515:3: error: storage class specified for parameter ‘__pthread_unwind_buf_t’
+/usr/include/pthread.h:515:3: error: alignment may not be specified for ‘__pthread_unwind_buf_t’
+/usr/include/pthread.h:664:63: error: expected ‘)’ before ‘*’ token
+/usr/include/pthread.h:676:65: error: expected ‘)’ before ‘*’ token
+/usr/include/pthread.h:717:59: error: expected ‘)’ before ‘*’ token
+/usr/include/pthread.h:727:12: error: storage class specified for parameter ‘__sigsetjmp’
+/usr/include/pthread.h:733:12: error: storage class specified for parameter ‘pthread_mutex_init’
+/usr/include/pthread.h:738:12: error: storage class specified for parameter ‘pthread_mutex_destroy’
+/usr/include/pthread.h:742:12: error: storage class specified for parameter ‘pthread_mutex_trylock’
+/usr/include/pthread.h:746:12: error: storage class specified for parameter ‘pthread_mutex_lock’
+/usr/include/pthread.h:751:12: error: storage class specified for parameter ‘pthread_mutex_timedlock’
+/usr/include/pthread.h:757:12: error: storage class specified for parameter ‘pthread_mutex_unlock’
+/usr/include/pthread.h:762:12: error: storage class specified for parameter ‘pthread_mutex_getprioceiling’
+/usr/include/pthread.h:769:12: error: storage class specified for parameter ‘pthread_mutex_setprioceiling’
+/usr/include/pthread.h:777:12: error: storage class specified for parameter ‘pthread_mutex_consistent’
+/usr/include/pthread.h:790:12: error: storage class specified for parameter ‘pthread_mutexattr_init’
+/usr/include/pthread.h:794:12: error: storage class specified for parameter ‘pthread_mutexattr_destroy’
+/usr/include/pthread.h:798:12: error: storage class specified for parameter ‘pthread_mutexattr_getpshared’
+/usr/include/pthread.h:804:12: error: storage class specified for parameter ‘pthread_mutexattr_setpshared’
+/usr/include/pthread.h:810:12: error: storage class specified for parameter ‘pthread_mutexattr_gettype’
+/usr/include/pthread.h:817:12: error: storage class specified for parameter ‘pthread_mutexattr_settype’
+/usr/include/pthread.h:822:12: error: storage class specified for parameter ‘pthread_mutexattr_getprotocol’
+/usr/include/pthread.h:829:12: error: storage class specified for parameter ‘pthread_mutexattr_setprotocol’
+/usr/include/pthread.h:834:12: error: storage class specified for parameter ‘pthread_mutexattr_getprioceiling’
+/usr/include/pthread.h:840:12: error: storage class specified for parameter ‘pthread_mutexattr_setprioceiling’
+/usr/include/pthread.h:846:12: error: storage class specified for parameter ‘pthread_mutexattr_getrobust’
+/usr/include/pthread.h:856:12: error: storage class specified for parameter ‘pthread_mutexattr_setrobust’
+/usr/include/pthread.h:872:12: error: storage class specified for parameter ‘pthread_rwlock_init’
+/usr/include/pthread.h:877:12: error: storage class specified for parameter ‘pthread_rwlock_destroy’
+/usr/include/pthread.h:881:12: error: storage class specified for parameter ‘pthread_rwlock_rdlock’
+/usr/include/pthread.h:885:12: error: storage class specified for parameter ‘pthread_rwlock_tryrdlock’
+/usr/include/pthread.h:890:12: error: storage class specified for parameter ‘pthread_rwlock_timedrdlock’
+/usr/include/pthread.h:896:12: error: storage class specified for parameter ‘pthread_rwlock_wrlock’
+/usr/include/pthread.h:900:12: error: storage class specified for parameter ‘pthread_rwlock_trywrlock’
+/usr/include/pthread.h:905:12: error: storage class specified for parameter ‘pthread_rwlock_timedwrlock’
+/usr/include/pthread.h:911:12: error: storage class specified for parameter ‘pthread_rwlock_unlock’
+/usr/include/pthread.h:918:12: error: storage class specified for parameter ‘pthread_rwlockattr_init’
+/usr/include/pthread.h:922:12: error: storage class specified for parameter ‘pthread_rwlockattr_destroy’
+/usr/include/pthread.h:926:12: error: storage class specified for parameter ‘pthread_rwlockattr_getpshared’
+/usr/include/pthread.h:932:12: error: storage class specified for parameter ‘pthread_rwlockattr_setpshared’
+/usr/include/pthread.h:937:12: error: storage class specified for parameter ‘pthread_rwlockattr_getkind_np’
+/usr/include/pthread.h:943:12: error: storage class specified for parameter ‘pthread_rwlockattr_setkind_np’
+/usr/include/pthread.h:952:12: error: storage class specified for parameter ‘pthread_cond_init’
+/usr/include/pthread.h:957:12: error: storage class specified for parameter ‘pthread_cond_destroy’
+/usr/include/pthread.h:961:12: error: storage class specified for parameter ‘pthread_cond_signal’
+/usr/include/pthread.h:965:12: error: storage class specified for parameter ‘pthread_cond_broadcast’
+/usr/include/pthread.h:973:12: error: storage class specified for parameter ‘pthread_cond_wait’
+/usr/include/pthread.h:984:12: error: storage class specified for parameter ‘pthread_cond_timedwait’
+/usr/include/pthread.h:992:12: error: storage class specified for parameter ‘pthread_condattr_init’
+/usr/include/pthread.h:996:12: error: storage class specified for parameter ‘pthread_condattr_destroy’
+/usr/include/pthread.h:1000:12: error: storage class specified for parameter ‘pthread_condattr_getpshared’
+/usr/include/pthread.h:1006:12: error: storage class specified for parameter ‘pthread_condattr_setpshared’
+/usr/include/pthread.h:1011:12: error: storage class specified for parameter ‘pthread_condattr_getclock’
+/usr/include/pthread.h:1017:12: error: storage class specified for parameter ‘pthread_condattr_setclock’
+/usr/include/pthread.h:1028:12: error: storage class specified for parameter ‘pthread_spin_init’
+/usr/include/pthread.h:1032:12: error: storage class specified for parameter ‘pthread_spin_destroy’
+/usr/include/pthread.h:1036:12: error: storage class specified for parameter ‘pthread_spin_lock’
+/usr/include/pthread.h:1040:12: error: storage class specified for parameter ‘pthread_spin_trylock’
+/usr/include/pthread.h:1044:12: error: storage class specified for parameter ‘pthread_spin_unlock’
+/usr/include/pthread.h:1052:12: error: storage class specified for parameter ‘pthread_barrier_init’
+/usr/include/pthread.h:1058:12: error: storage class specified for parameter ‘pthread_barrier_destroy’
+/usr/include/pthread.h:1062:12: error: storage class specified for parameter ‘pthread_barrier_wait’
+/usr/include/pthread.h:1067:12: error: storage class specified for parameter ‘pthread_barrierattr_init’
+/usr/include/pthread.h:1071:12: error: storage class specified for parameter ‘pthread_barrierattr_destroy’
+/usr/include/pthread.h:1075:12: error: storage class specified for parameter ‘pthread_barrierattr_getpshared’
+/usr/include/pthread.h:1081:12: error: storage class specified for parameter ‘pthread_barrierattr_setpshared’
+/usr/include/pthread.h:1095:12: error: storage class specified for parameter ‘pthread_key_create’
+/usr/include/pthread.h:1100:12: error: storage class specified for parameter ‘pthread_key_delete’
+/usr/include/pthread.h:1103:14: error: storage class specified for parameter ‘pthread_getspecific’
+/usr/include/pthread.h:1106:12: error: storage class specified for parameter ‘pthread_setspecific’
+/usr/include/pthread.h:1112:12: error: storage class specified for parameter ‘pthread_getcpuclockid’
+/usr/include/pthread.h:1129:12: error: storage class specified for parameter ‘pthread_atfork’
+In file included from /usr/include/semaphore.h:30:0,
+                 from /usr/include/fred/message_buffer.h:6,
+                 from /usr/include/fred/handler.h:8,
+                 from ../../lib/location_json.c:19:
+/usr/include/bits/semaphore.h:41:3: error: storage class specified for parameter ‘sem_t’
+In file included from /usr/include/fred/message_buffer.h:6:0,
+                 from /usr/include/fred/handler.h:8,
+                 from ../../lib/location_json.c:19:
+/usr/include/semaphore.h:37:28: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:40:31: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:43:14: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/semaphore.h:46:29: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:49:12: error: storage class specified for parameter ‘sem_unlink’
+/usr/include/semaphore.h:55:28: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:62:33: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:67:31: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:70:28: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:73:32: error: expected ‘)’ before ‘*’ token
+In file included from /usr/include/fred/message_buffer.h:7:0,
+                 from /usr/include/fred/handler.h:8,
+                 from ../../lib/location_json.c:19:
+/usr/include/fred/pdu.h:10:3: error: storage class specified for parameter ‘control_byte’
+/usr/include/fred/pdu.h:29:1: error: storage class specified for parameter ‘transport_layer_pdu’
+/usr/include/fred/pdu.h:31:61: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+/usr/include/fred/pdu.h:43:49: error: expected ‘)’ before ‘*’ token
+In file included from /usr/include/fred/handler.h:8:0,
+                 from ../../lib/location_json.c:19:
+/usr/include/fred/message_buffer.h:12:1: error: expected specifier-qualifier-list before ‘transport_layer_pdu’
+/usr/include/fred/message_buffer.h:13:2: error: storage class specified for parameter ‘msg’
+/usr/include/fred/message_buffer.h:17:3: error: expected specifier-qualifier-list before ‘sem_t’
+/usr/include/fred/message_buffer.h:25:1: error: storage class specified for parameter ‘transport_layer_buffer’
+/usr/include/fred/message_buffer.h:29:47: error: expected ‘)’ before ‘*’ token
+/usr/include/fred/message_buffer.h:32:20: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/fred/message_buffer.h:33:11: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/fred/message_buffer.h:34:11: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/fred/message_buffer.h:35:39: error: expected ‘)’ before ‘*’ token
+/usr/include/fred/message_buffer.h:36:46: error: expected ‘)’ before ‘*’ token
+In file included from /usr/include/fred/handler.h:9:0,
+                 from ../../lib/location_json.c:19:
+/usr/include/fred/macros.h:43:51: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+In file included from /usr/include/fred/handler.h:10:0,
+                 from ../../lib/location_json.c:19:
+/usr/include/fred/registry_error.h:13:14: error: storage class specified for parameter ‘registry_error_str’
+In file included from /usr/include/fred/registry_ops.h:5:0,
+                 from /usr/include/fred/handler.h:11,
+                 from ../../lib/location_json.c:19:
+/usr/include/sys/un.h:32:5: error: expected specifier-qualifier-list before ‘sa_family_t’
+In file included from /usr/include/fred/handler.h:11:0,
+                 from ../../lib/location_json.c:19:
+/usr/include/fred/registry_ops.h:13:2: error: storage class specified for parameter ‘registry_descriptor’
+/usr/include/fred/registry_ops.h:15:27: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/fred/registry_ops.h:16:53: error: expected ‘)’ before ‘*’ token
+In file included from /usr/include/fred/handler.h:11:0,
+                 from ../../lib/location_json.c:19:
+/usr/include/fred/registry_ops.h:18:65: error: expected declaration specifiers or ‘...’ before ‘registry_descriptor’
+/usr/include/fred/registry_ops.h:18:12: error: storage class specified for parameter ‘register_handler’
+/usr/include/fred/registry_ops.h:19:73: error: expected declaration specifiers or ‘...’ before ‘registry_descriptor’
+/usr/include/fred/registry_ops.h:19:12: error: storage class specified for parameter ‘get_handler_address’
+/usr/include/fred/registry_ops.h:20:52: error: expected declaration specifiers or ‘...’ before ‘registry_descriptor’
+/usr/include/fred/registry_ops.h:20:12: error: storage class specified for parameter ‘unregister_handler_address’
+In file included from /usr/include/fred/handler.h:12:0,
+                 from ../../lib/location_json.c:19:
+/usr/include/fred/configuration_user_communication.h:11:3: error: storage class specified for parameter ‘config_descriptor’
+/usr/include/fred/configuration_user_communication.h:13:25: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/fred/configuration_user_communication.h:14:56: error: expected ‘)’ before ‘*’ token
+/usr/include/fred/configuration_user_communication.h:15:73: error: expected ‘)’ before ‘*’ token
+In file included from ../../lib/location_json.c:19:0:
+/usr/include/fred/handler.h:21:1: error: expected specifier-qualifier-list before ‘transport_layer_buffer’
+/usr/include/fred/handler.h:58:1: error: storage class specified for parameter ‘transport_layer_handler’
+/usr/include/fred/handler.h:60:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+In file included from ../../lib/location_json.c:19:0:
+/usr/include/fred/handler.h:61:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/fred/handler.h:62:45: error: expected ‘)’ before ‘*’ token
+In file included from /usr/include/syslog.h:1:0,
+                 from ../../lib/location_json.c:20:
+/usr/include/sys/syslog.h:175:13: error: storage class specified for parameter ‘closelog’
+/usr/include/sys/syslog.h:181:13: error: storage class specified for parameter ‘openlog’
+/usr/include/sys/syslog.h:184:12: error: storage class specified for parameter ‘setlogmask’
+/usr/include/sys/syslog.h:190:13: error: storage class specified for parameter ‘syslog’
+/usr/include/sys/syslog.h:200:13: error: storage class specified for parameter ‘vsyslog’
+../../lib/location_json.c:25:55: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../lib/location_json.c:29:32: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../lib/location_json.c:34:58: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../lib/location_json.c:52:84: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../lib/location_json.c:64:59: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../lib/location_json.c:70:88: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../lib/location_json.c:212:69: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../include/location_json.h:19:6: error: old-style parameter declarations in prototyped function definition
+../../lib/location_json.c:363:1: error: expected ‘{’ at end of input
+In file included from /usr/include/sys/socket.h:28:0,
+                 from /usr/include/fred/handler.h:5,
+                 from ../../lib/map.c:18:
+/usr/include/sys/uio.h: In function ‘PrintLocation’:
+/usr/include/sys/uio.h:40:16: error: storage class specified for parameter ‘readv’
+/usr/include/sys/uio.h:51:16: error: storage class specified for parameter ‘writev’
+/usr/include/sys/uio.h:66:16: error: storage class specified for parameter ‘preadv’
+/usr/include/sys/uio.h:78:16: error: storage class specified for parameter ‘pwritev’
+In file included from /usr/include/sys/socket.h:40:0,
+                 from /usr/include/fred/handler.h:5,
+                 from ../../lib/map.c:18:
+/usr/include/bits/socket.h:35:21: error: storage class specified for parameter ‘socklen_t’
+In file included from /usr/include/bits/socket.h:175:0,
+                 from /usr/include/sys/socket.h:40,
+                 from /usr/include/fred/handler.h:5,
+                 from ../../lib/map.c:18:
+/usr/include/bits/sockaddr.h:29:28: error: storage class specified for parameter ‘sa_family_t’
+In file included from /usr/include/sys/socket.h:40:0,
+                 from /usr/include/fred/handler.h:5,
+                 from ../../lib/map.c:18:
+/usr/include/bits/socket.h:180:5: error: expected specifier-qualifier-list before ‘sa_family_t’
+/usr/include/bits/socket.h:193:5: error: expected specifier-qualifier-list before ‘sa_family_t’
+/usr/include/bits/socket.h:254:5: error: expected specifier-qualifier-list before ‘socklen_t’
+/usr/include/bits/socket.h:308:24: error: storage class specified for parameter ‘__cmsg_nxthdr’
+In file included from /usr/include/sys/socket.h:40:0,
+                 from /usr/include/fred/handler.h:5,
+                 from ../../lib/map.c:18:
+/usr/include/bits/socket.h:429:12: error: storage class specified for parameter ‘recvmmsg’
+In file included from /usr/include/fred/handler.h:5:0,
+                 from ../../lib/map.c:18:
+/usr/include/sys/socket.h:105:12: error: storage class specified for parameter ‘socket’
+/usr/include/sys/socket.h:111:12: error: storage class specified for parameter ‘socketpair’
+/usr/include/sys/socket.h:115:57: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:115:12: error: storage class specified for parameter ‘bind’
+/usr/include/sys/socket.h:120:4: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:119:12: error: storage class specified for parameter ‘getsockname’
+/usr/include/sys/socket.h:129:60: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:129:12: error: storage class specified for parameter ‘connect’
+/usr/include/sys/socket.h:134:4: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:133:12: error: storage class specified for parameter ‘getpeername’
+/usr/include/sys/socket.h:141:16: error: storage class specified for parameter ‘send’
+/usr/include/sys/socket.h:148:16: error: storage class specified for parameter ‘recv’
+/usr/include/sys/socket.h:157:10: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:155:16: error: storage class specified for parameter ‘sendto’
+/usr/include/sys/socket.h:168:5: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:166:16: error: storage class specified for parameter ‘recvfrom’
+/usr/include/sys/socket.h:176:16: error: storage class specified for parameter ‘sendmsg’
+/usr/include/sys/socket.h:184:16: error: storage class specified for parameter ‘recvmsg’
+/usr/include/sys/socket.h:192:10: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:190:12: error: storage class specified for parameter ‘getsockopt’
+/usr/include/sys/socket.h:198:34: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:197:12: error: storage class specified for parameter ‘setsockopt’
+/usr/include/sys/socket.h:204:12: error: storage class specified for parameter ‘listen’
+/usr/include/sys/socket.h:215:6: error: expected declaration specifiers or ‘...’ before ‘socklen_t’
+/usr/include/sys/socket.h:214:12: error: storage class specified for parameter ‘accept’
+/usr/include/sys/socket.h:232:12: error: storage class specified for parameter ‘shutdown’
+/usr/include/sys/socket.h:237:12: error: storage class specified for parameter ‘sockatmark’
+/usr/include/sys/socket.h:245:12: error: storage class specified for parameter ‘isfdtype’
+In file included from /usr/include/sched.h:43:0,
+                 from /usr/include/pthread.h:25,
+                 from /usr/include/fred/handler.h:6,
+                 from ../../lib/map.c:18:
+/usr/include/bits/sched.h:83:12: error: storage class specified for parameter ‘clone’
+/usr/include/bits/sched.h:87:12: error: storage class specified for parameter ‘unshare’
+/usr/include/bits/sched.h:90:12: error: storage class specified for parameter ‘sched_getcpu’
+/usr/include/bits/sched.h:116:27: error: storage class specified for parameter ‘__cpu_mask’
+/usr/include/bits/sched.h:125:3: error: expected specifier-qualifier-list before ‘__cpu_mask’
+/usr/include/bits/sched.h:126:3: error: storage class specified for parameter ‘cpu_set_t’
+/usr/include/bits/sched.h:201:64: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/usr/include/bits/sched.h:203:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/bits/sched.h:204:40: error: expected ‘)’ before ‘*’ token
+In file included from /usr/include/pthread.h:25:0,
+                 from /usr/include/fred/handler.h:6,
+                 from ../../lib/map.c:18:
+/usr/include/sched.h:51:12: error: storage class specified for parameter ‘sched_setparam’
+/usr/include/sched.h:55:12: error: storage class specified for parameter ‘sched_getparam’
+/usr/include/sched.h:58:12: error: storage class specified for parameter ‘sched_setscheduler’
+/usr/include/sched.h:62:12: error: storage class specified for parameter ‘sched_getscheduler’
+/usr/include/sched.h:65:12: error: storage class specified for parameter ‘sched_yield’
+/usr/include/sched.h:68:12: error: storage class specified for parameter ‘sched_get_priority_max’
+/usr/include/sched.h:71:12: error: storage class specified for parameter ‘sched_get_priority_min’
+/usr/include/sched.h:74:12: error: storage class specified for parameter ‘sched_rr_get_interval’
+In file included from /usr/include/pthread.h:26:0,
+                 from /usr/include/fred/handler.h:6,
+                 from ../../lib/map.c:18:
+/usr/include/time.h:183:16: error: storage class specified for parameter ‘clock’
+/usr/include/time.h:186:15: error: storage class specified for parameter ‘time’
+/usr/include/time.h:189:15: error: storage class specified for parameter ‘difftime’
+/usr/include/time.h:193:15: error: storage class specified for parameter ‘mktime’
+/usr/include/time.h:199:15: error: storage class specified for parameter ‘strftime’
+/usr/include/time.h:217:15: error: storage class specified for parameter ‘strftime_l’
+/usr/include/time.h:233:19: error: storage class specified for parameter ‘gmtime’
+/usr/include/time.h:237:19: error: storage class specified for parameter ‘localtime’
+/usr/include/time.h:243:19: error: storage class specified for parameter ‘gmtime_r’
+/usr/include/time.h:248:19: error: storage class specified for parameter ‘localtime_r’
+/usr/include/time.h:255:14: error: storage class specified for parameter ‘asctime’
+/usr/include/time.h:258:14: error: storage class specified for parameter ‘ctime’
+/usr/include/time.h:266:14: error: storage class specified for parameter ‘asctime_r’
+/usr/include/time.h:270:14: error: storage class specified for parameter ‘ctime_r’
+/usr/include/time.h:276:14: error: storage class specified for parameter ‘__tzname’
+/usr/include/time.h:277:12: error: storage class specified for parameter ‘__daylight’
+/usr/include/time.h:278:17: error: storage class specified for parameter ‘__timezone’
+/usr/include/time.h:283:14: error: storage class specified for parameter ‘tzname’
+/usr/include/time.h:287:13: error: storage class specified for parameter ‘tzset’
+/usr/include/time.h:291:12: error: storage class specified for parameter ‘daylight’
+/usr/include/time.h:292:17: error: storage class specified for parameter ‘timezone’
+/usr/include/time.h:298:12: error: storage class specified for parameter ‘stime’
+/usr/include/time.h:313:15: error: storage class specified for parameter ‘timegm’
+/usr/include/time.h:316:15: error: storage class specified for parameter ‘timelocal’
+/usr/include/time.h:319:12: error: storage class specified for parameter ‘dysize’
+/usr/include/time.h:328:12: error: storage class specified for parameter ‘nanosleep’
+/usr/include/time.h:333:12: error: storage class specified for parameter ‘clock_getres’
+/usr/include/time.h:336:12: error: storage class specified for parameter ‘clock_gettime’
+/usr/include/time.h:339:12: error: storage class specified for parameter ‘clock_settime’
+/usr/include/time.h:347:12: error: storage class specified for parameter ‘clock_nanosleep’
+/usr/include/time.h:352:12: error: storage class specified for parameter ‘clock_getcpuclockid’
+/usr/include/time.h:357:12: error: storage class specified for parameter ‘timer_create’
+/usr/include/time.h:362:12: error: storage class specified for parameter ‘timer_delete’
+/usr/include/time.h:365:12: error: storage class specified for parameter ‘timer_settime’
+/usr/include/time.h:370:12: error: storage class specified for parameter ‘timer_gettime’
+/usr/include/time.h:374:12: error: storage class specified for parameter ‘timer_getoverrun’
+In file included from /usr/include/pthread.h:29:0,
+                 from /usr/include/fred/handler.h:6,
+                 from ../../lib/map.c:18:
+/usr/include/bits/setjmp.h:34:13: error: storage class specified for parameter ‘__jmp_buf’
+In file included from /usr/include/fred/handler.h:6:0,
+                 from ../../lib/map.c:18:
+/usr/include/pthread.h:225:12: error: storage class specified for parameter ‘pthread_create’
+/usr/include/pthread.h:234:13: error: storage class specified for parameter ‘pthread_exit’
+/usr/include/pthread.h:242:12: error: storage class specified for parameter ‘pthread_join’
+/usr/include/pthread.h:263:12: error: storage class specified for parameter ‘pthread_detach’
+/usr/include/pthread.h:267:18: error: storage class specified for parameter ‘pthread_self’
+/usr/include/pthread.h:270:12: error: storage class specified for parameter ‘pthread_equal’
+/usr/include/pthread.h:278:12: error: storage class specified for parameter ‘pthread_attr_init’
+/usr/include/pthread.h:281:12: error: storage class specified for parameter ‘pthread_attr_destroy’
+/usr/include/pthread.h:285:12: error: storage class specified for parameter ‘pthread_attr_getdetachstate’
+/usr/include/pthread.h:290:12: error: storage class specified for parameter ‘pthread_attr_setdetachstate’
+/usr/include/pthread.h:296:12: error: storage class specified for parameter ‘pthread_attr_getguardsize’
+/usr/include/pthread.h:301:12: error: storage class specified for parameter ‘pthread_attr_setguardsize’
+/usr/include/pthread.h:307:12: error: storage class specified for parameter ‘pthread_attr_getschedparam’
+/usr/include/pthread.h:313:12: error: storage class specified for parameter ‘pthread_attr_setschedparam’
+/usr/include/pthread.h:318:12: error: storage class specified for parameter ‘pthread_attr_getschedpolicy’
+/usr/include/pthread.h:323:12: error: storage class specified for parameter ‘pthread_attr_setschedpolicy’
+/usr/include/pthread.h:327:12: error: storage class specified for parameter ‘pthread_attr_getinheritsched’
+/usr/include/pthread.h:332:12: error: storage class specified for parameter ‘pthread_attr_setinheritsched’
+/usr/include/pthread.h:338:12: error: storage class specified for parameter ‘pthread_attr_getscope’
+/usr/include/pthread.h:343:12: error: storage class specified for parameter ‘pthread_attr_setscope’
+/usr/include/pthread.h:347:12: error: storage class specified for parameter ‘pthread_attr_getstackaddr’
+/usr/include/pthread.h:355:12: error: storage class specified for parameter ‘pthread_attr_setstackaddr’
+/usr/include/pthread.h:360:12: error: storage class specified for parameter ‘pthread_attr_getstacksize’
+/usr/include/pthread.h:367:12: error: storage class specified for parameter ‘pthread_attr_setstacksize’
+/usr/include/pthread.h:373:12: error: storage class specified for parameter ‘pthread_attr_getstack’
+/usr/include/pthread.h:381:12: error: storage class specified for parameter ‘pthread_attr_setstack’
+/usr/include/pthread.h:413:12: error: storage class specified for parameter ‘pthread_setschedparam’
+/usr/include/pthread.h:418:12: error: storage class specified for parameter ‘pthread_getschedparam’
+/usr/include/pthread.h:424:12: error: storage class specified for parameter ‘pthread_setschedprio’
+/usr/include/pthread.h:478:12: error: storage class specified for parameter ‘pthread_once’
+/usr/include/pthread.h:490:12: error: storage class specified for parameter ‘pthread_setcancelstate’
+/usr/include/pthread.h:494:12: error: storage class specified for parameter ‘pthread_setcanceltype’
+/usr/include/pthread.h:497:12: error: storage class specified for parameter ‘pthread_cancel’
+/usr/include/pthread.h:502:13: error: storage class specified for parameter ‘pthread_testcancel’
+/usr/include/pthread.h:511:5: error: expected specifier-qualifier-list before ‘__jmp_buf’
+/usr/include/pthread.h:515:3: error: storage class specified for parameter ‘__pthread_unwind_buf_t’
+/usr/include/pthread.h:515:3: error: alignment may not be specified for ‘__pthread_unwind_buf_t’
+/usr/include/pthread.h:664:63: error: expected ‘)’ before ‘*’ token
+/usr/include/pthread.h:676:65: error: expected ‘)’ before ‘*’ token
+/usr/include/pthread.h:717:59: error: expected ‘)’ before ‘*’ token
+/usr/include/pthread.h:727:12: error: storage class specified for parameter ‘__sigsetjmp’
+/usr/include/pthread.h:733:12: error: storage class specified for parameter ‘pthread_mutex_init’
+/usr/include/pthread.h:738:12: error: storage class specified for parameter ‘pthread_mutex_destroy’
+/usr/include/pthread.h:742:12: error: storage class specified for parameter ‘pthread_mutex_trylock’
+/usr/include/pthread.h:746:12: error: storage class specified for parameter ‘pthread_mutex_lock’
+/usr/include/pthread.h:751:12: error: storage class specified for parameter ‘pthread_mutex_timedlock’
+/usr/include/pthread.h:757:12: error: storage class specified for parameter ‘pthread_mutex_unlock’
+/usr/include/pthread.h:762:12: error: storage class specified for parameter ‘pthread_mutex_getprioceiling’
+/usr/include/pthread.h:769:12: error: storage class specified for parameter ‘pthread_mutex_setprioceiling’
+/usr/include/pthread.h:777:12: error: storage class specified for parameter ‘pthread_mutex_consistent’
+/usr/include/pthread.h:790:12: error: storage class specified for parameter ‘pthread_mutexattr_init’
+/usr/include/pthread.h:794:12: error: storage class specified for parameter ‘pthread_mutexattr_destroy’
+/usr/include/pthread.h:798:12: error: storage class specified for parameter ‘pthread_mutexattr_getpshared’
+/usr/include/pthread.h:804:12: error: storage class specified for parameter ‘pthread_mutexattr_setpshared’
+/usr/include/pthread.h:810:12: error: storage class specified for parameter ‘pthread_mutexattr_gettype’
+/usr/include/pthread.h:817:12: error: storage class specified for parameter ‘pthread_mutexattr_settype’
+/usr/include/pthread.h:822:12: error: storage class specified for parameter ‘pthread_mutexattr_getprotocol’
+/usr/include/pthread.h:829:12: error: storage class specified for parameter ‘pthread_mutexattr_setprotocol’
+/usr/include/pthread.h:834:12: error: storage class specified for parameter ‘pthread_mutexattr_getprioceiling’
+/usr/include/pthread.h:840:12: error: storage class specified for parameter ‘pthread_mutexattr_setprioceiling’
+/usr/include/pthread.h:846:12: error: storage class specified for parameter ‘pthread_mutexattr_getrobust’
+/usr/include/pthread.h:856:12: error: storage class specified for parameter ‘pthread_mutexattr_setrobust’
+/usr/include/pthread.h:872:12: error: storage class specified for parameter ‘pthread_rwlock_init’
+/usr/include/pthread.h:877:12: error: storage class specified for parameter ‘pthread_rwlock_destroy’
+/usr/include/pthread.h:881:12: error: storage class specified for parameter ‘pthread_rwlock_rdlock’
+/usr/include/pthread.h:885:12: error: storage class specified for parameter ‘pthread_rwlock_tryrdlock’
+/usr/include/pthread.h:890:12: error: storage class specified for parameter ‘pthread_rwlock_timedrdlock’
+/usr/include/pthread.h:896:12: error: storage class specified for parameter ‘pthread_rwlock_wrlock’
+/usr/include/pthread.h:900:12: error: storage class specified for parameter ‘pthread_rwlock_trywrlock’
+/usr/include/pthread.h:905:12: error: storage class specified for parameter ‘pthread_rwlock_timedwrlock’
+/usr/include/pthread.h:911:12: error: storage class specified for parameter ‘pthread_rwlock_unlock’
+/usr/include/pthread.h:918:12: error: storage class specified for parameter ‘pthread_rwlockattr_init’
+/usr/include/pthread.h:922:12: error: storage class specified for parameter ‘pthread_rwlockattr_destroy’
+/usr/include/pthread.h:926:12: error: storage class specified for parameter ‘pthread_rwlockattr_getpshared’
+/usr/include/pthread.h:932:12: error: storage class specified for parameter ‘pthread_rwlockattr_setpshared’
+/usr/include/pthread.h:937:12: error: storage class specified for parameter ‘pthread_rwlockattr_getkind_np’
+/usr/include/pthread.h:943:12: error: storage class specified for parameter ‘pthread_rwlockattr_setkind_np’
+/usr/include/pthread.h:952:12: error: storage class specified for parameter ‘pthread_cond_init’
+/usr/include/pthread.h:957:12: error: storage class specified for parameter ‘pthread_cond_destroy’
+/usr/include/pthread.h:961:12: error: storage class specified for parameter ‘pthread_cond_signal’
+/usr/include/pthread.h:965:12: error: storage class specified for parameter ‘pthread_cond_broadcast’
+/usr/include/pthread.h:973:12: error: storage class specified for parameter ‘pthread_cond_wait’
+/usr/include/pthread.h:984:12: error: storage class specified for parameter ‘pthread_cond_timedwait’
+/usr/include/pthread.h:992:12: error: storage class specified for parameter ‘pthread_condattr_init’
+/usr/include/pthread.h:996:12: error: storage class specified for parameter ‘pthread_condattr_destroy’
+/usr/include/pthread.h:1000:12: error: storage class specified for parameter ‘pthread_condattr_getpshared’
+/usr/include/pthread.h:1006:12: error: storage class specified for parameter ‘pthread_condattr_setpshared’
+/usr/include/pthread.h:1011:12: error: storage class specified for parameter ‘pthread_condattr_getclock’
+/usr/include/pthread.h:1017:12: error: storage class specified for parameter ‘pthread_condattr_setclock’
+/usr/include/pthread.h:1028:12: error: storage class specified for parameter ‘pthread_spin_init’
+/usr/include/pthread.h:1032:12: error: storage class specified for parameter ‘pthread_spin_destroy’
+/usr/include/pthread.h:1036:12: error: storage class specified for parameter ‘pthread_spin_lock’
+/usr/include/pthread.h:1040:12: error: storage class specified for parameter ‘pthread_spin_trylock’
+/usr/include/pthread.h:1044:12: error: storage class specified for parameter ‘pthread_spin_unlock’
+/usr/include/pthread.h:1052:12: error: storage class specified for parameter ‘pthread_barrier_init’
+/usr/include/pthread.h:1058:12: error: storage class specified for parameter ‘pthread_barrier_destroy’
+/usr/include/pthread.h:1062:12: error: storage class specified for parameter ‘pthread_barrier_wait’
+/usr/include/pthread.h:1067:12: error: storage class specified for parameter ‘pthread_barrierattr_init’
+/usr/include/pthread.h:1071:12: error: storage class specified for parameter ‘pthread_barrierattr_destroy’
+/usr/include/pthread.h:1075:12: error: storage class specified for parameter ‘pthread_barrierattr_getpshared’
+/usr/include/pthread.h:1081:12: error: storage class specified for parameter ‘pthread_barrierattr_setpshared’
+/usr/include/pthread.h:1095:12: error: storage class specified for parameter ‘pthread_key_create’
+/usr/include/pthread.h:1100:12: error: storage class specified for parameter ‘pthread_key_delete’
+/usr/include/pthread.h:1103:14: error: storage class specified for parameter ‘pthread_getspecific’
+/usr/include/pthread.h:1106:12: error: storage class specified for parameter ‘pthread_setspecific’
+/usr/include/pthread.h:1112:12: error: storage class specified for parameter ‘pthread_getcpuclockid’
+/usr/include/pthread.h:1129:12: error: storage class specified for parameter ‘pthread_atfork’
+In file included from /usr/include/semaphore.h:30:0,
+                 from /usr/include/fred/message_buffer.h:6,
+                 from /usr/include/fred/handler.h:8,
+                 from ../../lib/map.c:18:
+/usr/include/bits/semaphore.h:41:3: error: storage class specified for parameter ‘sem_t’
+In file included from /usr/include/fred/message_buffer.h:6:0,
+                 from /usr/include/fred/handler.h:8,
+                 from ../../lib/map.c:18:
+/usr/include/semaphore.h:37:28: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:40:31: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:43:14: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/semaphore.h:46:29: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:49:12: error: storage class specified for parameter ‘sem_unlink’
+/usr/include/semaphore.h:55:28: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:62:33: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:67:31: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:70:28: error: expected ‘)’ before ‘*’ token
+/usr/include/semaphore.h:73:32: error: expected ‘)’ before ‘*’ token
+In file included from /usr/include/fred/message_buffer.h:7:0,
+                 from /usr/include/fred/handler.h:8,
+                 from ../../lib/map.c:18:
+/usr/include/fred/pdu.h:10:3: error: storage class specified for parameter ‘control_byte’
+/usr/include/fred/pdu.h:29:1: error: storage class specified for parameter ‘transport_layer_pdu’
+/usr/include/fred/pdu.h:31:61: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+/usr/include/fred/pdu.h:43:49: error: expected ‘)’ before ‘*’ token
+In file included from /usr/include/fred/handler.h:8:0,
+                 from ../../lib/map.c:18:
+/usr/include/fred/message_buffer.h:12:1: error: expected specifier-qualifier-list before ‘transport_layer_pdu’
+/usr/include/fred/message_buffer.h:13:2: error: storage class specified for parameter ‘msg’
+/usr/include/fred/message_buffer.h:17:3: error: expected specifier-qualifier-list before ‘sem_t’
+/usr/include/fred/message_buffer.h:25:1: error: storage class specified for parameter ‘transport_layer_buffer’
+/usr/include/fred/message_buffer.h:29:47: error: expected ‘)’ before ‘*’ token
+/usr/include/fred/message_buffer.h:32:20: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/fred/message_buffer.h:33:11: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/fred/message_buffer.h:34:11: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/fred/message_buffer.h:35:39: error: expected ‘)’ before ‘*’ token
+/usr/include/fred/message_buffer.h:36:46: error: expected ‘)’ before ‘*’ token
+In file included from /usr/include/fred/handler.h:9:0,
+                 from ../../lib/map.c:18:
+/usr/include/fred/macros.h:43:51: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+In file included from /usr/include/fred/handler.h:10:0,
+                 from ../../lib/map.c:18:
+/usr/include/fred/registry_error.h:13:14: error: storage class specified for parameter ‘registry_error_str’
+In file included from /usr/include/fred/registry_ops.h:5:0,
+                 from /usr/include/fred/handler.h:11,
+                 from ../../lib/map.c:18:
+/usr/include/sys/un.h:32:5: error: expected specifier-qualifier-list before ‘sa_family_t’
+In file included from /usr/include/fred/handler.h:11:0,
+                 from ../../lib/map.c:18:
+/usr/include/fred/registry_ops.h:13:2: error: storage class specified for parameter ‘registry_descriptor’
+/usr/include/fred/registry_ops.h:15:27: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/fred/registry_ops.h:16:53: error: expected ‘)’ before ‘*’ token
+In file included from /usr/include/fred/handler.h:11:0,
+                 from ../../lib/map.c:18:
+/usr/include/fred/registry_ops.h:18:65: error: expected declaration specifiers or ‘...’ before ‘registry_descriptor’
+/usr/include/fred/registry_ops.h:18:12: error: storage class specified for parameter ‘register_handler’
+/usr/include/fred/registry_ops.h:19:73: error: expected declaration specifiers or ‘...’ before ‘registry_descriptor’
+/usr/include/fred/registry_ops.h:19:12: error: storage class specified for parameter ‘get_handler_address’
+/usr/include/fred/registry_ops.h:20:52: error: expected declaration specifiers or ‘...’ before ‘registry_descriptor’
+/usr/include/fred/registry_ops.h:20:12: error: storage class specified for parameter ‘unregister_handler_address’
+In file included from /usr/include/fred/handler.h:12:0,
+                 from ../../lib/map.c:18:
+/usr/include/fred/configuration_user_communication.h:11:3: error: storage class specified for parameter ‘config_descriptor’
+/usr/include/fred/configuration_user_communication.h:13:25: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/fred/configuration_user_communication.h:14:56: error: expected ‘)’ before ‘*’ token
+/usr/include/fred/configuration_user_communication.h:15:73: error: expected ‘)’ before ‘*’ token
+In file included from ../../lib/map.c:18:0:
+/usr/include/fred/handler.h:21:1: error: expected specifier-qualifier-list before ‘transport_layer_buffer’
+/usr/include/fred/handler.h:58:1: error: storage class specified for parameter ‘transport_layer_handler’
+/usr/include/fred/handler.h:60:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+In file included from ../../lib/map.c:18:0:
+/usr/include/fred/handler.h:61:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/fred/handler.h:62:45: error: expected ‘)’ before ‘*’ token
+In file included from ../../lib/map.c:20:0:
+/usr/include/dirent.h:128:28: error: storage class specified for parameter ‘DIR’
+/usr/include/dirent.h:135:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/dirent.h:142:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/dirent.h:150:26: error: expected ‘)’ before ‘*’ token
+/usr/include/dirent.h:163:36: error: expected ‘)’ before ‘*’ token
+/usr/include/dirent.h:184:27: error: expected ‘)’ before ‘*’ token
+/usr/include/dirent.h:209:28: error: expected ‘)’ before ‘*’ token
+/usr/include/dirent.h:215:26: error: expected ‘)’ before ‘*’ token
+/usr/include/dirent.h:218:30: error: expected ‘)’ before ‘*’ token
+/usr/include/dirent.h:224:23: error: expected ‘)’ before ‘*’ token
+In file included from ../../lib/map.c:20:0:
+/usr/include/dirent.h:252:12: error: storage class specified for parameter ‘scandir’
+/usr/include/dirent.h:285:12: error: storage class specified for parameter ‘alphasort’
+/usr/include/dirent.h:313:18: error: storage class specified for parameter ‘getdirentries’
+../../lib/map.c:22:55: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../lib/map.c:64:31: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../lib/map.c:140:63: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../lib/map.c:152:131: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../lib/map.c:187:27: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../lib/map.c:195:59: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+../../include/location_json.h:19:6: error: old-style parameter declarations in prototyped function definition
+../../lib/map.c:504:1: error: expected ‘{’ at end of input
+make: *** [spotter] Error 1

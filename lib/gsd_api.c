@@ -36,12 +36,9 @@ uint16_t RequestService(char * wanted){
 
 	char message[1024];
 	uint16_t gsd_handler;
-	uint8_t node;
-	uint8_t app;
 
 	//get the k algorism and sum 1 - That's the handler of local GSD (ex: 1001);
-	int2dot(address,&node,&app);
-	gsd_handler = dot2int(node,1);
+	gsd_handler = dot2int(address / 1000,1);
 
 	sprintf(message,"LOCAL_REQUEST<>%d<>%s",++request_id,wanted);
 	send_data(handler,message,strlen(message),gsd_handler);

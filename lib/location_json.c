@@ -22,6 +22,15 @@
 #include "map.h"
 #include "manager.h"
 
+int CompareNodes(const void * key1, const void * key2){
+  return strcmp((const char *) key1, (const char *) key2);
+}
+
+void PrintLocation(void * info){
+  Location * loc = (Location *) info;
+  printf("x: %d \ny: %d \nmap_id id: %d \n", loc->x, loc->y,loc->area_id);
+}
+
 static void PrintNodeJSON(yajl_gen g, rb_red_blk_node* x){
 	yajl_gen_map_open(g);
 		yajl_gen_string(g, (unsigned char *) "Key", strlen("Key"));
@@ -151,7 +160,7 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 
 									short i;
 									for (i = 0; i< sensor->RSS.node_number; i++){
-										yajl_gen_string(g, sensor->RSS.nodes[i], strlen((char *) sensor->RSS.nodes[i]));
+										yajl_gen_string(g, sensor->RSS.nodes+i*(MD5_DIGEST_LENGTH+1), strlen((char *) sensor->RSS.nodes + i*(MD5_DIGEST_LENGTH+1)));
 									}
 								yajl_gen_array_close(g);
 								yajl_gen_string(g, (unsigned char *) "rss", strlen("rss"));
@@ -327,13 +336,13 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 						yajl_val rss_node = YAJL_GET_OBJECT(sensor_obj)->values[1];
 						sensor_data->RSS.type = YAJL_GET_INTEGER(YAJL_GET_OBJECT(rss_node)->values[0]);
 						sensor_data->RSS.node_number = YAJL_GET_INTEGER(YAJL_GET_OBJECT(rss_node)->values[1]);
-						sensor_data->RSS.nodes = (unsigned char **) malloc(MD5_DIGEST_LENGTH*sensor_data->RSS.node_number + 1);
-						sensor_data->RSS.rss = (int8_t *) malloc(sizeof(int8_t)*sensor_data->RSS.node_number);
+						sensor_data->RSS.nodes = (unsigned char *) malloc((MD5_DIGEST_LENGTH+1)*sensor_data->RSS.node_number);
+						sensor_data->RSS.rss = (uint16_t *) malloc(sizeof(uint16_t)*sensor_data->RSS.node_number);
 						yajl_val node_array = YAJL_GET_OBJECT(rss_node)->values[2];
 
 						for (j=0; j<YAJL_GET_ARRAY(node_array)->len;j++){
 							tmp = YAJL_GET_STRING(YAJL_GET_ARRAY(node_array)->values[j]);
-							strcpy((char *)sensor_data->RSS.nodes[j], tmp);
+							memcpy((char *)sensor_data->RSS.nodes + j*(MD5_DIGEST_LENGTH+1), tmp,MD5_DIGEST_LENGTH+1);
 						}
 
 						yajl_val rss_array = YAJL_GET_OBJECT(rss_node)->values[3];

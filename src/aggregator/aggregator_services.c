@@ -67,8 +67,8 @@ static void CheckPreviousLocation(rb_red_blk_node* x){
 
 	GlobalLocation * location = (GlobalLocation *) malloc(sizeof(GlobalLocation));
 	location->last_update = updating_time;
-	location->changed_map = false;
-	location->forced_mantain = false;
+	location->conflicted = false;
+	location->has_previous = true;
 
 	if (previous == NULL){
 
@@ -77,23 +77,40 @@ static void CheckPreviousLocation(rb_red_blk_node* x){
 		
 		RBTreeInsert(global_tree, x->key, location);
 
-	}else if (!((GlobalLocation *) x->info)->has_previous){
+	}else if (!((GlobalLocation *) previous->info)->has_previous){
 
-		location->previous = ((GlobalLocation *) x->info)->previous;
+		location->previous = ((GlobalLocation *) previous->info)->current;
 		location->current = *((Location *) x->info);
-		location->has_previous = true;
-
+		
+		RBDelete(global_tree, previous);
 		RBTreeInsert(global_tree, x->key, location);
 
 	}else{
-		
-  /*
-  	IF (last_update == time_sent)
-  		//CONFLICTO ENTAO VERIFICAR O SITIO ANTERIOR DO GAJO E SE EXISTEM TRANSICOES PARA ESTE PERTO SE SIM, ESCOLHE ESTE, SE NAO ESCOLHE O OUTRO 
-  	
-  	ELSE
-  		PASSAR O CURRENT PARA OLD E ADICIONAR O ACTUAL PARA CURRENT
-  		*/
+		if (((GlobalLocation *)previous->info)->last_update == updating_time){
+			//QUER DIZER QUE JÀ HOUVE UM NÓ QUE ADICIONOU ESTA PESSOA NESTE CICLO: OU SEJA CONFLITO
+			Location * previous_location = &(((GlobalLocation *)previous->info)->previous);
+			Location * comitted = &(((GlobalLocation *)previous->info)->current);
+			Location * conflicted = (Location *) x->info;
+			
+			if(CheckTransition(&maps, previous_location, comitted, conflicted, ((GlobalLocation *)previous->info)->conflicted)){
+				location->current = *conflicted;
+			}else{
+				location->current = *comitted;
+			}	
+
+			location->previous = *previous_location;
+			location->conflicted = true;
+
+			RBDelete(global_tree, previous);
+			RBTreeInsert(global_tree, x->key, location);
+
+		}else{
+			location->previous = ((GlobalLocation *) previous->info)->current;
+			location->current = *((Location *) x->info);
+
+			RBDelete(global_tree, previous);
+			RBTreeInsert(global_tree, x->key, location);
+		}
 		
 	}
 }
@@ -151,7 +168,7 @@ void DeliverManagerData(uint16_t manager_address, LocationPacket * packet, uint6
 	if (compute || num_ready == managers.NumEl){
 
 		updating_time = time_sent;
-		//TODO: ALL THE MAGIC! Receive Manager data and aggregate to global data
+		
 
 		FOR_EACH(node, managers){
 			Manager * manager = (Manager *) node->data;
