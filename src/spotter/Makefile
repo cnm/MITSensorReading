@@ -7,9 +7,11 @@ all: $(EXECS)
 
 spotter: spotter.c spotter_services.c ../../lib/*.c ../../lib/rbtree/*.c
 		$(CC) $(FLAGS) -o $@ $? $(LIBS)
+		mv $(EXECS) ../build/
+		cp bt_sensor.cfg ../build/
 
 clean: 
-		rm $(EXECS)
+		rm -f $(EXECS)
 
 plugins: 
 	gcc -I../../include -fPIC -g -c -Wall ir_sensor.c  

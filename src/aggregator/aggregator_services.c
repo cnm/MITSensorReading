@@ -58,7 +58,7 @@ void SpontaneousManager(uint16_t manager_address, uint8_t map_id, unsigned short
 	packet.required_frequency = max_frequency;
 
 	generate_JSON(&packet,&message,&len);
-	send_data(handler, (char *) &message,len,manager_address);
+	send_data(handler, (char *) message,len,manager_address);
 
 }
 

@@ -1,0 +1,31 @@
+INCLUDE_DIR=include
+#CC=arm-unknown-linux-gnu-gcc
+CC=gcc
+CFLAGS=-fPIC -g 
+
+#We can only change the name of this folder. We cannot put it into another directory
+#and it must end with a slash '/'
+BUILD_DIR=build/
+
+
+all: 
+		mkdir -p $(BUILD_DIR)
+		make -C discovery/
+		make -C spotter/
+		make -C spotter/ plugins
+		make -C manager/
+		make -C aggregator/
+
+deploy: all
+		mv $(BUILD_DIR) ~/tese_build
+		cp -r ../lib/spot_plugins ~/tese_build/
+		cp -r ../config ~/tese_build/
+
+clean:
+		rm -rf ~/tese_build/
+		make -C discovery/ clean
+		make -C spotter/ clean
+		make -C manager/ clean
+		make -C aggregator/ clean
+
+redo: clean deploy

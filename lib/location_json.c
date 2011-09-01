@@ -149,6 +149,9 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 								yajl_gen_integer(g, sensor->people);
 								break;
 							case RSS:
+								yajl_gen_string(g, (unsigned char *) "RSS", strlen("RSS"));
+								yajl_gen_map_open(g);
+
 								yajl_gen_string(g, (unsigned char *) "type", strlen("type"));
 								yajl_gen_integer(g, sensor->RSS.type);
 
@@ -158,9 +161,11 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 								yajl_gen_string(g, (unsigned char *) "nodes", strlen("nodes"));
 								yajl_gen_array_open(g);
 
-									short i;
+									short i,aux=0;
 									for (i = 0; i< sensor->RSS.node_number; i++){
-										yajl_gen_string(g, sensor->RSS.nodes+i*(MD5_DIGEST_LENGTH+1), strlen((char *) sensor->RSS.nodes + i*(MD5_DIGEST_LENGTH+1)));
+										if (i>0)
+											aux=1;
+										yajl_gen_string(g, sensor->RSS.nodes+i*(MD5_DIGEST_LENGTH*2+1)+aux, MD5_DIGEST_LENGTH*2);
 									}
 								yajl_gen_array_close(g);
 								yajl_gen_string(g, (unsigned char *) "rss", strlen("rss"));
@@ -169,6 +174,8 @@ bool generate_JSON(LocationPacket * packet, unsigned char ** response, size_t * 
 										yajl_gen_integer(g,sensor->RSS.rss[i]);
 									}
 								yajl_gen_array_close(g);
+
+								yajl_gen_map_close(g);
 								break;
 						}
 					yajl_gen_map_close(g);
@@ -217,7 +224,7 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 
 	//logger("Parsing packet from JSON message");
 
-	node = yajl_tree_parse(( char *) data, errbuf, sizeof(errbuf));
+	node = yajl_tree_parse(data, errbuf, sizeof(errbuf));
 
 	/* parse error handling */
     if (node == NULL) {
@@ -289,7 +296,7 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 					array = YAJL_GET_OBJECT(object)->values[j];
 					for(z=0; z < YAJL_GET_ARRAY(array)->len; z++){
 						info = YAJL_GET_OBJECT(array)->values[z];
-						char * rb_key = (char *) malloc(MD5_DIGEST_LENGTH + 1);
+						char * rb_key = (char *) malloc(MD5_DIGEST_LENGTH*2 + 1);
 						Location * rb_info = (Location *) malloc(sizeof(Location));
 						for (i=0; z < YAJL_GET_OBJECT(info)->len; z++){
 							if (!strcmp(YAJL_GET_OBJECT(info)->keys[i],"x"))
@@ -336,13 +343,17 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 						yajl_val rss_node = YAJL_GET_OBJECT(sensor_obj)->values[1];
 						sensor_data->RSS.type = YAJL_GET_INTEGER(YAJL_GET_OBJECT(rss_node)->values[0]);
 						sensor_data->RSS.node_number = YAJL_GET_INTEGER(YAJL_GET_OBJECT(rss_node)->values[1]);
-						sensor_data->RSS.nodes = (unsigned char *) malloc((MD5_DIGEST_LENGTH+1)*sensor_data->RSS.node_number);
+						sensor_data->RSS.nodes = (unsigned char *) malloc((MD5_DIGEST_LENGTH*2+1)*sensor_data->RSS.node_number);
+						memset(sensor_data->RSS.nodes,0,(MD5_DIGEST_LENGTH*2+1)*sensor_data->RSS.node_number);
 						sensor_data->RSS.rss = (uint16_t *) malloc(sizeof(uint16_t)*sensor_data->RSS.node_number);
 						yajl_val node_array = YAJL_GET_OBJECT(rss_node)->values[2];
 
 						for (j=0; j<YAJL_GET_ARRAY(node_array)->len;j++){
 							tmp = YAJL_GET_STRING(YAJL_GET_ARRAY(node_array)->values[j]);
-							memcpy((char *)sensor_data->RSS.nodes + j*(MD5_DIGEST_LENGTH+1), tmp,MD5_DIGEST_LENGTH+1);
+							char * node_ptr = (char *)sensor_data->RSS.nodes + j*(MD5_DIGEST_LENGTH*2+1);
+							if (j!=0)
+								node_ptr++;
+							memcpy(node_ptr, tmp,MD5_DIGEST_LENGTH*2+1);
 						}
 
 						yajl_val rss_array = YAJL_GET_OBJECT(rss_node)->values[3];
@@ -353,6 +364,7 @@ bool generate_packet_from_JSON(char * data, LocationPacket * packet){
 					}
 					default: break;
 				}
+				AddToList(sensor_data,&packet->data);
 			}
 
 			break;

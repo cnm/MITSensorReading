@@ -18,6 +18,7 @@
 #include <dlfcn.h>
 #include <fred/handler.h>
 #include <fred/addr_convert.h>
+#include <openssl/md5.h>
 #include "listType.h"
 #include "manager.h"
 #include "location.h"
@@ -61,7 +62,7 @@ void ServiceFound(uint16_t dest_handler, uint16_t request_id) {
 
 			generate_JSON(&location,&data,&length);
 
-			send_data(handler, (char *)&data,length,dest_handler);
+			send_data(handler, (char *)data,length,dest_handler);
 
 			free(data);
 		}
@@ -71,7 +72,7 @@ void ServiceFound(uint16_t dest_handler, uint16_t request_id) {
 
 		generate_JSON(&location,&data,&length);
 
-		send_data(handler, (char *)&data,length,dest_handler);
+		send_data(handler, (char *)data,length,dest_handler);
 
 		free(data);
 	}
@@ -91,7 +92,7 @@ void SendManagerData(uint16_t address){
 
 	generate_JSON(&packet, &data, &length);
 
-	send_data(handler, (char *)&data,length,address);
+	send_data(handler, (char *)data,length,address);
 
 	free(data);
 
@@ -119,6 +120,12 @@ void FreePacket(LocationPacket * packet){
 }
 
 void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int64_t air_time, uint16_t src_id){
+
+	if (!memcmp(data,"LOCAL_GSD:",strlen("LOCAL_GSD:"))){
+		GsdReceive(data);
+		return;
+	}
+
 	LocationPacket * packet = (LocationPacket *) malloc(sizeof(LocationPacket));
 	generate_packet_from_JSON(data, packet);
 
@@ -157,6 +164,32 @@ void free_elements(){
 	//TODO More elements to free
 }
 
+void print_spotters(){
+	LElement * elem;
+	int i,aux;
+	FOR_EACH(elem, spotters){
+		Spotter * spotter = (Spotter *) elem->data;
+		printf("---- NEW SPOTTER ----\n id: %d \n location.x: %d\n location.y: %d\n ",spotter->id, spotter->location.x,spotter->location.y);
+		if (spotter->current_info != NULL){
+			printf("---CURRENT INFO: \n node number: %d \n",spotter->current_info->node_number);
+			printf("-- Nodes --\n");
+			for (i=0; i< spotter->current_info->node_number; i++){
+				if (i>0)
+					aux=1;
+				printf("ID: %s --- RSS: %d\n", spotter->current_info->nodes + i*(MD5_DIGEST_LENGTH*2+1)+aux, spotter->current_info->rss[i]);
+			}
+			printf("---- END SPOTTER ----\n");
+		}
+	}
+}
+
+void print_state(){
+	printf("---- MANAGER STATE ----\n Number of people in area:%d\n ---- DETECTED PEOPLE LOCATION ----\n",people_in_area);
+
+	RBTreePrint(people_located);
+
+}
+
 int main(int argc, char ** argv){
 
 	//LER CONFIGS
@@ -174,8 +207,8 @@ int main(int argc, char ** argv){
 		return 0;
 	}
 	if (argc == 1){
-		handler_file = "../../config/manager_handler.cfg";
-		manager_file = "../../config/manager.cfg";
+		handler_file = "config/manager_handler.cfg";
+		manager_file = "config/manager.cfg";
 	}else{
 		handler_file = argv[1];
 		manager_file = argv[2];
@@ -251,14 +284,16 @@ int main(int argc, char ** argv){
 
 	pthread_create(&update_aggregator_loop, NULL, manager_send_loop, NULL);
 
-	while(op != 2){
-		printf("MENU:\n 1-PRINT CURRENT STATE\n 2-EXIT\n\n");
+	while(op != 3){
+		printf("MENU:\n 1-PRINT CURRENT STATE\n 2-PRINT AVAILABLE SPOTTERS\n 3-EXIT\n\n");
 		scanf("%d", &op);
 
 		switch(op){
-			case 1:
+			case 1: print_state();
 					break;
-			case 2: free_elements();
+			case 2:	print_spotters();
+					break;
+			case 3: free_elements();
 					break;
 			default: printf("Acção Incorrecta\n");
 		}

@@ -32,7 +32,7 @@ void RequestFrequent(uint16_t manager_address, unsigned short required_frequence
 	packet.RegSensor.sensor_location = self;
 
 	generate_JSON(&packet,&message,&len);
-	send_data(handler, (char *) &message,len,manager_address);
+	send_data(handler, (char *) message,len,manager_address);
 
 }
 

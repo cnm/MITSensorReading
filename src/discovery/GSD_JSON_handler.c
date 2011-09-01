@@ -5,11 +5,13 @@
 #include <yajl/yajl_parse.h>
 #include <yajl/yajl_gen.h>
 #include <yajl/yajl_tree.h>
+#include <fred/handler.h>
+#include <fred/addr_convert.h>
+#include <syslog.h>
 #include "discovery.h"
 #include "listType.h"
 #include "ServiceCache.h"
-#include <fred/handler.h>
-#include <syslog.h>
+
 
 extern uint16_t MYADDRESS;
 extern char* MYIPADDRESS;
@@ -360,7 +362,7 @@ bool Import_Local_Services(char * data){
 				memset(service->ip_address, 0, strlen(MYIPADDRESS)+7);
 				sprintf(service->ip_address, "%s:%d", MYIPADDRESS, port);
 			}else if (!strcmp("address", YAJL_GET_OBJECT(obj)->keys[j])){
-				service->address = YAJL_GET_INTEGER(YAJL_GET_OBJECT(obj)->values[j]);
+				service->address = dot2int(YAJL_GET_INTEGER(YAJL_GET_OBJECT(obj)->values[j])/1000,YAJL_GET_INTEGER(YAJL_GET_OBJECT(obj)->values[j])%1000);
 			}else if (!strcmp("groups", YAJL_GET_OBJECT(obj)->keys[j])){
 				groups_JSON = YAJL_GET_OBJECT(obj)->values[j];
 			}

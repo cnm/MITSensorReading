@@ -43,20 +43,23 @@ RequestList local_requests;
 
 unsigned int broadcast_id = 0;
 
-static char * MatchService(GSDPacket * req){
+static bool MatchService(GSDPacket * req, ServiceReply * reply){
 	LElement * cache_item;
 	LElement * service_item;
 	//TODO FUTURE WORK: CHECK THIS COMPARE AND REMAKE ALL DESCRIPTIONS TO BE OWL
 	FOR_EACH(cache_item,cache){
 		if (((ServiceCache *)cache_item->data)->local){
 			FOR_EACH(service_item, (((ServiceCache *)cache_item->data)->services)){
-				if (strcmp(((Service *)service_item->data)->description, req->request->wanted_service.description)==0)
-					return ((Service *)service_item->data)->ip_address;
+				if (strcmp(((Service *)service_item->data)->description, req->request->wanted_service.description)==0){
+					reply->ip_address = ((Service *)service_item->data)->ip_address;
+					reply->dest_address = ((Service *)service_item->data)->address;
+					return true;
+				}
 			}
 		}
 	}
 	
-	return NULL;
+	return false;
 }
 
 static void SelectiveForward(GSDPacket * req){
@@ -136,15 +139,12 @@ static void RequestService(GSDPacket * req){
 	Register_Handler(req->request->ip_last_address,req->request->last_address);
 	
 	//Match request with services present in local cache
-	char * ip_match = MatchService(req);
-	if(ip_match != NULL){
+	ServiceReply reply;
+	
+	if(MatchService(req,&reply)){
 		//IF match
 		
 		logger("Local Service Match found. Replying\n");
-		
-		ServiceReply reply;
-		reply.dest_address = MYADDRESS;
-		reply.ip_address = ip_match;
 		
 		free(req->request);
 		req->reply = &reply;
@@ -323,15 +323,22 @@ static void create_local_request(char * data, GSDPacket * packet,uint16_t addres
 		local->request_id = atoi(parser);
 		local->broadcast_id = broadcast_id;
 
+		AddToList(local, &local_requests);
+
 		packet->packet_type = GSD_REQUEST;
 		packet->source_address = MYADDRESS;
 		packet->hop_count = 0;
 		packet->broadcast_id = broadcast_id++;
 		packet->request = req;
-		packet->gsd_ip_address = MYIPADDRESS;
+		packet->gsd_ip_address = (char *) malloc(strlen(MYIPADDRESS) + 5 + 2);
+		sprintf(packet->gsd_ip_address, "%s:%d", MYIPADDRESS, MYPORT);
 		
 		req->last_address = MYADDRESS;
-		req->ip_last_address = MYIPADDRESS;
+		req->ip_last_address = (char *) malloc(strlen(MYIPADDRESS) + 5 + 2);
+		sprintf(req->ip_last_address, "%s:%d", MYIPADDRESS, MYPORT);
+
+		parser = strtok(NULL,"<>;");
+
 		req->wanted_service.description = (char *) malloc(strlen(parser)+1);
 		memcpy(req->wanted_service.description,parser,strlen(parser)+1);
 		
@@ -351,23 +358,18 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int6
 	
 	GSDPacket * packet = (GSDPacket *) malloc(sizeof(GSDPacket));
 	
+	if (src_id == MYADDRESS && packet->packet_type == GSD_ADVERTISE)
+		return;
 	
 	logger("Received message\n");
+
 	
 	//CREATE PACKET; CHECK PACKET TYPE; CALL METHODS
 	
 	if(!memcmp(data, "LOCAL_REQUEST<>", strlen("LOCAL_REQUEST<>")))
 		create_local_request(data,packet,src_id);
 	else
-		generate_packet_from_JSON(data, packet);
-	
-	
-	//VERIFICAR SE VEIO DO PRÓPRIO NÓ (Broadcast)
-	if (!memcmp(packet->gsd_ip_address,MYIPADDRESS,strlen(MYIPADDRESS)) && packet->packet_type != GSD_REPLY){
-		free(packet);
-		return;
-	}
-	
+		generate_packet_from_JSON(data, packet);	
 	
     switch(packet->packet_type){
 		case GSD_ADVERTISE: P2PCacheAndForwardAdvertisement(packet);
@@ -498,9 +500,9 @@ int main(int argc, char **argv)
 		return 0;
 	}
 	if (argc == 1){
-		handler_file = "../../config/gsd_handler.cfg";
-		gsd_file = "../../config/gsd.cfg";
-		services_file = "../../config/gsd_services.cfg";
+		handler_file = "config/gsd_handler.cfg";
+		gsd_file = "config/gsd.cfg";
+		services_file = "config/gsd_services.cfg";
 	}else{
 		handler_file = argv[1];
 		gsd_file = argv[2];

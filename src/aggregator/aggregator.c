@@ -61,7 +61,7 @@ void ServiceFound(uint16_t dest_handler, uint16_t request_id) {
 
 	generate_JSON(&location,&data,&length);
 
-	send_data(handler, (char *)&data,length,dest_handler);
+	send_data(handler, (char *)data,length,dest_handler);
 
 	free(data);
 
@@ -165,8 +165,8 @@ int main(int argc, char ** argv){
 		return 0;
 	}
 	if (argc == 1){
-		handler_file = "../../config/aggregator_handler.cfg";
-		agg_file = "../../config/aggregator.cfg";
+		handler_file = "config/aggregator_handler.cfg";
+		agg_file = "config/aggregator.cfg";
 	}else{
 		handler_file = argv[1];
 		agg_file = argv[2];

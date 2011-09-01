@@ -36,7 +36,6 @@ void SensorResult(SensorData * data){
 	short index = 1;
 	LElement * elem;
 	bool got_in = false;
-	SensorData * data_to_keep;
 	printf("GOT ONE RESULT!!! \n");
 	switch(data->type){
 		case ENTRY:
@@ -70,10 +69,8 @@ void SensorResult(SensorData * data){
 	}
 
 	if (!got_in){
-		data_to_keep = (SensorData *) malloc(sizeof(SensorData));
-		memcpy(data_to_keep,data,sizeof(SensorData));
 		pthread_mutex_lock(&dataToSend);
-		AddToList(data_to_keep,&cached_data);
+		AddToList(data,&cached_data);
 		pthread_mutex_unlock(&dataToSend);
 	}
 
@@ -104,7 +101,7 @@ void ServiceFound(uint16_t dest_handler, uint16_t request_id) {
 
 		generate_JSON(&location,&data,&length);
 
-		send_data(handler, (char *)&data,length,dest_handler);
+		send_data(handler, (char *)data,length,dest_handler);	
 
 		free(data);
 	}
@@ -118,8 +115,10 @@ void ManagerLost(){
 
 void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int64_t air_time, uint16_t src_id){
 
-	if (!memcmp(data,"LOCAL_GSD:",strlen("LOCAL_GSD:")))
+	if (!memcmp(data,"LOCAL_GSD:",strlen("LOCAL_GSD:"))){
 		GsdReceive(data);
+		return;
+	}
 
 	LocationPacket * packet = (LocationPacket *) malloc(sizeof(LocationPacket));
 	generate_packet_from_JSON(data, packet);
@@ -177,11 +176,11 @@ void SendSensorData(uint16_t address){
 
 	CreateList(&packet.data);
 	FOR_EACH(elem, cached_data){
-		AddToList(elem,&packet.data);
+		AddToList(elem->data,&packet.data);
 	}
 	generate_JSON(&packet, &data,&length);
 
-	send_data(handler, (char *)&data,length,manager_address);
+	send_data(handler, (char *)data,length,manager_address);
 
 	free(data);
 }
@@ -242,7 +241,7 @@ void print_plugins(){
 void print_current_data(){
 	LElement * item;
 	SensorData * sensor;
-	unsigned short i;
+	unsigned short i,aux=0;
 	FOR_EACH(item,cached_data){
 		sensor = (SensorData *) item->data;
 		printf("-------------------- SENSOR DATA -------------------------\n");
@@ -256,7 +255,8 @@ void print_current_data(){
 			case RSS:
 				printf("--- TYPE: RSS - NUM_NODES: %hu \n", sensor->RSS.node_number);
 				for (i=0; i < sensor->RSS.node_number; i++){
-					printf("- ID: %s , RSS: %d \n", sensor->RSS.nodes + i*(MD5_DIGEST_LENGTH+1), sensor->RSS.rss[i]);
+					if (i>0) aux=1;
+					printf("- ID: %s , RSS: %d \n", sensor->RSS.nodes + i*(MD5_DIGEST_LENGTH*2+1)+aux, sensor->RSS.rss[i]);
 				}
 				break;
 		}
@@ -285,8 +285,8 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 	if (argc == 1){
-		handler_file = "../../config/spotter_handler.cfg";
-		spotter_file = "../../config/spotter.cfg";
+		handler_file = "config/spotter_handler.cfg";
+		spotter_file = "config/spotter.cfg";
 	}else{
 		handler_file = argv[1];
 		spotter_file = argv[2];

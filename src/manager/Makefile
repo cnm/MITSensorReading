@@ -7,6 +7,7 @@ all: $(EXECS)
 
 manager: *.c ../../lib/*.c ../../lib/rbtree/*.c
 		$(CC) $(FLAGS) -o $@ $? $(LIBS)
+		mv $(EXECS) ../build/
 
 clean: 
-		rm $(EXECS)
+		rm -f $(EXECS)

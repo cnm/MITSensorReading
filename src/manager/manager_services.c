@@ -43,7 +43,7 @@ void RequestFrequent(uint16_t aggregator_address, unsigned short frequency){
 	AddAggregator(aggregator_address,frequency);
 
 	generate_JSON(&packet,&message,&len);
-	send_data(handler, (char *) &message,len,aggregator_address);
+	send_data(handler, (char *) message,len,aggregator_address);
 
 }
 
@@ -63,6 +63,8 @@ void SpontaneousSpotter(uint16_t spotter_address, Location location, unsigned sh
 	Spotter * spotter = (Spotter *) malloc(sizeof(Spotter));
 	spotter->id = spotter_address;
 	spotter->location = location;
+	spotter->current_info = NULL;
+	spotter->last_received = 0;
 
 	AddToList(spotter,&spotters);
 
@@ -71,7 +73,7 @@ void SpontaneousSpotter(uint16_t spotter_address, Location location, unsigned sh
 	packet.required_frequency = max_frequency;
 
 	generate_JSON(&packet,&message,&len);
-	send_data(handler, (char *) &message,len,spotter_address);
+	send_data(handler, (char *) message,len,spotter_address);
 
 }
 
@@ -130,10 +132,10 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 							//Allocate it as the last info for this node till we have all the info from all nodes
 							if (spotter->current_info == NULL){
 								RSSInfo * rss = (RSSInfo *) malloc(sizeof(RSSInfo));
-								rss->nodes = (unsigned char *) malloc((MD5_DIGEST_LENGTH+1)*sensor->RSS.node_number);
+								rss->nodes = (unsigned char *) malloc((MD5_DIGEST_LENGTH*2+1)*sensor->RSS.node_number);
 								rss->rss = (uint16_t *) malloc(sizeof(uint16_t)*sensor->RSS.node_number);
 								memcpy(rss,&(sensor->RSS),sizeof(RSSInfo));
-								memcpy(rss->nodes, sensor->RSS.nodes,(MD5_DIGEST_LENGTH+1)*sensor->RSS.node_number);
+								memcpy(rss->nodes, sensor->RSS.nodes,(MD5_DIGEST_LENGTH*2+1)*sensor->RSS.node_number);
 								memcpy(rss->rss,sensor->RSS.rss,sizeof(uint16_t)*sensor->RSS.node_number);
 								spotter->current_info = rss;
 								spotter->last_received = time_sent;
@@ -150,7 +152,7 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 					//When we have info from all nodes (or if missed an info from a node) we compute the location of people with the info we have
 					if (compute || num_ready == spotters.NumEl){
 						
-						unsigned short i;
+						unsigned short i,aux=0;
 						LList raw_list;
 						CreateList(&raw_list);
 						bool in_list = false;
@@ -159,10 +161,10 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 							Spotter * spotter = (Spotter *) node->data;
 							if (spotter->current_info != NULL){
 								for (i=0; i < spotter->current_info->node_number; i++){
-
+									if (i>0) aux=1;
 									FOR_EACH(elem, raw_list){
 										TriInfo * tri = (TriInfo *) elem->data;
-										 if (!memcmp((const char *) tri->node,(const char *) spotter->current_info->nodes+(MD5_DIGEST_LENGTH+1)*i, MD5_DIGEST_LENGTH)){
+										 if (!memcmp((const char *) tri->node,(const char *) spotter->current_info->nodes+(MD5_DIGEST_LENGTH*2+1)*i+aux, MD5_DIGEST_LENGTH*2)){
 										 	in_list = true;
 										 	if (!tri->b2){
 										 		tri->b2 = true;
@@ -175,9 +177,11 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 									}
 
 									if (!in_list){
+										aux=0;
 										TriInfo * new = (TriInfo *) malloc(sizeof(TriInfo));
-										new->node = (unsigned char *) malloc(MD5_DIGEST_LENGTH + 1);
-										memcpy((char *) new->node, (char *) spotter->current_info->nodes+(MD5_DIGEST_LENGTH+1)*i,MD5_DIGEST_LENGTH+1);
+										new->node = (unsigned char *) malloc(MD5_DIGEST_LENGTH*2 + 1);
+										if (i>0) aux=1;
+										memcpy((char *) new->node, (char *) spotter->current_info->nodes+(MD5_DIGEST_LENGTH*2+1)*i + aux,MD5_DIGEST_LENGTH*2+1);
 										new->s1 = spotter->location;
 										new->r1 = spotter->current_info->rss[i];
 										AddToList(new, &raw_list);

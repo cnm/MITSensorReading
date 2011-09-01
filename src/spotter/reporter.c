@@ -257,6 +257,21 @@ void reporter_add_with_rssi(inquiry_info_with_rssi* newthingy) {
 	//reporter_add(&template);
 }
 
+char* hexamd5(char* md5bin){
+	char * hexa = (char *) malloc(MD5_DIGEST_LENGTH*2+1);
+	uint32_t i;
+
+	if (!hexa){
+		printf("%s:%d: Malloc failed\n", __FILE__, __LINE__);
+		return NULL;
+	}
+
+	memset(hexa,0,MD5_DIGEST_LENGTH*2+1);
+	for(i=0;i< MD5_DIGEST_LENGTH; i++)
+		sprintf(hexa + (i*2),"%02x", (uint8_t) (md5bin[i]));
+
+	return hexa;
+}
 
 /* The new inq has concluded so, see if there are any entries in
  * the old inq that are not in the new inq.... report removes.
@@ -265,7 +280,7 @@ void reporter_add_with_rssi(inquiry_info_with_rssi* newthingy) {
  */
 SensorData * reporter_swap() {
 	char ieeeaddr[18];
-	int i,j;
+	int i,j,aux=0;
 	int8_t value;
 	double r;
 	SensorData * rss_data;
@@ -276,21 +291,32 @@ SensorData * reporter_swap() {
 	
 	rss_data->type = RSS;
 
-	unsigned char * test;
+	char test[MD5_DIGEST_LENGTH+1];
+	char * tmp_str;
 
 	rss_data->RSS.node_number = entries1;
 	rss_data->RSS.type = BLUETOOTH;
-	rss_data->RSS.nodes = (unsigned char *) malloc((MD5_DIGEST_LENGTH+1)*entries1);
+	rss_data->RSS.nodes = (unsigned char *) malloc((MD5_DIGEST_LENGTH*2+1)*entries1);
 	rss_data->RSS.rss = (uint16_t *) malloc(sizeof(uint16_t)* entries1);
+
+	memset(rss_data->RSS.nodes,0,(MD5_DIGEST_LENGTH*2+1)*entries1);
 
 	debug && printf("\n\nBase Power: %d\n\n",base_power);
 
 	for (i=0; i< entries1; i++){
 		ba2str(&((storeR1+i)->bdaddr), ieeeaddr);	
-		test = (rss_data->RSS.nodes + i*(MD5_DIGEST_LENGTH+1));
+
 		debug && printf("MAC: %s ",ieeeaddr);
-		MD5((unsigned char *) ieeeaddr,strlen(ieeeaddr),test);	
-		debug && printf("MD5: %s ", test);
+		MD5(ieeeaddr,strlen(ieeeaddr),test);
+
+		tmp_str = hexamd5(test);
+
+		if (i > 0)
+			aux = 1;
+
+		memcpy(rss_data->RSS.nodes + i*(MD5_DIGEST_LENGTH*2+1) + aux, tmp_str, MD5_DIGEST_LENGTH*2 + 1);
+
+		debug && printf("MD5: %s ", tmp_str);
 		debug && printf("\n ATENUACAO: %d , ABSOLUTE: %d \n",(storeR1+i)->rssi - base_power,abs((storeR1+i)->rssi - base_power));
 		value = (storeR1+i)->rssi;	
 		if (!do_finger){

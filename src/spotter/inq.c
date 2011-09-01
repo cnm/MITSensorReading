@@ -105,10 +105,12 @@ static int dd;
 
 
 static int print_data(SensorData * data){
-	int i;	
+	int i, aux = 0;	
 	printf("Num nodes: %d\n",data->RSS.node_number);
-	for (i=0; i<data->RSS.node_number; i++)
-		printf("Node: %s  --  RSS: %d\n", data->RSS.nodes + i*(MD5_DIGEST_LENGTH+1), data->RSS.rss[i]);
+	for (i=0; i<data->RSS.node_number; i++){
+		if (i>0) aux=1;
+		printf("Node: %s  --  RSS: %d\n", data->RSS.nodes + i*(MD5_DIGEST_LENGTH*2+1) + aux, data->RSS.rss[i]);
+	}
 	return 1;
 }
 
@@ -570,6 +572,10 @@ void start_sense(){
 
 void stop_cb(){
 	sensor_result = NULL;
+	
+	if (hci_send_cmd(dd, OGF_LINK_CTL, OCF_EXIT_PERIODIC_INQUIRY, 0, NULL) < 0) 
+	       fprintf(stderr, gettext("I cannot stop the inquisition!\n"));
+
 	if (dd>0)
 		hci_close_dev(dd);
 }
