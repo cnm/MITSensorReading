@@ -84,7 +84,7 @@ void FreeRSS(RSSInfo * rss){
 }
 
 void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint64_t time_sent){
-	LElement * elem, * node;
+	LElement * elem, * node, * iter;
 	bool exit_entry = false;
 
 	FOR_EACH(elem,packet->data){
@@ -195,8 +195,8 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 							}
 						}
 						
-						FOR_EACH(elem,raw_list){
-							TriInfo * tri = (TriInfo *) elem->data;
+						FOR_EACH(iter,raw_list){
+							TriInfo * tri = (TriInfo *) iter->data;
 
 							if(!tri->b2)
 								break;

@@ -29,3 +29,8 @@ clean:
 		make -C aggregator/ clean
 
 redo: clean deploy
+
+update: all
+		mv $(BUILD_DIR)* ~/tese_build
+		cp -r ../lib/spot_plugins ~/tese_build/
+		
