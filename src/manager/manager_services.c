@@ -162,8 +162,8 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 							if (spotter->current_info != NULL){
 								for (i=0; i < spotter->current_info->node_number; i++){
 									if (i>0) aux=1;
-									FOR_EACH(elem, raw_list){
-										TriInfo * tri = (TriInfo *) elem->data;
+									FOR_EACH(iter, raw_list){
+										TriInfo * tri = (TriInfo *) iter->data;
 										 if (!memcmp((const char *) tri->node,(const char *) spotter->current_info->nodes+(MD5_DIGEST_LENGTH*2+1)*i+aux, MD5_DIGEST_LENGTH*2)){
 										 	in_list = true;
 										 	if (!tri->b2){
