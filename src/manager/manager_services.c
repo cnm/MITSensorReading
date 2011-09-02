@@ -180,6 +180,8 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 										aux=0;
 										TriInfo * new = (TriInfo *) malloc(sizeof(TriInfo));
 										new->node = (unsigned char *) malloc(MD5_DIGEST_LENGTH*2 + 1);
+										new->b2 = false;
+										new->b3 = false;
 										if (i>0) aux=1;
 										memcpy((char *) new->node, (char *) spotter->current_info->nodes+(MD5_DIGEST_LENGTH*2+1)*i + aux,MD5_DIGEST_LENGTH*2+1);
 										new->s1 = spotter->location;
@@ -227,13 +229,19 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 							v3.z = 0;
 
 							
+							Location * location;
+							if (trilateration(&result1,&result2,v1,r1,v2,r2,v3,r3,0.00001)==0)
+								location = InfoToCell(my_map, &result1, &result2);
+							else
+								location = InfoToCell(my_map, &v1, &v2);
 							
-							if (trilateration(&result1,&result2,v1,r1,v2,r2,v3,r3,0.00001)==0){
-								Location * location = InfoToCell(my_map, &result1, &result2);
+							
+							rb_red_blk_node * previous = RBExactQuery(people_located, tri->node);
 
-								RBTreeInsert(people_located, tri->node, location);
-							}
-							
+							if(previous!=NULL)
+								RBDelete(people_located, previous);
+
+							RBTreeInsert(people_located, tri->node, location);
 							
 						}
 
