@@ -48,13 +48,11 @@ static bool MatchService(GSDPacket * req, ServiceReply * reply){
 	LElement * service_item;
 	//TODO FUTURE WORK: CHECK THIS COMPARE AND REMAKE ALL DESCRIPTIONS TO BE OWL
 	FOR_EACH(cache_item,cache){
-		if (((ServiceCache *)cache_item->data)->local){
-			FOR_EACH(service_item, (((ServiceCache *)cache_item->data)->services)){
-				if (strcmp(((Service *)service_item->data)->description, req->request->wanted_service.description)==0){
-					reply->ip_address = ((Service *)service_item->data)->ip_address;
-					reply->dest_address = ((Service *)service_item->data)->address;
-					return true;
-				}
+		FOR_EACH(service_item, (((ServiceCache *)cache_item->data)->services)){
+			if (strcmp(((Service *)service_item->data)->description, req->request->wanted_service.description)==0){
+				reply->ip_address = ((Service *)service_item->data)->ip_address;
+				reply->dest_address = ((Service *)service_item->data)->address;
+				return true;
 			}
 		}
 	}
