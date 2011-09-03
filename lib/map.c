@@ -203,10 +203,10 @@ Location * InfoToCell(Map * map, vec3d * rs1, vec3d * rs2){
 	double x2 = rs2->x/map->cell_size;
 	double y2 = rs2->y/map->cell_size;
 
-	unsigned int cell_x1 = (unsigned int) x1;
-	unsigned int cell_y1 = (unsigned int) y1;
-	unsigned int cell_x2 = (unsigned int) x2;
-	unsigned int cell_y2 = (unsigned int) y2;
+	int cell_x1 = (int) x1;
+	int cell_y1 = (int) y1;
+	int cell_x2 = (int) x2;
+	int cell_y2 = (int) y2;
 		
 	double x1c = x1 - cell_x1;
 	double y1c = y1 - cell_y1;
