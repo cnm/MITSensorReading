@@ -164,9 +164,11 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 							Spotter * spotter = (Spotter *) node->data;
 							if (spotter->current_info != NULL){
 								for (i=0; i < spotter->current_info->node_number; i++){
-									if (i>0) aux=1;
 									FOR_EACH(iter, raw_list){
 										TriInfo * tri = (TriInfo *) iter->data;
+										aux = 0;
+										if (i>0) aux=1;
+										printf("\n MEM COMPARE: %s - %s \n",tri->node,spotter->current_info->nodes+(MD5_DIGEST_LENGTH*2+1)*i+aux);
 										 if (!memcmp((const char *) tri->node,(const char *) spotter->current_info->nodes+(MD5_DIGEST_LENGTH*2+1)*i+aux, MD5_DIGEST_LENGTH*2)){
 										 	in_list = true;
 										 	if (!tri->b2){
@@ -185,10 +187,11 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 										aux=0;
 										TriInfo * new = (TriInfo *) malloc(sizeof(TriInfo));
 										new->node = (unsigned char *) malloc(MD5_DIGEST_LENGTH*2 + 1);
+										memset(new->node, 0, MD5_DIGEST_LENGTH*2 + 1);
 										new->b2 = false;
 										new->b3 = false;
 										if (i>0) aux=1;
-										memcpy((char *) new->node, (char *) spotter->current_info->nodes+(MD5_DIGEST_LENGTH*2+1)*i + aux,MD5_DIGEST_LENGTH*2+1);
+										memcpy((char *) new->node, (char *) spotter->current_info->nodes+(MD5_DIGEST_LENGTH*2+1)*i + aux,MD5_DIGEST_LENGTH*2);
 										new->s1 = spotter->location;
 										new->r1 = spotter->current_info->rss[i];
 										AddToList(new, &raw_list);
@@ -206,7 +209,7 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 							TriInfo * tri = (TriInfo *) iter->data;
 
 							if(!tri->b2)
-								break;
+								continue;
 
 							vec3d v1,v2,v3,result1,result2;
 							double r1,r2,r3;
