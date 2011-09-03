@@ -171,9 +171,11 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 										 	in_list = true;
 										 	if (!tri->b2){
 										 		tri->b2 = true;
+										 		tri->s2 = spotter->location;
 										 		tri->r2 = spotter->current_info->rss[i];
-											 }else{										 	
+											 }else{				
 										 		tri->r3 = spotter->current_info->rss[i];
+										 		tri->s3 = spotter->location;
 										 		tri->b3 = true;
 										 	}
 										 }
