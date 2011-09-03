@@ -245,7 +245,7 @@ int main(int argc, char ** argv){
 
 	fclose(config_file);
 
-	people_located = RBTreeCreate(CompareNodes,free,free,NullFunction,PrintLocation);
+	people_located = RBTreeCreate(CompareNodes,free,free,PrintKey,PrintLocation);
 	CreateList(&spotters);
 
 	fp = fopen(map_file, "rb");

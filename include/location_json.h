@@ -11,4 +11,6 @@ int CompareNodes(const void * key1, const void * key2);
 
 void PrintLocation(void * info);
 
+void PrintKey(const void * key);
+
 #endif /* LOCATION_JSON_H_ */

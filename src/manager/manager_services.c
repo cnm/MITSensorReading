@@ -157,6 +157,9 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 						CreateList(&raw_list);
 						bool in_list = false;
 
+						RBTreeDestroy(people_located);
+						people_located = RBTreeCreate(CompareNodes,free,free,PrintKey,PrintLocation);
+
 						FOR_EACH(node,spotters){
 							Spotter * spotter = (Spotter *) node->data;
 							if (spotter->current_info != NULL){
@@ -235,12 +238,6 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 							else
 								location = InfoToCell(my_map, &v1, &v2);
 							
-							
-							rb_red_blk_node * previous = RBExactQuery(people_located, tri->node);
-
-							if(previous!=NULL)
-								RBDelete(people_located, previous);
-
 							RBTreeInsert(people_located, tri->node, location);
 							
 						}

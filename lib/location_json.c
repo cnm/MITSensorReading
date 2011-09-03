@@ -26,9 +26,13 @@ int CompareNodes(const void * key1, const void * key2){
   return strcmp((const char *) key1, (const char *) key2);
 }
 
+void PrintKey(const void * key){
+	printf("MD5 hash: %s \n", (char *) key);
+}
+
 void PrintLocation(void * info){
   Location * loc = (Location *) info;
-  printf("x: %d \ny: %d \nmap_id id: %d \n", loc->x, loc->y,loc->area_id);
+  printf("MAP ID: %d, LOCATION -> x: %d, y: %d \n", loc->x, loc->y,loc->area_id);
 }
 
 static void PrintNodeJSON(yajl_gen g, rb_red_blk_node* x){

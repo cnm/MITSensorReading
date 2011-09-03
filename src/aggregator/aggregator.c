@@ -203,7 +203,7 @@ int main(int argc, char ** argv){
 
 	logger("Main - Configuration concluded\n");
 
-	global_tree = RBTreeCreate(CompareNodes,free,free,NullFunction,PrintLocation);
+	global_tree = RBTreeCreate(CompareNodes,free,free,PrintKey,PrintLocation);
 
 	//LOAD MAPS FROM CONFIG'd FOLDER
 	LoadMultiMaps(MAP_FOLDER,&maps);
