@@ -36,6 +36,47 @@ pthread_mutex_t aggregator, dataToSend;
 LList maps, managers;
 rb_red_blk_tree * global_tree;
 
+/*
+static void PrintNodeExport(FILE * fp, rb_red_blk_node* x){
+	yajl_gen_map_open(g);
+		yajl_gen_string(g, (unsigned char *) "Key", strlen("Key"));
+		yajl_gen_string(g, (unsigned char *) x->key, strlen((char *) x->key));
+
+		yajl_gen_string(g, (unsigned char *) "x" , strlen("x"));
+		yajl_gen_integer(g, ((Location *) x->info)->x);
+
+		yajl_gen_string(g, (unsigned char *) "y" , strlen("y"));
+		yajl_gen_integer(g, ((Location *) x->info)->y);
+
+		yajl_gen_string(g, (unsigned char *) "area_id" , strlen("area_id"));
+		yajl_gen_integer(g, ((Location *) x->info)->area_id);
+	yajl_gen_map_close(g);
+}
+
+
+
+static void InorderTreeExport(FILE * fp, rb_red_blk_tree* tree, rb_red_blk_node* x) {
+  if (x != tree->nil) {
+    InorderTreeJSON(fp, tree,x->left);
+
+    PrintNodeJSON(fp, x);
+    
+    InorderTreeJSON(fp, tree,x->right);
+  }
+}
+
+
+
+static void RBTreeExport(rb_red_blk_tree* tree) {
+
+	FILE * fp = fopen("export","a");
+
+
+	InorderTreeJSON(g, tree,tree->root->left);
+
+	close(fp);
+}
+*/
 void AddServer(uint16_t address, unsigned short frequence){
 
 	//TODO Add Server logic
@@ -237,7 +278,9 @@ int main(int argc, char ** argv){
 					break;
 			case 2: free_elements();
 					break;
-			default: printf("Acção Incorrecta\n");
+			default:
+					printf("Acção Incorrecta\n");
+					break;
 		}
 	}
 
