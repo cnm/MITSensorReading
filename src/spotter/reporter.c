@@ -208,6 +208,8 @@ void reporter_add_with_rssi(inquiry_info_with_rssi* newthingy) {
 	for (i = 0; i < entries1; i++) {
 		debug && printf("\n\n ------ COMPARE ITERATION: %d \n",i);
 		if (0 == bacmp(&((storeR1+i)->bdaddr),&(newthingy->bdaddr))) {
+			(storeR1+i)->clock_offset = (storeR1+i)->clock_offset + abs(newthingy->rssi);
+			(storeR1+i)->pscan_rep_mode = (storeR1+i)->pscan_rep_mode + 1;
 			if (debug) {
 			        ba2str(&(newthingy->bdaddr), ieeeaddr);
 			        printf("= %s %02x %04x ", ieeeaddr,
@@ -236,6 +238,8 @@ void reporter_add_with_rssi(inquiry_info_with_rssi* newthingy) {
 	debug && printf("\n\n --- BEFORE STORING IN ARRAY \n");
 
 	/* store in the array */
+	newthingy->pscan_rep_mode = 1;
+	newthingy->clock_offset = abs(newthingy->rssi);
 	*(storeR1+(entries1-1)) = *newthingy;
 
 	debug && printf("\n\n --- BEFORE BACMP2 \n");
@@ -318,7 +322,7 @@ SensorData * reporter_swap() {
 
 		debug && printf("MD5: %s ", tmp_str);
 		debug && printf("\n ATENUACAO: %d , ABSOLUTE: %d \n",(storeR1+i)->rssi - base_power,abs((storeR1+i)->rssi - base_power));
-		value = (storeR1+i)->rssi;	
+		value = -((storeR1+i)->clock_offset/(storeR1+i)->pscan_rep_mode);
 		if (!do_finger){
 			r = pow(10,(abs((storeR1+i)->rssi - base_power) - 40.05)/20);
 			debug && printf("\nDistance: %f\n",r);

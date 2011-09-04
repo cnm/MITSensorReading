@@ -32,7 +32,7 @@ void PrintKey(const void * key){
 
 void PrintLocation(void * info){
   Location * loc = (Location *) info;
-  printf("MAP ID: %d, LOCATION -> x: %d, y: %d \n", loc->x, loc->y,loc->area_id);
+  printf("MAP ID: %d, LOCATION -> x: %d, y: %d \n", loc->area_id, loc->x, loc->y);
 }
 
 static void PrintNodeJSON(yajl_gen g, rb_red_blk_node* x){
