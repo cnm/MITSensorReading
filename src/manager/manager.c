@@ -265,6 +265,8 @@ int main(int argc, char ** argv){
 
     my_map = LoadMap(buffer);
 
+    PrintMap(my_map);
+
 	logger("Main - Configuration concluded\n");
 
 	//REGISTER HANDLER

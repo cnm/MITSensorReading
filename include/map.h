@@ -47,5 +47,6 @@ Map * LoadMap(char * map_info);
 void DestroyMap(Map * map);
 Location * InfoToCell(Map * map, vec3d * rs1, vec3d * rs2);
 bool CheckTransition(LList * maps, Location * previous, Location  * comitted_pos, Location * conflicted_pos, bool prev_conflicted);
+void PrintMap(Map *);
 
 #endif /* MAP_H_ */

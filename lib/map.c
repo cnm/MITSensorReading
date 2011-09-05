@@ -192,11 +192,27 @@ void DestroyMap(Map * map){
 	free(map);
 }
 
+void PrintMap(Map * map){
+	int i,j;
+	printf("map id: %d \n floor: %d cell size: %d\n x_cells: %d\n y_cells: %d\n", map->area_id, map->floor, map->cell_size, map->x_cells, map->y_cells);
+	for (i=0; i< map->x_cells; i++){
+		for(j=0; j < map->y_cells; j++){
+			if (map->cells[i][j].transition_cell)
+				printf("2 ");
+			else
+				printf("%d ",map->cells[i][j].prob_location);
+		}
+		printf("\n");
+	}
+}
+
 Location * InfoToCell(Map * map, vec3d * rs1, vec3d * rs2){
 
 
 	Location * location = (Location *) malloc(sizeof(Location));
 	location->area_id = map->area_id;
+
+	uint16_t i,j;
 
 	double x1 = rs1->x/map->cell_size;
 	double y1 = rs1->y/map->cell_size;
@@ -496,6 +512,17 @@ Location * InfoToCell(Map * map, vec3d * rs1, vec3d * rs2){
 		}
 
 	}
+
+
+
+	for (i=0;i < map->x_cells; i++)
+		for(j=0; j<map->y_cells; j++)
+			if (map->cells[i][j].transition_cell){
+				location->x = i;
+				location->y = j;
+				return location;
+			}
+
 
 	location->x = 0;
 	location->y = 0;
