@@ -35,48 +35,35 @@ bool server_available = false;
 pthread_mutex_t aggregator, dataToSend;
 LList maps, managers;
 rb_red_blk_tree * global_tree;
+uint64_t updating_time = 0, last_export = 0;
 
-/*
+
 static void PrintNodeExport(FILE * fp, rb_red_blk_node* x){
-	yajl_gen_map_open(g);
-		yajl_gen_string(g, (unsigned char *) "Key", strlen("Key"));
-		yajl_gen_string(g, (unsigned char *) x->key, strlen((char *) x->key));
 
-		yajl_gen_string(g, (unsigned char *) "x" , strlen("x"));
-		yajl_gen_integer(g, ((Location *) x->info)->x);
+	char node_export[200];
+	sprintf(node_export, "key:%s,area:%d,x:%d,y:%d\n", (char *) x->key,((Location *) x->info)->area_id,((Location *) x->info)->x,((Location *) x->info)->y);
 
-		yajl_gen_string(g, (unsigned char *) "y" , strlen("y"));
-		yajl_gen_integer(g, ((Location *) x->info)->y);
-
-		yajl_gen_string(g, (unsigned char *) "area_id" , strlen("area_id"));
-		yajl_gen_integer(g, ((Location *) x->info)->area_id);
-	yajl_gen_map_close(g);
+	fputs(node_export, fp);
 }
 
 
 
 static void InorderTreeExport(FILE * fp, rb_red_blk_tree* tree, rb_red_blk_node* x) {
   if (x != tree->nil) {
-    InorderTreeJSON(fp, tree,x->left);
+    InorderTreeExport(fp, tree,x->left);
 
-    PrintNodeJSON(fp, x);
+    PrintNodeExport(fp, x);
     
-    InorderTreeJSON(fp, tree,x->right);
+    InorderTreeExport(fp, tree,x->right);
   }
 }
 
 
 
-static void RBTreeExport(rb_red_blk_tree* tree) {
-
-	FILE * fp = fopen("export","a");
-
-
-	InorderTreeJSON(g, tree,tree->root->left);
-
-	close(fp);
+static void RBTreeExport(FILE * fp, rb_red_blk_tree* tree) {
+	InorderTreeExport(fp, tree,tree->root->left);
 }
-*/
+
 void AddServer(uint16_t address, unsigned short frequence){
 
 	//TODO Add Server logic
@@ -130,7 +117,41 @@ void SendAggregatorData(uint16_t address){
 }
 
 void ExportData(){
-	//TODO: WRITE DATA TO DISC
+
+	LElement * node;
+	FILE * fp;
+
+	char new_entry[60];
+
+	if(last_export == 0 || last_export == updating_time)
+		return;
+
+	last_export = updating_time;
+
+	fp = fopen("export","a");
+
+	sprintf(new_entry, "NEW_EXPORT:%llu\n", updating_time);
+	fputs(new_entry, fp);
+
+	sprintf(new_entry, "NUM_PEOPLE:");
+	fputs(new_entry, fp);
+
+	FOR_EACH(node,managers){
+		Manager * manager = (Manager *) node->data;
+		sprintf(new_entry, "%d:%d,",manager->map_id,manager->num_people);
+		fputs(new_entry, fp);
+	}
+
+	sprintf(new_entry,"\n");
+	fputs(new_entry, fp);
+	
+	RBTreeExport(fp,global_tree);
+
+	sprintf(new_entry, "END_EXPORT\n");
+	fputs(new_entry, fp);
+
+	fclose(fp);
+
 }
 
 void * aggregator_send_loop(){

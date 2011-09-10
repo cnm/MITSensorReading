@@ -24,7 +24,7 @@ extern __tp(handler)* handler;
 extern LList managers;
 extern LList maps;
 extern rb_red_blk_tree * global_tree;
-static uint64_t updating_time;
+extern uint64_t updating_time;
 
 void RequestInstant(uint16_t address){
 	SendAggregatorData(address);
@@ -147,8 +147,8 @@ void DeliverManagerData(uint16_t manager_address, LocationPacket * packet, uint6
 		if (manager->id == manager_address){
 			if(time_sent <= manager->last_received)
 				break;			
-			else
-				manager->last_received = time_sent;
+			
+			manager->last_received = time_sent;
 
 			//Allocate it as the last info for this node till we have all the info from all nodes
 			if (manager->current_info == NULL){
