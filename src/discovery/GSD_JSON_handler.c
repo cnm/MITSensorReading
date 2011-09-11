@@ -141,8 +141,9 @@ bool generate_JSON(GSDPacket * packet, unsigned char ** response, size_t * lengt
 	const unsigned char * buf;
 	
     yajl_gen_get_buf(g, &buf, length);
-    *response = (unsigned char *) malloc((*length + 1)*sizeof(char));
-	memcpy((char*)*response, (char *)buf, *length + 1);
+    *response = (unsigned char *) malloc((*length + 1)*sizeof(unsigned char));
+    memset(*response, 0, (*length + 1)*sizeof(unsigned char));
+	memcpy(*response, buf, (*length + 1)*sizeof(unsigned char));
 	yajl_gen_free(g);
 	
 	return true;
