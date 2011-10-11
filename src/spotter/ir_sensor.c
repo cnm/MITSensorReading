@@ -71,7 +71,7 @@ void * loop(){
 	short i=HIGH,last_i=LOW;
 	short o=HIGH,last_o=LOW;
 	SensorData data;
-
+	data.type = ENTRY;
 	while(sensor_loop){
  		i = getpin(INSIDE_PIN);
  		o = getpin(OUTSIDE_PIN);
