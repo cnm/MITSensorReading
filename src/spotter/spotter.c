@@ -46,6 +46,13 @@ void SensorResult(SensorData * data){
 					break;
 				}
 			}
+			if (!got_in){
+				SensorData * entry = (SensorData *) malloc(sizeof(SensorData));
+				memcpy(entry, data, sizeof(SensorData));
+				got_in = true;
+				AddToList(entry, &cached_data);
+			}
+
 
 			break;
 		case COUNT:
@@ -56,6 +63,14 @@ void SensorResult(SensorData * data){
 					break;
 				}
 			}
+			if (!got_in){
+				SensorData * entry = (SensorData *) malloc(sizeof(SensorData));
+				memcpy(entry, data, sizeof(SensorData));
+				got_in = true;
+				AddToList(entry, &cached_data);
+			}
+
+
 			break;
 		case RSS:
 			FOR_EACH(elem,cached_data){

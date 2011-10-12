@@ -27,8 +27,8 @@ static time_t DELTA_MOVEMENT = 3;
 static uint64_t entradas,saidas;
 static int presencas;
 
-static unsigned short INSIDE_PIN = 21;
-static unsigned short OUTSIDE_PIN = 25;
+static unsigned short INSIDE_PIN = 20;
+static unsigned short OUTSIDE_PIN = 6;
 static bool sensor_loop = true;
 static pthread_t sense_loop;
 
@@ -49,18 +49,18 @@ void wait_miliseconds(int miliseconds){
 
 int getpin(int pin){
 	FILE * fp;
-    int value;
-	char result[11];
-    char command[13];
+    int value,i;
+	char result[11] = { 0 };
+    char command[13] = { 0 };
 
     sprintf(command,"./dio get %d",pin);
 
     fp = popen(command,"r");
 	fgets(result,sizeof(result),fp);
 	pclose(fp);
-	value = atoi(&result[strlen(result) - 1]);
-
-    return value;
+    for(i=0;result[i] != '='; i++);
+    i +=2;
+    return result[i ] -'0';
 }
 
 void print_state(){
@@ -78,6 +78,7 @@ void * loop(){
 
 		if (i == LOW && last_i == HIGH){
 			time(&in_t);
+			printf("in:%d\n", in_t);
 
 			if ((in_t - out_t) <= DELTA_MOVEMENT){
 				data.entrances = 1;
@@ -92,6 +93,7 @@ void * loop(){
 
 		if(o == LOW && last_o == HIGH){
 			time(&out_t);
+			printf("out:%d\n", out_t);
 
 			if ((out_t - in_t)  <= DELTA_MOVEMENT){
 				data.entrances = -1;
@@ -106,6 +108,7 @@ void * loop(){
 		}
 		last_i=i;
 		last_o=o;
+		
 		wait_miliseconds(50);
 	}
 
