@@ -78,7 +78,6 @@ void * loop(){
 
 		if (i == LOW && last_i == HIGH){
 			time(&in_t);
-			printf("in:%d\n", in_t);
 
 			if ((in_t - out_t) <= DELTA_MOVEMENT){
 				data.entrances = 1;
@@ -87,13 +86,12 @@ void * loop(){
 				sensor_result(&data);
 				in_t = 0;
 				out_t = 0;
-				print_state();
+				//print_state();
 			}
 		}
 
 		if(o == LOW && last_o == HIGH){
 			time(&out_t);
-			printf("out:%d\n", out_t);
 
 			if ((out_t - in_t)  <= DELTA_MOVEMENT){
 				data.entrances = -1;
@@ -102,14 +100,14 @@ void * loop(){
 				sensor_result(&data);
 				in_t = 0;
 				out_t = 0;
-				print_state();
+				//print_state();
 			}
 
 		}
 		last_i=i;
 		last_o=o;
 		
-		wait_miliseconds(50);
+		wait_miliseconds(40);
 	}
 
 	return NULL;

@@ -479,6 +479,17 @@ static void free_elements(){
 	free(porto);
 }
 
+static void clean_stdin(){
+    int c;
+
+    do
+    {
+        c = fgetc(stdin);
+    }
+    while (c != '\n' && c != EOF);
+}
+
+
 int main(int argc, char **argv)
 {
 	int op = 0;
@@ -492,6 +503,7 @@ int main(int argc, char **argv)
     void * tmpAddrPtr=NULL;
     FILE * config_file;
     char * handler_file, * gsd_file, * services_file = NULL;
+	int rv;
     
     if (argc != 1 && argc != 3 && argc != 4){
 		printf("USAGE: gsd <Handler_file> <GSD_file> [<Local_Services_file>]\n");
@@ -625,7 +637,10 @@ int main(int argc, char **argv)
 	
 	while(op != 3){
 		printf("MENU:\n 1-PRINT CACHE\n 2-PRINT REVERSE_ROUTE_TABLE\n 3-EXIT\n\n");
-		scanf("%d", &op);
+		do{
+			rv=scanf("%d", &op);
+			clean_stdin();
+		}while(rv!=1);
 	
 		switch(op){
 			case 1: print_cache();
