@@ -7,7 +7,7 @@ all: $(EXECS)
 
 gsd: *.c ../../lib/listType.c
 		$(CC) $(FLAGS) -o $@ $? $(LIBS)
-		mv $(EXECS) ../build/
+		cp $(EXECS) ../build/
 
 clean: 
 		rm -f $(EXECS)

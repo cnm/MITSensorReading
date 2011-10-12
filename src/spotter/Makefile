@@ -7,7 +7,7 @@ all: $(EXECS)
 
 spotter: spotter.c spotter_services.c ../../lib/*.c ../../lib/rbtree/*.c
 		$(CC) $(FLAGS) -o $@ $? $(LIBS)
-		mv $(EXECS) ../build/
+		cp $(EXECS) ../build/
 		cp bt_sensor.cfg ../build/
 
 clean: 

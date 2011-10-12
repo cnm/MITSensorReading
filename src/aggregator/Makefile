@@ -7,7 +7,7 @@ all: $(EXECS)
 
 agg: *.c ../../lib/*.c ../../lib/rbtree/*.c
 		$(CC) $(FLAGS) -o $@ $? $(LIBS)
-		mv $(EXECS) ../build/
+		cp $(EXECS) ../build/
 
 clean: 
 		rm -f $(EXECS)
