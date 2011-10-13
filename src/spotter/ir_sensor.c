@@ -107,7 +107,7 @@ void * loop(){
 		last_i=i;
 		last_o=o;
 		
-		wait_miliseconds(40);
+		wait_miliseconds(25);
 	}
 
 	return NULL;
