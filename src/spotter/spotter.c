@@ -28,7 +28,7 @@ unsigned short UPDATE_FREQUENCY = 15;
 LList plugins;
 uint16_t MY_ADDRESS, manager_address, MAP;
 Location self;
-bool manager_available = false;
+bool manager_available = false, sent=false;
 pthread_mutex_t manager, dataToSend;
 SensorDataList cached_data;
 
@@ -41,8 +41,11 @@ void SensorResult(SensorData * data){
 		case ENTRY:
 			FOR_EACH(elem,cached_data){
 				if (((SensorData *)elem->data)->type == ENTRY){
+					if (sent)
+						((SensorData *)elem->data)->entrances = 0;
 					((SensorData *)elem->data)->entrances = ((SensorData *)elem->data)->entrances + data->entrances;
 					got_in = true;
+					sent=false;
 					break;
 				}
 			}
@@ -198,6 +201,8 @@ void SendSensorData(uint16_t address){
 	send_data(handler, (char *)data,length,manager_address);
 
 	free(data);
+	
+	sent=true;
 }
 
 void * spotter_send_loop(){

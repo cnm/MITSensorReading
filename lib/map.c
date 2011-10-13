@@ -34,6 +34,8 @@ void LoadMultiMaps(char * folder, LList * maps_loaded){
     {
         de = readdir(dir);
         if (!de) break;
+	if(!strcmp(de->d_name, ".")) continue;
+	if(!strcmp(de->d_name, "..")) continue;
         fp = fopen(de->d_name, "rb");
         if (!fp) continue;
 

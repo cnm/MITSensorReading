@@ -107,7 +107,7 @@ void * manager_send_loop(){
 
 		//FreeList(&cached_data);
 
-		sleep(UPDATE_FREQUENCY);
+		sleep(30);
 	}
 
 	return NULL;
@@ -277,7 +277,7 @@ int main(int argc, char ** argv){
 
 	//REQUEST AGGREGATOR
 	char request_service[255];
-	sprintf(request_service,"AGGREGATOR:%d;AGGREGATOR,PEOPLE_LOCATION,SERVICE", map_id);
+	sprintf(request_service,"AGGREGATOR;AGGREGATOR,PEOPLE_LOCATION,SERVICE");
 
 	request_aggregator = RequestService(request_service);
 

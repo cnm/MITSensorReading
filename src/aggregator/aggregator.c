@@ -123,7 +123,7 @@ void ExportData(){
 
 	char new_entry[60];
 
-	if(last_export == 0 || last_export == updating_time)
+	if(last_export == updating_time)
 		return;
 
 	last_export = updating_time;
