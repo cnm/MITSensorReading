@@ -436,7 +436,9 @@ static int inquisition(int dd, int length) {
 
 		if (done){
 			if (hci_send_cmd(dd, OGF_LINK_CTL, OCF_EXIT_PERIODIC_INQUIRY, 0, NULL) < 0) {
-			       fprintf(stderr, gettext("I cannot stop the inquisition!\n"));
+				hci_send_cmd(dd, OGF_LINK_CTL, OCF_EXIT_PERIODIC_INQUIRY, 0, NULL);
+				hci_send_cmd(dd, OGF_LINK_CTL, OCF_EXIT_PERIODIC_INQUIRY, 0, NULL);
+				fprintf(stderr, gettext("I cannot stop the inquisition!\n"));
 				   return EXIT_FAILURE;
 			}else
 				return EXIT_SUCCESS;

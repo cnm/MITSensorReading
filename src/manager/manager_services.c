@@ -59,14 +59,23 @@ void SpontaneousSpotter(uint16_t spotter_address, Location location, unsigned sh
 
 	unsigned char * message;
 	size_t len;
+	LElement * elem;
+	bool exists = false;
 
-	Spotter * spotter = (Spotter *) malloc(sizeof(Spotter));
-	spotter->id = spotter_address;
-	spotter->location = location;
-	spotter->current_info = NULL;
-	spotter->last_received = 0;
+	FOR_EACH(elem, spotters){
+		if (((Spotter *) elem->data)->id == spotter_address)
+			exists = true;
+	}
+	
+	if (!exists){
+		Spotter * spotter = (Spotter *) malloc(sizeof(Spotter));
+		spotter->id = spotter_address;
+		spotter->location = location;
+		spotter->current_info = NULL;
+		spotter->last_received = 0;
 
-	AddToList(spotter,&spotters);
+		AddToList(spotter,&spotters);
+	}
 
 	LocationPacket packet;
 	packet.type = CONFIRM_MANAGER;
@@ -105,7 +114,7 @@ void DeliverSpotterData(uint16_t spotter_address, LocationPacket * packet, uint6
 				if (exit_entry)
 					break;
 
-				if (sensor->entrances < 0 && people_in_area < sensor->entrances)
+				if (sensor->entrances < 0 && people_in_area + sensor->entrances < 0)
 					people_in_area = 0;
 				else
 					people_in_area += sensor->entrances;
