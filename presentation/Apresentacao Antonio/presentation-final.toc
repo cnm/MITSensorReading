@@ -1,0 +1,10 @@
+\beamer@endinputifotherversion {3.10pt}
+\select@language {english}
+\beamer@sectionintoc {1}{Motivation}{3}{0}{1}
+\beamer@sectionintoc {2}{Work Objectives}{5}{0}{2}
+\beamer@sectionintoc {3}{The BitTorrent Protocol}{6}{0}{3}
+\beamer@sectionintoc {4}{Contributions}{7}{0}{4}
+\beamer@sectionintoc {5}{Work Methodology}{8}{0}{5}
+\beamer@sectionintoc {6}{Results}{14}{0}{6}
+\beamer@sectionintoc {7}{Partial Swarm Merger}{23}{0}{7}
+\beamer@sectionintoc {8}{Conclusions}{26}{0}{8}

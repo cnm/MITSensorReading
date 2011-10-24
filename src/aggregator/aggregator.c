@@ -195,7 +195,7 @@ void receive(__tp(handler)* sk, char* data, uint16_t len, int64_t timestamp,int6
 			ConfirmManager(src_id, packet->manager_area_id, packet->required_frequency);
 			break;
 		case MANAGER_DATA:
-			DeliverManagerData(src_id, packet, timestamp - air_time);
+			DeliverManagerData(src_id, packet, timestamp);
 			break;
 		default:
 			break;

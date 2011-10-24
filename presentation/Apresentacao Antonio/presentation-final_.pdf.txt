@@ -1,0 +1,136 @@
+1
+Bom dia nome e antonio e estou aqui para apresentar o trabalho desenvolvido no ambito da minha dissertacao de mestrado com o nome de ...
+
+2
+Primeiro vou falar disto e daquilo
+
+3
+Comecando pelo problema e motivacao para o trabalho
+
+4
+O problema esta na cada vez maior utilizacao de protocolos P2P como mostra o estudo da ipoque.
+
+5
+Isto representa um problema porque o paradigma da comunicacao modifica-se -- descentralizado cada um partilha o seu conteudo. Descentralizacao gera muito mais trafego por toda a rede e nao apenas em determinados pontos como acontecia com cliente-servidor -- afecta qualidade de outros servicos. Descentralizacao significa conteudo espalhado pela rede o que resulta em muita comunicacao inter-ISP. Descentralizacao e cara
+
+6
+BitTorrent e o protocolo p2p que mais trafego gera
+
+7
+passando para uma possivel solucao
+
+8
+Solucao passa por analisar a localidade e o conteudo e direcionar trafego consoante estes dados. Identificar padroes ao nivel de comportamentos de peers swarms e ao nivel dos conteudos partilhados
+
+9
+Explicar o bittorrent muito por alto e depois ainda dizer que mais tarde e fazendo parte do swarm, os peers podem obter outros peers atraves de queries ao tracker ou a peers aos quais estejam ligados. Dai a divisao em dois estudos -> localidade e conteudo
+
+11
+imagens
+
+12
+imagens
+
+13
+imagens
+
+15
+dizer como o nosso estudo se encaixa...
+
+16
+focando nas metodologias utilizadas neste trabalho, nomeadamente na recolha e analise de dados
+
+22
+Torrent database
+Cada estudo tem diferentes características e dai os diferentes criterios
+Conteúdo …
+Localidade …
+
+24
+Os resultados obtidos do estudo foram divididos em duas categorias principais e uma categoria secundaria com dados curiosos observados durante a experiencia
+
+26
+Dividido em duas partes: pollution and repetition, o que e cada um.
+
+27
+dos 3211 torrents analisados, 221 tinham mais de 70p das suas partes iguais
+
+28
+dos 221, quase 60p demoram menos de 24h a desaparecer (peers abandonam o swarm e nao voltam)
+
+29
+dos torrentes que tem pelo menos uma parte em comum, 50p partilham entre 0p e 16p e os restantes 50p partilham entre 95p e 100p
+de realcar que existe um numero significativo de torrents com 100p de partes comuns, para estes foram calculadas as infohash e descobrimos que nenhum partilhava a mesma infohash
+
+30
+Maior parte dos conteudos repetidos duas vezes. A partir da 4 vez sao raros.
+
+31
+Dois graficos com a media de peers e seeders por conteudo e a soma de todos para cada conteudo. Facilmente se observa um ganho significativo na disponibilidade dos conteudos.
+
+32
+mesmo mas com seeders
+
+33
+Primeiro foi analisada a localidade existente nos swarms a partilhar conteudo repetido e de seguida os ganhos de localidade que existiriam se os swarms, que partilham mesmo ou similar conteúdo, fossem integrados num so.
+De seguida, foi estudada a localidade para todos os conteudos e identificados os conteudos regionais, conteudos específicos a determinada regiao ou pais.
+A localidade calculada anteriormente foi feita com base em dados agregados em períodos de 1 dia. No final, as analises foram repetidas mas para periodos mais pequenos, 2 horas. Isto foi feito tendo em conta menor tempo de download e consequentemente menor numero de fontes que possam partilhar os ficheiros.
+
+34
+Tabela mostra para um determinado conteudo repetido, os valores XXX para cada torrent e para a agregacao dos tres
+
+35
+O grafico mostra os ganhos para a agregacao de dados para cada conteudo por dia. A maioria tem ganhos significativos, no entanto, ha alguns que tem ganhos negativos uma vez que ao agregar os torrents do mesmo conteudo, o aumento no numero de ISPs excedeu o aumento no numero de peers.
+Desta forma, e demonstrado que a juncao dos varios swarms que partilham o mesmo ou similar conteudo nao so aumenta a disponibilidade do conteudo como aumenta a localidade para aquele conteudo
+
+36
+Media de peers por Pais e ISP relacionados com a media de diferentes peers obtida atraves das queries ao tracker. –> nota-se uma clara tendencia para aumento da localidade com o aumento do tamanho do swarm
+
+37
+mesmo anterior mas com isp
+
+38
+Foi calculado para cada torrente, para todos os dias, a mediana da percentagem de peers que pertencia ao mesmo pais ou ISP. Para todos os resultados foram calculados o minimo, maximo, 25, 50 e 75 percentil.
+Era de esperar que os 25, 50 e 75 percentil aumentassem com o tamanho do swarm, no entanto, isso não acontece porque, ao aumentar o swarm, os peers ficam com uma melhor distribuicao por todos os países e isps o que leva ao 25 e 75 percentil aproximarem-se um do outro.
+Estes resultados demonstram que a utilizacao de um mecanismo de localidade e capaz de criar clusters grandes o suficiente para conseguir reter o trafego perto na rede e nao afectar a experiencia do utilizador. Para swarms mais pequenos, e motivados pela quantidade de localidade encontrada em alguns, decidimos aprofundar a analise para uma procura por conteudo regional.
+Em relacao a isp, nao e possível ver nenhum padrao, no entanto, tambem foram identificadas propriedades de localidade.
+
+39
+Para um torrente ser considerado regional, decidimos que tinham de ter 60p dos seus peers a pertencer ao mesmo pais pelo menos 75p das vezes.
+
+40
+Dos resultados anteriores, procuramos os que tinham 30p dos peers a pertencer ao mesmo isp, 75p das vezes.
+Minimos devem-se a queries ao tracker que retornaram poucos peers e muito espalhados pelos diferentes isps.
+Estes resultados sugerem grande localidade existente num numero significativo de torrents. No entanto, 80p dos torrents tinham associados swarms ate 500 peers. Isto demonstra que muitos dos pequenos swarms, em vez de serem pouco populares, sao apenas populares em determinadas regioes. Estes torrentes regionais representam quase 5p do total de swarms com tamanhos entre 50 e 500 peers.
+
+41
+Esta analise foi feita para perceber o quanto o tempo de download afecta a localidade existente. So foi feita para swarms acima dos 5000 peers.
+Media de peers por isp e pais. Valores mais baixos do que os obtidos para periodos de 1 dia, como esperado. Quanto menor o tempo de download, menos peers se obtem, e tendo em conta a utilização por parte do tracker de um algoritmo de seleccao aleatoria para a escolha dos peers a enviar para o cliente, e normal que os peers estejam mais distribuidos pelos diferentes paises e isps.
+Apesar dos resultados mais baixos, ainda e possivel observar grandes quantidades de localidade para ser explorada
+
+42
+Conclui-se que o tempo de download tem um grande impacto na localidade existente. Desta forma, um mecanismo de localidade conseguira melhores resultados se modificar, entre outros, o algoritmo de seleccao aleatoria de peers do tracker. Utilizacao de DHTs e PEX tambem e importante para conseguir mais fontes em downloads mais rapidos.
+
+44
+Dos 3211 torrents, 1094 tinham mais de um tracker a responder a queries. No entanto, reparamos que os peers nao se distribuiam uniformemente entre os diferentes trackers
+Figura mostra 5 trackers para o mesmo ficheiro. E esperado que a localidade e disponibilidade sejam diferentes de tracker para tracker e que seja mais acentuada em trackers com diferentes tamanhos
+Os picos são quebras do tracker, no entanto, sao de rapida recuperacao e com tecnologia tipo PEX e DHTs nao existe qualquer problema com isto
+
+45
+A figura mostra claramente o enxame a aumentar e diminuir de tamanho num periodo aproximado de 1 dia.
+Mudancas foram de 5p ate 60p
+Comportamento mais evidente em swarms grandes.
+
+46
+Figura mostra que com o aumento do tamanho do swarm, este numero tende a ser igual ao numero de seeders, ou seja, os peers a medida que acabam o download vao ficando online a partilhar o que obtem da rede.
+Free-riding nao e um problema no bittorrent, significativo pelo menos
+
+47
+Muita localidade em grandes swarms ao nivel de distribuição de peers por pais e ISP mas também ao nível dos pequenos swarms – conteúdo regional
+Muitos padroes observados para uma rede p2p descentralizada:
+-Conteudo partilhado repetido
+-Comportamentos do peer como o day-night
+Provado que a performance do bittorrent pode ser melhorada, aumento de disponibilidade para conteudos repetidos, e o trafego gerado mantido perto na rede, propriedades de localidade muito fortes.
+
+
+

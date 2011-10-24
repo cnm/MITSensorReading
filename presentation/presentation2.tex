@@ -1,0 +1,381 @@
+\documentclass[]{beamer}
+% Class options include: notes, notesonly, handout, trans,
+%                        hidesubsections, shadesubsections,
+%                        inrow, blue, red, grey, brown
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage[english]{babel}
+% or whatever
+
+\usepackage[utf8]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[People Counting and Detection of Patterns of Movement] % (optional, use only with long paper titles)
+{Green IT - People Counting and Detection of Patterns of Movement}
+
+\subtitle
+{}
+\author[António Calçada Novais] % (optional, use only with lots of authors)
+{António Calçada Novais \\ Student nº 57432 \\ MERC}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\institute[] % (optional, but mostly needed)
+{
+  INESC-ID, Communications Networks and Mobility\\
+  Instituto Superior Técnico - Campus TagusPark
+}
+% - Use the \inst command only if there are several affiliations.
+% - Keep it simple, no one is interested in your street address.
+
+\date % (optional, should be abbreviation of conference name)
+{\today}
+% - Either use conference name or its abbreviation.
+% - Not really informative to the audience, more for people (including
+%   yourself) who are reading the slides online
+
+\subject{Computer Science}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+
+\pgfdeclareimage[height=0.8cm]{university-logo}{figures/logo_ist}
+\logo{\pgfuseimage{university-logo}}
+
+
+
+% Theme for beamer presentation.
+%\usepackage{beamerthemesplit} 
+% Other themes include: beamerthemebars, beamerthemelined, 
+%                       beamerthemetree, beamerthemetreebars  
+
+%\title{Green IT - People Counting and Detection of Patterns of Movement}    % Enter your title between curly braces
+%\author{António Calçada Novais}                 % Enter your name between curly braces
+%\institute{NESC-ID, Communications Networks and Mobility\\Instituto Superior Técnico - Taguspark}      % Enter your institute name between curly braces
+%\date{\today}                    % Enter the date or \today between curly braces
+
+\begin{document}
+
+% Creates title page of slide show using above information
+\begin{frame}
+  \titlepage
+\end{frame}
+\note{Talk for 20 minutes} % Add notes to yourself that will be displayed when
+                           % typeset with the notes or notesonly class options
+
+\section[Outline]{}
+
+% Creates table of contents slide incorporating
+% all \section and \subsection commands
+\begin{frame}
+  \tableofcontents
+\end{frame}
+
+\section{Introduction}
+
+\subsection{Motivation}
+
+\begin{frame}
+  \frametitle{Motivation}   % Insert frame title between curly braces
+
+  \begin{itemize}
+	\item Dificuldade de gerir consumos energéticos num campus
+	\item Redução de custos energéticos é uma necessidade
+	\item Previsível diminuição dos recursos naturais
+
+	\item Custos de implementação de plataformas específicas a um ambiente
+	\item Disseminação da computação pervasiva 
+	\item Falta de plataformas genéricas funcionais a diferentes objectivos e ambientes
+
+  \end{itemize}
+\end{frame}
+\note[enumerate]       % Add notes to yourself that will be displayed when
+{                      % typeset with the notes or notesonly class options
+\item Note for Point 1   
+\item Note for Point 2   
+}
+
+\subsection{Objectives}
+
+\begin{frame}
+  \frametitle{Objectives}   % Insert frame title between curly braces
+
+  \begin{itemize}
+	\item Desenhar um sistema capaz de contar pessoas e identificar os seus padrões de mobilidade dentro de edifícios
+	\item O custo do sistema deve ser inferior às poupanças
+	\item Caso de uso de plataforma multi-funcional de monitorização
+
+	\item Integrar na plataforma supra-mencionada módulos de:
+	\item Aquisição de dados genérica de interfaces heterogéneas
+	\item Descoberta de serviços
+
+	\item Instalar o sistema no campus do IST-Taguspark e avaliar o seu desempenho
+  \end{itemize}
+\end{frame}
+\note[enumerate]       % Add notes to yourself that will be displayed when
+{                      % typeset with the notes or notesonly class options
+\item Note for Point 1   
+\item Note for Point 2   
+}
+
+\begin{frame}
+  \frametitle{Pros of using the multi-functional platform}   % Insert frame title between curly braces
+
+  \begin{itemize}
+	\item Abstracção de problemas de comunicação:
+	\item Disponibilidade
+	\item Estado da rede
+	\item Descoberta de Serviços
+
+	\item Optimizar o processamento à capacidade do nó
+  \end{itemize}
+\end{frame}
+\note[enumerate]       % Add notes to yourself that will be displayed when
+{                      % typeset with the notes or notesonly class options
+\item Note for Point 1   
+\item Note for Point 2   
+}
+
+%\section{State of the art}
+
+%\begin{frame}
+%  \frametitle{State of the art}   % Insert frame title between curly braces
+
+%  \begin{itemize}
+%  \item Point 1
+%  \item Point 2
+%  \item Point 3
+%  \end{itemize}
+%\end{frame}
+%\note[enumerate]       % Add notes to yourself that will be displayed when
+%{                      % typeset with the notes or notesonly class options
+%\item Note for Point 1   
+%\item Note for Point 2   
+%}%
+
+%\subsection{Service Discovery}
+
+%\begin{frame}
+%  \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces%
+%
+ % \begin{itemize}
+  %\item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+  %\item<2-> Point 2  % Use Next Page to go to Point 3
+  %\item<3-> Point 3
+  %\end{itemize}
+%\end{frame}
+%\note{Speak clearly}  % Add notes to yourself that will be displayed when
+                      % typeset with the notes or notesonly class options
+
+%\subsection{Location Systems}
+
+%\begin{frame}
+%  \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces%
+
+%  \begin{itemize}
+%  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+ % \item<2-> Point 2  % Use Next Page to go to Point 3
+  %\item<3-> Point 3
+  %\end{itemize}
+%\end{frame}
+%\note{Speak clearly}  % Add notes to yourself that will be displayed when
+                      % typeset with the notes or notesonly class options
+
+
+
+\section{System Architecture}
+
+\begin{frame}
+  \frametitle{Slide with two columns: items and a graphic}   % Insert frame title between curly braces
+  \begin{columns}[c]
+  \column{2in}  % slides are 3in high by 5in wide
+  \begin{itemize}
+  \item<1-> First item
+  \item<2-> Second item
+  \item<3-> ...
+  \end{itemize}
+  \column{2in}
+  \framebox{Insert graphic here % e.g. \includegraphics[height=2.65in]{graphic}
+  }
+  \end{columns}
+\end{frame}
+\note{The end}       % Add notes to yourself that will be displayed when
+		     % typeset with the notes or notesonly class options
+
+\subsection{Service Discovery}
+
+\begin{frame}
+  \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces
+
+  \begin{itemize}
+  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+  \item<2-> Point 2  % Use Next Page to go to Point 3
+  \item<3-> Point 3
+  \end{itemize}
+\end{frame}
+\note{Speak clearly}  % Add notes to yourself that will be displayed when
+                      % typeset with the notes or notesonly class options
+
+\subsection{Location System}
+
+\begin{frame}
+  \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces
+
+  \begin{itemize}
+  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+  \item<2-> Point 2  % Use Next Page to go to Point 3
+  \item<3-> Point 3
+  \end{itemize}
+\end{frame}
+\note{Speak clearly}  % Add notes to yourself that will be displayed when
+                      % typeset with the notes or notesonly class options
+
+\section{Implementation}
+
+\begin{frame}
+  \frametitle{Slide with two columns: items and a graphic}   % Insert frame title between curly braces
+  \begin{columns}[c]
+  \column{2in}  % slides are 3in high by 5in wide
+  \begin{itemize}
+  \item<1-> First item
+  \item<2-> Second item
+  \item<3-> ...
+  \end{itemize}
+  \column{2in}
+  \framebox{Insert graphic here % e.g. \includegraphics[height=2.65in]{graphic}
+  }
+  \end{columns}
+\end{frame}
+\note{The end}       % Add notes to yourself that will be displayed when
+		     % typeset with the notes or notesonly class options
+
+
+\subsection{IST-Taguspark prototype}
+
+\begin{frame}
+  \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces
+
+  \begin{itemize}
+  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+  \item<2-> Point 2  % Use Next Page to go to Point 3
+  \item<3-> Point 3
+  \end{itemize}
+\end{frame}
+\note{Speak clearly}  % Add notes to yourself that will be displayed when
+                      % typeset with the notes or notesonly class options
+
+\subsection{Plugins}
+
+\begin{frame}
+  \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces
+
+  \begin{itemize}
+  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+  \item<2-> Point 2  % Use Next Page to go to Point 3
+  \item<3-> Point 3
+  \end{itemize}
+\end{frame}
+\note{Speak clearly}  % Add notes to yourself that will be displayed when
+                      % typeset with the notes or notesonly class options
+
+\section{Results}
+
+\begin{frame}
+  \frametitle{Slide with two columns: items and a graphic}   % Insert frame title between curly braces
+  \begin{columns}[c]
+  \column{2in}  % slides are 3in high by 5in wide
+  \begin{itemize}
+  \item<1-> First item
+  \item<2-> Second item
+  \item<3-> ...
+  \end{itemize}
+  \column{2in}
+  \framebox{Insert graphic here % e.g. \includegraphics[height=2.65in]{graphic}
+  }
+  \end{columns}
+\end{frame}
+\note{The end}       % Add notes to yourself that will be displayed when
+		     % typeset with the notes or notesonly class options
+
+\subsection{People Counting}
+
+\begin{frame}
+  \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces
+
+  \begin{itemize}
+  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+  \item<2-> Point 2  % Use Next Page to go to Point 3
+  \item<3-> Point 3
+  \end{itemize}
+\end{frame}
+\note{Speak clearly}  % Add notes to yourself that will be displayed when
+                      % typeset with the notes or notesonly class options
+
+\subsection{People Tracking}
+
+\begin{frame}
+  \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces
+
+  \begin{itemize}
+  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+  \item<2-> Point 2  % Use Next Page to go to Point 3
+  \item<3-> Point 3
+  \end{itemize}
+\end{frame}
+\note{Speak clearly}  % Add notes to yourself that will be displayed when
+                      % typeset with the notes or notesonly class options
+
+\section{Conclusions}
+
+\begin{frame}
+  \frametitle{Slide with two columns: items and a graphic}   % Insert frame title between curly braces
+  \begin{columns}[c]
+  \column{2in}  % slides are 3in high by 5in wide
+  \begin{itemize}
+  \item<1-> First item
+  \item<2-> Second item
+  \item<3-> ...
+  \end{itemize}
+  \column{2in}
+  \framebox{Insert graphic here % e.g. \includegraphics[height=2.65in]{graphic}
+  }
+  \end{columns}
+\end{frame}
+\note{The end}       % Add notes to yourself that will be displayed when
+		     % typeset with the notes or notesonly class options
+
+\subsection{Future Work}
+
+\begin{frame}
+  \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces
+
+  \begin{itemize}
+  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+  \item<2-> Point 2  % Use Next Page to go to Point 3
+  \item<3-> Point 3
+  \end{itemize}
+\end{frame}
+\note{Speak clearly}  % Add notes to yourself that will be displayed when
+                      % typeset with the notes or notesonly class options
+
+\end{document}
