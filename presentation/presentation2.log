@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.9.7)  24 OCT 2011 22:35
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.9.7)  30 OCT 2011 15:25
 entering extended mode
  %&-line parsing enabled.
 **presentation2.tex
@@ -1050,7 +1050,7 @@ LaTeX Font Info:    Font shape `T1/phv/m/it' in size <6> not available
 (Font)              Font shape `T1/phv/m/sl' tried instead on input line 82.
  [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
- <./figures/logo_ist.jpg>] (./presentation2.toc)
+ <./figures/logos.jpg>] (./presentation2.toc)
 [2
 
 ] [3
@@ -1125,6 +1125,8 @@ LaTeX Font Info:    Font shape `T1/phv/m/it' in size <6> not available
 
 ] [37
 
+] [38
+
 ]
 \tf@nav=\write5
 \openout5 = `presentation2.nav'.
@@ -1137,18 +1139,18 @@ LaTeX Font Info:    Font shape `T1/phv/m/it' in size <6> not available
 
  (./presentation2.aux) ) 
 Here is how much of TeX's memory you used:
- 13543 strings out of 493848
- 235144 string characters out of 1152824
- 321848 words of memory out of 3000000
- 16344 multiletter control sequences out of 15000+50000
+ 13547 strings out of 493848
+ 235176 string characters out of 1152824
+ 321871 words of memory out of 3000000
+ 16346 multiletter control sequences out of 15000+50000
  28059 words of font info for 46 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
  45i,19n,62p,340b,753s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}<
 /usr/share/texmf-texlive/fonts/type1/urw/helvetic/uhvr8a.pfb>
-Output written on presentation2.pdf (37 pages, 171088 bytes).
+Output written on presentation2.pdf (38 pages, 185290 bytes).
 PDF statistics:
- 655 PDF objects out of 1000 (max. 8388607)
- 90 named destinations out of 1000 (max. 500000)
+ 668 PDF objects out of 1000 (max. 8388607)
+ 92 named destinations out of 1000 (max. 500000)
  206 words of extra memory for PDF output out of 10000 (max. 10000000)
 

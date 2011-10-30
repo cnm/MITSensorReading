@@ -15,49 +15,51 @@
 \headcommand {\beamer@subsectionentry {0}{2}{2}{4}{Objectives}}\headcommand {\beamer@subsectionpages {3}{3}}
 \headcommand {\slideentry {2}{2}{1}{4/4}{Objectives}{0}}
 \headcommand {\beamer@framepages {4}{4}}
-\headcommand {\sectionentry {3}{System Architecture}{5}{System Architecture}{0}}
-\headcommand {\beamer@sectionpages {3}{4}}
-\headcommand {\beamer@subsectionpages {4}{4}}
-\headcommand {\slideentry {3}{0}{2}{5/7}{}{0}}
-\headcommand {\beamer@framepages {5}{7}}
-\headcommand {\beamer@subsectionentry {0}{3}{1}{8}{Service Discovery}}\headcommand {\beamer@subsectionpages {5}{7}}
-\headcommand {\slideentry {3}{1}{1}{8/10}{Service Discovery}{0}}
-\headcommand {\beamer@framepages {8}{10}}
-\headcommand {\beamer@subsectionentry {0}{3}{2}{11}{Location System}}\headcommand {\beamer@subsectionpages {8}{10}}
-\headcommand {\slideentry {3}{2}{1}{11/13}{Location System}{0}}
-\headcommand {\beamer@framepages {11}{13}}
-\headcommand {\sectionentry {4}{Implementation}{14}{Implementation}{0}}
-\headcommand {\beamer@sectionpages {5}{13}}
-\headcommand {\beamer@subsectionpages {11}{13}}
-\headcommand {\slideentry {4}{0}{2}{14/16}{}{0}}
-\headcommand {\beamer@framepages {14}{16}}
-\headcommand {\beamer@subsectionentry {0}{4}{1}{17}{IST-Taguspark prototype}}\headcommand {\beamer@subsectionpages {14}{16}}
-\headcommand {\slideentry {4}{1}{1}{17/19}{IST-Taguspark prototype}{0}}
-\headcommand {\beamer@framepages {17}{19}}
-\headcommand {\beamer@subsectionentry {0}{4}{2}{20}{Plugins}}\headcommand {\beamer@subsectionpages {17}{19}}
-\headcommand {\slideentry {4}{2}{1}{20/22}{Plugins}{0}}
-\headcommand {\beamer@framepages {20}{22}}
-\headcommand {\sectionentry {5}{Results}{23}{Results}{0}}
-\headcommand {\beamer@sectionpages {14}{22}}
-\headcommand {\beamer@subsectionpages {20}{22}}
-\headcommand {\slideentry {5}{0}{2}{23/25}{}{0}}
-\headcommand {\beamer@framepages {23}{25}}
-\headcommand {\beamer@subsectionentry {0}{5}{1}{26}{People Counting}}\headcommand {\beamer@subsectionpages {23}{25}}
-\headcommand {\slideentry {5}{1}{1}{26/28}{People Counting}{0}}
-\headcommand {\beamer@framepages {26}{28}}
-\headcommand {\beamer@subsectionentry {0}{5}{2}{29}{People Tracking}}\headcommand {\beamer@subsectionpages {26}{28}}
-\headcommand {\slideentry {5}{2}{1}{29/31}{People Tracking}{0}}
-\headcommand {\beamer@framepages {29}{31}}
-\headcommand {\sectionentry {6}{Conclusions}{32}{Conclusions}{0}}
-\headcommand {\beamer@sectionpages {23}{31}}
-\headcommand {\beamer@subsectionpages {29}{31}}
-\headcommand {\slideentry {6}{0}{2}{32/34}{}{0}}
-\headcommand {\beamer@framepages {32}{34}}
-\headcommand {\beamer@subsectionentry {0}{6}{1}{35}{Future Work}}\headcommand {\beamer@subsectionpages {32}{34}}
-\headcommand {\slideentry {6}{1}{1}{35/37}{Future Work}{0}}
-\headcommand {\beamer@framepages {35}{37}}
-\headcommand {\beamer@partpages {1}{37}}
-\headcommand {\beamer@subsectionpages {35}{37}}
-\headcommand {\beamer@sectionpages {32}{37}}
-\headcommand {\beamer@documentpages {37}}
-\headcommand {\def \inserttotalframenumber {15}}
+\headcommand {\slideentry {2}{2}{2}{5/5}{Objectives}{0}}
+\headcommand {\beamer@framepages {5}{5}}
+\headcommand {\sectionentry {3}{System Architecture}{6}{System Architecture}{0}}
+\headcommand {\beamer@sectionpages {3}{5}}
+\headcommand {\beamer@subsectionpages {4}{5}}
+\headcommand {\slideentry {3}{0}{3}{6/8}{}{0}}
+\headcommand {\beamer@framepages {6}{8}}
+\headcommand {\beamer@subsectionentry {0}{3}{1}{9}{Service Discovery}}\headcommand {\beamer@subsectionpages {6}{8}}
+\headcommand {\slideentry {3}{1}{1}{9/11}{Service Discovery}{0}}
+\headcommand {\beamer@framepages {9}{11}}
+\headcommand {\beamer@subsectionentry {0}{3}{2}{12}{Location System}}\headcommand {\beamer@subsectionpages {9}{11}}
+\headcommand {\slideentry {3}{2}{1}{12/14}{Location System}{0}}
+\headcommand {\beamer@framepages {12}{14}}
+\headcommand {\sectionentry {4}{Implementation}{15}{Implementation}{0}}
+\headcommand {\beamer@sectionpages {6}{14}}
+\headcommand {\beamer@subsectionpages {12}{14}}
+\headcommand {\slideentry {4}{0}{2}{15/17}{}{0}}
+\headcommand {\beamer@framepages {15}{17}}
+\headcommand {\beamer@subsectionentry {0}{4}{1}{18}{IST-Taguspark prototype}}\headcommand {\beamer@subsectionpages {15}{17}}
+\headcommand {\slideentry {4}{1}{1}{18/20}{IST-Taguspark prototype}{0}}
+\headcommand {\beamer@framepages {18}{20}}
+\headcommand {\beamer@subsectionentry {0}{4}{2}{21}{Plugins}}\headcommand {\beamer@subsectionpages {18}{20}}
+\headcommand {\slideentry {4}{2}{1}{21/23}{Plugins}{0}}
+\headcommand {\beamer@framepages {21}{23}}
+\headcommand {\sectionentry {5}{Results}{24}{Results}{0}}
+\headcommand {\beamer@sectionpages {15}{23}}
+\headcommand {\beamer@subsectionpages {21}{23}}
+\headcommand {\slideentry {5}{0}{2}{24/26}{}{0}}
+\headcommand {\beamer@framepages {24}{26}}
+\headcommand {\beamer@subsectionentry {0}{5}{1}{27}{People Counting}}\headcommand {\beamer@subsectionpages {24}{26}}
+\headcommand {\slideentry {5}{1}{1}{27/29}{People Counting}{0}}
+\headcommand {\beamer@framepages {27}{29}}
+\headcommand {\beamer@subsectionentry {0}{5}{2}{30}{People Tracking}}\headcommand {\beamer@subsectionpages {27}{29}}
+\headcommand {\slideentry {5}{2}{1}{30/32}{People Tracking}{0}}
+\headcommand {\beamer@framepages {30}{32}}
+\headcommand {\sectionentry {6}{Conclusions}{33}{Conclusions}{0}}
+\headcommand {\beamer@sectionpages {24}{32}}
+\headcommand {\beamer@subsectionpages {30}{32}}
+\headcommand {\slideentry {6}{0}{2}{33/35}{}{0}}
+\headcommand {\beamer@framepages {33}{35}}
+\headcommand {\beamer@subsectionentry {0}{6}{1}{36}{Future Work}}\headcommand {\beamer@subsectionpages {33}{35}}
+\headcommand {\slideentry {6}{1}{1}{36/38}{Future Work}{0}}
+\headcommand {\beamer@framepages {36}{38}}
+\headcommand {\beamer@partpages {1}{38}}
+\headcommand {\beamer@subsectionpages {36}{38}}
+\headcommand {\beamer@sectionpages {33}{38}}
+\headcommand {\beamer@documentpages {38}}
+\headcommand {\def \inserttotalframenumber {16}}
