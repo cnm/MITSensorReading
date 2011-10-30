@@ -1,16 +1,17 @@
 \beamer@endinputifotherversion {3.07pt}
 \select@language {english}
-\beamer@sectionintoc {2}{Introduction}{3}{0}{1}
-\beamer@subsectionintoc {2}{1}{Motivation}{3}{0}{1}
-\beamer@subsectionintoc {2}{2}{Objectives}{4}{0}{1}
-\beamer@sectionintoc {3}{System Architecture}{6}{0}{2}
-\beamer@subsectionintoc {3}{1}{Service Discovery}{9}{0}{2}
-\beamer@subsectionintoc {3}{2}{Location System}{12}{0}{2}
-\beamer@sectionintoc {4}{Implementation}{15}{0}{3}
-\beamer@subsectionintoc {4}{1}{IST-Taguspark prototype}{18}{0}{3}
-\beamer@subsectionintoc {4}{2}{Plugins}{21}{0}{3}
-\beamer@sectionintoc {5}{Results}{24}{0}{4}
-\beamer@subsectionintoc {5}{1}{People Counting}{27}{0}{4}
-\beamer@subsectionintoc {5}{2}{People Tracking}{30}{0}{4}
-\beamer@sectionintoc {6}{Conclusions}{33}{0}{5}
-\beamer@subsectionintoc {6}{1}{Future Work}{36}{0}{5}
+\beamer@sectionintoc {2}{Introdu\IeC {\c c}\IeC {\~a}o}{3}{0}{1}
+\beamer@subsectionintoc {2}{1}{Motiva\IeC {\c c}\IeC {\~a}o}{4}{0}{1}
+\beamer@subsectionintoc {2}{2}{Objectivos}{5}{0}{1}
+\beamer@sectionintoc {3}{Arquitectura}{7}{0}{2}
+\beamer@subsectionintoc {3}{1}{Sistema de localiza\IeC {\c c}\IeC {\~a}o}{8}{0}{2}
+\beamer@subsectionintoc {3}{2}{Plataforma Multi-Funcional de Monitoriza\IeC {\c c}\IeC {\~a}o}{14}{0}{2}
+\beamer@subsectionintoc {3}{3}{Componentes de localiza\IeC {\c c}\IeC {\~a}o}{20}{0}{2}
+\beamer@sectionintoc {4}{Implementa\IeC {\c c}\IeC {\~a}o}{23}{0}{3}
+\beamer@subsectionintoc {4}{1}{Prot\IeC {\'o}tipo IST-Taguspark}{27}{0}{3}
+\beamer@subsectionintoc {4}{2}{Plugins}{30}{0}{3}
+\beamer@sectionintoc {5}{Resultados}{33}{0}{4}
+\beamer@subsectionintoc {5}{1}{Contagem de pessoas}{37}{0}{4}
+\beamer@subsectionintoc {5}{2}{Rastreamento de pessoas}{43}{0}{4}
+\beamer@sectionintoc {6}{Conclus\IeC {\~o}es}{46}{0}{5}
+\beamer@subsectionintoc {6}{1}{Trabalho Futuro}{50}{0}{5}
