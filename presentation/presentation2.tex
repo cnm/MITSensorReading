@@ -58,9 +58,40 @@
 
 
 % If you have a file called "university-logo-filename.xxx", where xxx
+%LOGOS
 \pgfdeclareimage[height=0.6cm]{logoIST}{figures/logoIST.png}
 \pgfdeclareimage[height=0.8cm]{logoINESC}{figures/inescID.png}
 \pgfdeclareimage[height=0.3cm]{logoMIT}{figures/mit-logo.png}
+
+%ARCHITECTURE
+\pgfdeclareimage[height=4.9cm]{topoFIS}{figures/novais_arch2.pdf}
+\pgfdeclareimage[height=4.5cm]{topoLOG}{figures/novais_arch.pdf}
+\pgfdeclareimage[height=5cm]{arch_top}{figures/top_level_arch.pdf}
+\pgfdeclareimage[height=5cm]{arch_gsd_plat}{figures/gsd_platform.pdf}
+\pgfdeclareimage[height=5cm]{arch_spotter}{figures/spotter_v2.pdf}
+
+%MAP PLANT/CELL
+\pgfdeclareimage[height=5cm]{cells11-5}{figures/cells11-5.pdf}
+\pgfdeclareimage[height=5cm]{planta11-5}{figures/planta11-5.pdf}
+\pgfdeclareimage[height=5cm]{planta11}{figures/planta11.pdf}
+
+%PROTOTYPES
+\pgfdeclareimage[height=5cm]{ir_proto}{figures/ir_proto.jpg}
+\pgfdeclareimage[height=5cm]{ir_emitters}{figures/ir_emitters.jpg}
+\pgfdeclareimage[height=5cm]{ir_entrance1}{figures/ir_entrance1.jpg}
+\pgfdeclareimage[height=5cm]{ir_entrance2}{figures/ir_entrance2.jpg}
+\pgfdeclareimage[height=5cm]{ir_close_up}{figures/ir_close_up.jpg}
+\pgfdeclareimage[height=5cm]{ir_receivers}{figures/ir_receivers.jpg}
+\pgfdeclareimage[height=5cm]{bt_proto}{figures/bt_simple.jpg}
+
+%TESTS
+\pgfdeclareimage[height=5cm]{test_mov}{figures/movimento.pdf}
+\pgfdeclareimage[height=3cm]{test1.2}{figures/13-16zona2.pdf}
+\pgfdeclareimage[height=3cm]{test1.3}{figures/13-16zona3.pdf}
+\pgfdeclareimage[height=3cm]{test2.2}{figures/17-20zona2.pdf}
+\pgfdeclareimage[height=3cm]{test2.3}{figures/17-20zona3.pdf}
+\pgfdeclareimage[height=3cm]{test3.2}{figures/21-23zona2.pdf}
+\pgfdeclareimage[height=3cm]{test3.3}{figures/21-23zona3.pdf}
 % is a graphic format that can be processed by latex or pdflatex,
 % resp., then you can add a logo as follows:
 
@@ -122,11 +153,11 @@
   \MyLogo 
   \frametitle{Motivação}   % Insert frame title between curly braces
 
-  \begin{itemize}
-	\item Dificuldade de gerir consumos energéticos num campus
-	\item Redução de custos energéticos é uma necessidade
-	\item Previsível diminuição dos recursos naturais
-	\item Disseminação da computação pervasiva 
+  \begin{itemize}\setlength{\itemsep}{7mm}
+	\item<1-> Dificuldade de gerir consumos energéticos num campus
+	\item<2-> Redução de custos energéticos é uma necessidade
+	\item<3-> Previsível diminuição dos recursos naturais
+	\item<4-> Disseminação da computação pervasiva 
   \end{itemize}
 \end{frame}
 \note[enumerate]       % Add notes to yourself that will be displayed when
@@ -138,13 +169,14 @@
 \subsection{Objectivos}
 
 \begin{frame}
+  \MyLogo
   \frametitle{Objectivos}   % Insert frame title between curly braces
 
-  \begin{itemize}
-	\item Desenhar um sistema capaz de contar pessoas e identificar os seus padrões de mobilidade dentro de edifícios
-	\item O custo do sistema deve ser inferior às poupanças
-	\item Caso de uso de plataforma multi-funcional de monitorização
-	\item Integrar na plataforma supra-mencionada módulo de descoberta de serviços
+  \begin{itemize}\setlength{\itemsep}{7mm}
+	\item<1-> Desenhar um sistema capaz de contar pessoas e identificar os seus padrões de mobilidade dentro de edifícios
+	\item<2-> O custo do sistema deve ser inferior às poupanças
+	\item<3-> Caso de uso de plataforma multi-funcional de monitorização
+	\item<4-> Integrar na plataforma supra-mencionada módulo de descoberta de serviços
   \end{itemize}
 \end{frame}
 \note[enumerate]       % Add notes to yourself that will be displayed when
@@ -154,17 +186,17 @@
 }
 
 \begin{frame}
-  \frametitle{Vantagens de utilizar a plataforma multi-functional}   % Insert frame title between curly braces
+  \MyLogo
+  \frametitle{Vantagens de uso da plataforma}   % Insert frame title between curly braces
 
-  \begin{itemize}
-	\item Abstracção de problemas de comunicação
+  \begin{itemize}\setlength{\itemsep}{8mm}
+	\item<1-> Abstracção de problemas de comunicação
 	\begin{itemize}
 		\item Sincronização
 		\item Estado da rede
 		\item Descoberta de Serviços
 	\end{itemize}
-
-	\item Optimizar o processamento à capacidade do nó
+	\item<2-> Optimizar o processamento à capacidade do nó
   \end{itemize}
 \end{frame}
 \note[enumerate]       % Add notes to yourself that will be displayed when
@@ -222,29 +254,73 @@
 
 \section{Arquitectura}
 
-
 \subsection{Sistema de localização}
 
 \begin{frame}
+  \MyLogo
   \frametitle{Requisitos}   % Insert frame title between curly braces
 
-  \begin{itemize}
-  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-  \item<3-> Point 3
-  \item<2-> Point 2  % Use Next Page to go to Point 3
+  \begin{itemize}\setlength{\itemsep}{6mm}
+  \item<1-> Não intrusivo %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+  \item<2-> Escalável a diferentes edifícios e espaços
+  \item<3-> Flexivel quanto às tecnologias  % Use Next Page to go to Point 3
+  \item<4-> Baixa complexidade de computação
+  \item<5-> Manter privacidade das pessoas
   \end{itemize}
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
 
 \begin{frame}
+  \MyLogo
   \frametitle{Topologia}   % Insert frame title between curly braces
+  \begin{columns}
+   \column{.5\textwidth}
+       \pgfuseimage{topoFIS}
+   
+   \column{.5\textwidth}
+        \begin{itemize}
+               \item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item<2-> Nós espalhados pela área de monitorização
+	  	\item<3-> Nós contêm diferentes tipos de sensores  % Use Next Page to go to Point 3
+	  	\item<4-> Informação é agrupada e enviada para um servidor para armazenamento
+        \end{itemize}
+ \end{columns}
+	%\vbox{\hbox to 2.17cm{\hfil\pgfuseimage{topoFIS}}
+  	%  \fbox{\begin{minipage}[t]{150pt}
+    	%	%\includegraphics[height=100pt,width=150pt]{test}
+	%	\pgfuseimage{topoFIS}
+  	%\end{minipage}}
+ %\hfill
+ % \fbox{\begin{minipage}[t]{150pt}
+ %   	\begin{itemize}
+%	  \item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+%	  \item<2-> Nós espalhados pela área de monitorização
+%	  \item<3-> Nós contêm diferentes tipos de sensores  % Use Next Page to go to Point 3
+%	  \item<4-> Informação é agrupada e enviada para um servidor para armazenamento
+%	  \end{itemize}
+ % \end{minipage}}
+\end{frame}
+\note{Speak clearly}  % Add notes to yourself that will be displayed when
+                      % typeset with the notes or notesonly class options
 
-  \begin{itemize}
-  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-  \item<2-> Point 2  % Use Next Page to go to Point 3
-  \item<3-> Point 3
-  \end{itemize}
+\begin{frame}
+  \MyLogo
+  \frametitle{Topologia}   % Insert frame title between curly braces
+	%\vbox{\hbox to 2.17cm{\hfil\pgfuseimage{topoLOG}}
+  \begin{columns}
+   \column{.5\textwidth}
+       \pgfuseimage{topoLOG}
+   
+   \column{.5\textwidth}
+        \begin{itemize}
+               \item<1-> Topologia lógica da rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	%\item<2-> Nós espalhados pela área de monitorização
+	  	%\item<3-> Nós contêm diferentes tipos de sensores  % Use Next Page to go to Point 3
+	  	%\item<4-> Informação é agrupada e enviada para um servidor para armazenamento
+        \end{itemize}
+ \end{columns}
+  	%\pgfuseimage{topoLOG}
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
@@ -252,6 +328,7 @@
 \subsection{Plataforma Multi-Funcional de Monitorização}
 
 \begin{frame}
+  \MyLogo
   \frametitle{Overview}   % Insert frame title between curly braces
 
   \begin{itemize}
@@ -264,6 +341,7 @@
                       % typeset with the notes or notesonly class options
 
 \begin{frame}
+  \MyLogo
   \frametitle{Descoberta de Serviços}   % Insert frame title between curly braces
 
   \begin{itemize}
@@ -278,6 +356,7 @@
 \subsection{Componentes de localização}
 
 \begin{frame}
+  \MyLogo
   \frametitle{Spotter}   % Insert frame title between curly braces
 
   \begin{itemize}
@@ -293,6 +372,7 @@
 \section{Implementação}
 
 \begin{frame}
+  \MyLogo
   \frametitle{Ambiente}   % Insert frame title between curly braces
   \begin{columns}[c]
   \column{2in}  % slides are 3in high by 5in wide
@@ -313,6 +393,7 @@
 \subsection{Protótipo IST-Taguspark}
 
 \begin{frame}
+  \MyLogo
   \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces
 
   \begin{itemize}
@@ -327,6 +408,7 @@
 \subsection{Plugins}
 
 \begin{frame}
+  \MyLogo
   \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces
 
   \begin{itemize}
@@ -341,6 +423,7 @@
 \section{Resultados}
 
 \begin{frame}
+  \MyLogo
   \frametitle{Ambiente de Testes}   % Insert frame title between curly braces
   \begin{columns}[c]
   \column{2in}  % slides are 3in high by 5in wide
@@ -360,6 +443,7 @@
 \subsection{Contagem de pessoas}
 
 \begin{frame}
+  \MyLogo
   \frametitle{Funcionamento do Sensor Infra-Vermelhos}   % Insert frame title between curly braces
 
   \begin{itemize}
@@ -372,6 +456,7 @@
                       % typeset with the notes or notesonly class options
 
 \begin{frame}
+  \MyLogo
   \frametitle{Análise ao longo do dia}   % Insert frame title between curly braces
 
   \begin{itemize}
@@ -386,6 +471,7 @@
 \subsection{Rastreamento de pessoas}
 
 \begin{frame}
+  \MyLogo
   \frametitle{Experimentação}   % Insert frame title between curly braces
 
   \begin{itemize}
@@ -400,6 +486,7 @@
 \section{Conclusões}
 
 \begin{frame}
+  \MyLogo
   \frametitle{Conclusões}   % Insert frame title between curly braces
   \begin{columns}[c]
   \column{2in}  % slides are 3in high by 5in wide
@@ -419,6 +506,7 @@
 \subsection{Trabalho Futuro}
 
 \begin{frame}
+  \MyLogo
   \frametitle{Trabalho Futuro}   % Insert frame title between curly braces
 
   \begin{itemize}
