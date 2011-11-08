@@ -1,4 +1,4 @@
-\documentclass[]{beamer}
+\documentclass[handout]{beamer}
 % Class options include: notes, notesonly, handout, trans,
 %                        hidesubsections, shadesubsections,
 %                        inrow, blue, red, grey, brown
@@ -191,13 +191,11 @@
 \framesubtitle{Vantagens de uso da plataforma}   % Insert frame title between curly braces
 
   \begin{itemize}\setlength{\itemsep}{8mm}
-	\item<1-> Abstracção de problemas de comunicação
-	\begin{itemize}
-		  \item Sincronização
-	 	 \item Estado da rede
-			 \item Descoberta de Serviços
-	\end{itemize}
-   %\item<2-> Optimizar o processamento à capacidade do nó
+			\item<1-> Transparência de detalhes de transporte
+ 		\item<2-> Lidar com requisitos de determinadas aplicações ao nível de rede como a sincronização
+			\item<3-> Abstrair de dificuldades que surjam na comunicação
+			\item<4-> Possibilidade de inserir novos módulos que lidem com outro tipo de requisitos como compressão e encriptação
+ %\item<2-> Optimizar o processamento à capacidade do nó
   \end{itemize}
 \end{frame}
 \note[enumerate]       % Add notes to yourself that will be displayed when
@@ -415,8 +413,8 @@
 	  	\item<1-> Boards TS-7500
 	  	\item<2-> Processador ARM 250MHz
 		  \item<3-> 64MB de RAM 
-	  	\item<3-> Debian Linux
-	  	\item<4-> Linguagem C
+	  	\item<4-> Debian Linux
+	  	\item<5-> Linguagem C
         \end{itemize}
    \column{.5\textwidth}
        \pgfuseimage{ts7500}        
@@ -454,7 +452,7 @@
   		\item<2-> Curto alcance que é simulateamente emissor e receptor
 		\item<2-> Par emissor e receptor infra-vermelho de longo alcance
 		\item<3-> Uso de dois feixes em paralelo para detectar direcção
-		\item<4-> Dispositivos de longo alcance usados de forma síncrona para não causar interferências
+%		\item<4-> Dispositivos de longo alcance usados de forma síncrona para não causar interferências
 	\end{itemize}
   \item<5-> Tecnologia Bluetooth para detectar a força de sinal de aparelhos pessoais 
 	\begin{itemize}
@@ -662,5 +660,14 @@
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
+
+\begin{frame}{Fim da apresentação}
+ \MyLogo
+ \begin{center}
+  \Large Obrigado pela vossa comparência.\\
+  \vspace{0.5cm}
+  \large \bf Questões?
+ \end{center}
+\end{frame}
 
 \end{document}
