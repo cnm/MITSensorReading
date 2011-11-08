@@ -86,12 +86,12 @@
 
 %TESTS
 \pgfdeclareimage[height=4cm]{test_mov}{figures/movimento.pdf}
-\pgfdeclareimage[height=3.6cm]{test1.2}{figures/13-16zona2.pdf}
-\pgfdeclareimage[height=3.6cm]{test1.3}{figures/13-16zona3.pdf}
-\pgfdeclareimage[height=3.6cm]{test2.2}{figures/17-20zona2.pdf}
-\pgfdeclareimage[height=3.6cm]{test2.3}{figures/17-20zona3.pdf}
-\pgfdeclareimage[height=3.6cm]{test3.2}{figures/21-23zona2.pdf}
-\pgfdeclareimage[height=3.6cm]{test3.3}{figures/21-23zona3.pdf}
+\pgfdeclareimage[height=6cm]{test1.2}{figures/13-16zona2.pdf}
+\pgfdeclareimage[height=6cm]{test1.3}{figures/13-16zona3.pdf}
+\pgfdeclareimage[height=6cm]{test2.2}{figures/17-20zona2.pdf}
+\pgfdeclareimage[height=6cm]{test2.3}{figures/17-20zona3.pdf}
+\pgfdeclareimage[height=6cm]{test3.2}{figures/21-23zona2.pdf}
+\pgfdeclareimage[height=6cm]{test3.3}{figures/21-23zona3.pdf}
 % is a graphic format that can be processed by latex or pdflatex,
 % resp., then you can add a logo as follows:
 
@@ -154,9 +154,8 @@
   \frametitle{Introdução}   % Insert frame title between curly braces
   \framesubtitle{Motivação}
   \begin{itemize}\setlength{\itemsep}{7mm}
-	\item<1-> Dificuldade de gerir consumos energéticos num campus
+	\item<1-> Dificuldade de gerir e reduzir consumos energéticos num campus
 	\item<2-> Redução de custos energéticos é uma necessidade
-	\item<3-> Previsível diminuição dos recursos naturais
 	\item<4-> Disseminação da computação pervasiva 
   \end{itemize}
 \end{frame}
@@ -174,9 +173,8 @@
   \framesubtitle{Objectivos}
   \begin{itemize}\setlength{\itemsep}{7mm}
 	\item<1-> Desenhar um sistema capaz de contar pessoas e identificar os seus padrões de mobilidade dentro de edifícios
-	\item<2-> O custo do sistema deve ser inferior às poupanças
-	\item<3-> Caso de uso de plataforma multi-funcional de monitorização
-	\item<4-> Integrar na plataforma supra-mencionada módulo de descoberta de serviços
+	\item<2-> Utilizar plataforma multi-funcional de monitorização
+	\item<3-> Integrar na plataforma supra-mencionada módulo de descoberta de serviços
   \end{itemize}
 \end{frame}
 \note[enumerate]       % Add notes to yourself that will be displayed when
@@ -193,8 +191,8 @@
   \begin{itemize}\setlength{\itemsep}{8mm}
 			\item<1-> Transparência de detalhes de transporte
  		\item<2-> Lidar com requisitos de determinadas aplicações ao nível de rede como a sincronização
-			\item<3-> Abstrair de dificuldades que surjam na comunicação
-			\item<4-> Possibilidade de inserir novos módulos que lidem com outro tipo de requisitos como compressão e encriptação
+			%\item<3-> Abstrair de dificuldades que surjam na comunicação
+			\item<4-> Possibilidade de inserir novos módulos que lidem com outro tipo de requisitos como compressão e cifra
  %\item<2-> Optimizar o processamento à capacidade do nó
   \end{itemize}
 \end{frame}
@@ -261,10 +259,10 @@
 
   \begin{itemize}\setlength{\itemsep}{6mm}
   \item<1-> Não intrusivo %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-  \item<2-> Escalável a diferentes edifícios e espaços
+  \item<2-> Adaptável a edifícios ou espaços de diferentes dimensões
   \item<3-> Flexivel quanto às tecnologias  % Use Next Page to go to Point 3
   \item<4-> Baixa complexidade de computação
-  \item<5-> Manter privacidade das pessoas
+  \item<5-> Respeito pela privacidade
   \end{itemize}
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
@@ -347,11 +345,11 @@
 									 \begin{itemize}
                %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
 	  	\item Sincronização
-	  	\item Transporte Não-fiável  % Use Next Page to go to Point 3
-			 \item Descoberta de Serviços
+	  	\item Transporte não-fiável  % Use Next Page to go to Point 3
 	  	\item Configuração
 	
         \end{itemize}
+		\item<4-> Integração do módulo de descoberta de serviços
         \end{itemize}
  \end{columns}
 \end{frame}
@@ -392,7 +390,7 @@
                %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
 	  	\item<1-> Sistema de plugins
 	  	\item<2-> Síncronos ou assíncronos
-	  	\item<3-> Infromação abstraída para tipo de dados comum
+	  	\item<3-> Informação abstraída para tipo de dados comum
 		\item<4-> Utiliza a API para descobrir o respectivo manager
         \end{itemize}
  \end{columns}
@@ -449,7 +447,7 @@
   \begin{itemize}
   \item<1-> Feixes de infra-vermelhos para detectar entradas e saídas de pessoas
 	\begin{itemize}
-  		\item<2-> Curto alcance que é simulateamente emissor e receptor
+  		\item<2-> Curto alcance que é simultaneamente emissor e receptor
 		\item<2-> Par emissor e receptor infra-vermelho de longo alcance
 		\item<3-> Uso de dois feixes em paralelo para detectar direcção
 %		\item<4-> Dispositivos de longo alcance usados de forma síncrona para não causar interferências
@@ -457,7 +455,7 @@
   \item<5-> Tecnologia Bluetooth para detectar a força de sinal de aparelhos pessoais 
 	\begin{itemize}
   		\item<6-> Transformar força de sinal em distância ao nó
-		\item<7-> Através de leis de propagação em espaço livre
+		\item<7-> Através de leis de propagação
 		\item<7-> Através de fingerprinting
 	\end{itemize}
   \end{itemize}
@@ -469,28 +467,33 @@
 \begin{frame}
   \MyLogo
   \frametitle{Protótipo}\framesubtitle{Hardware}   % Insert frame title between curly braces
-	
-   \begin{columns}
-   \column{.5\textwidth}
 	\begin{center}
         \pgfuseimage{ir_proto}
 	\end{center}
-   \column{.5\textwidth}
+\end{frame}
+
+\begin{frame}
+  \MyLogo
+  \frametitle{Protótipo}\framesubtitle{Hardware} 
 	\begin{center}
         \pgfuseimage{ir_emitters}
 	\end{center}
- \end{columns}
-   \begin{columns}
-   \column{.5\textwidth}
+\end{frame}
+
+\begin{frame}
+  \MyLogo
+  \frametitle{Protótipo}\framesubtitle{Hardware} 
 	\begin{center}
 	\pgfuseimage{bt_proto}
 	\end{center}
-   \column{.5\textwidth}
+\end{frame}
+
+\begin{frame}
+  \MyLogo
+  \frametitle{Protótipo}\framesubtitle{Hardware} 
 	\begin{center}
 	\pgfuseimage{ir_receivers}
 	\end{center}
- \end{columns}
-	
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
@@ -503,10 +506,9 @@
    \column{.5\textwidth}
 	\begin{itemize}\setlength{\itemsep}{4mm}
                %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+		\item<1-> Realizados no núcleo 11
 	  	\item<1-> Duas zonas de contagem de pessoas
 	  	\item<2-> Uma zona de localização de pessoas
-	  	\item<3-> Nós A e D detectam entradas e saídas
-		\item<4-> Nós A, B e C realizam a triangulação
         \end{itemize}
    \column{.5\textwidth}
        \pgfuseimage{planta11}        
@@ -514,6 +516,22 @@
 \end{frame}
 \note{The end}       % Add notes to yourself that will be displayed when
 		     % typeset with the notes or notesonly class options
+
+\begin{frame}
+  \MyLogo
+  \frametitle{Resultados}\framesubtitle{Ambiente de Testes}   % Insert frame title between curly braces
+	\begin{columns}
+   \column{.5\textwidth}
+	\begin{itemize}\setlength{\itemsep}{4mm}
+               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item<3-> Nós A e D detectam entradas e saídas
+		\item<4-> Nós A, B e C realizam a triangulação
+        \end{itemize}
+   \column{.5\textwidth}
+       \pgfuseimage{planta11}        
+ \end{columns}
+\end{frame}
+
 
 \subsection{Contagem de pessoas}
 
@@ -526,10 +544,10 @@
 \begin{tabular}{ | l | p{7cm} |}
 
 \hline
-	\textbf{Test} & \textbf{Result} \\ \hline
+	\textbf{Teste} & \textbf{Resultado} \\ \hline
 	Entrada/saída normal & Uma entrada/saída \\ \hline
 	Entrada/saída rápida (a correr) & Se o sensor estiver obstruído por um intervalo inferior a 10ms poderá não detectar a passagem \\ \hline
-	Passagem cruzada & Usualmente detecta apenas uma das direcções \\ \hline
+	Passagem cruzada & Usualmente detecta apenas um dos sentidos \\ \hline
 	Passagem simultânea & Se os feixes não deixarem de estar obstruídos durante as duas passagens, apenas uma é detectada\\
 \hline
 
@@ -637,10 +655,10 @@
   \MyLogo
   \frametitle{Conclusões}   % Insert frame title between curly braces
   \begin{itemize}\setlength{\itemsep}{6mm}
-	  \item<1-> Criação de plataforma de localização escalável
+	  \item<1-> Criação de plataforma de contagem, localização e detecção de movimento
 	  \item<2-> Capaz de integrar variadas tecnologias de comunicação a custo reduzido
 	  \item<3-> Outros projectos podem dar uso a esta plataforma para aplicar políticas de poupança energética
-	  \item<4-> Criação de um add-on de descoberta de serviços a plataforma multi-funcional de monitorização
+	  \item<4-> Adição de um módulo de descoberta de serviços à plataforma multi-funcional
   \end{itemize}
 \end{frame}
 \note{The end}       % Add notes to yourself that will be displayed when
@@ -653,9 +671,9 @@
   \frametitle{Conclusões}\framesubtitle{Trabalho Futuro}   % Insert frame title between curly braces
 
   \begin{itemize}\setlength{\itemsep}{7mm}
-	  \item<1-> Carregar mapas dinâmicamente à medida que são necessários
-	  \item<2-> Realizar aproximações das distâncias para obter sempre triangulações solucionáveis
-	  \item<3-> Providenciar mecanismos de reset para quando é detectada adulteração de dados
+	  \item<1-> Estudar desempenho da plataforma quanto à escalabilidade, precisão e exactidão
+	  \item<2-> Implementar e aplicar o servidor de detecção de padrões de movimento
+	  \item<3-> Carregar mapas dinâmicamente à medida que são necessários
   \end{itemize}
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
