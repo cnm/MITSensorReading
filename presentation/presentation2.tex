@@ -66,32 +66,32 @@
 %ARCHITECTURE
 \pgfdeclareimage[height=4.9cm]{topoFIS}{figures/novais_arch2.pdf}
 \pgfdeclareimage[height=4.5cm]{topoLOG}{figures/novais_arch.pdf}
-\pgfdeclareimage[height=5cm]{arch_top}{figures/top_level_arch.pdf}
+\pgfdeclareimage[height=5.7cm]{arch_top}{figures/top_level_arch.pdf}
 \pgfdeclareimage[height=5cm]{arch_gsd_plat}{figures/gsd_platform.pdf}
-\pgfdeclareimage[height=5cm]{arch_spotter}{figures/spotter_v2.pdf}
+\pgfdeclareimage[height=4.5cm]{arch_spotter}{figures/spotter_v2.pdf}
 
 %MAP PLANT/CELL
 \pgfdeclareimage[height=5cm]{cells11-5}{figures/cells11-5.pdf}
-\pgfdeclareimage[height=5cm]{planta11-5}{figures/planta11-5.pdf}
-\pgfdeclareimage[height=5cm]{planta11}{figures/planta11.pdf}
+%\pgfdeclareimage[height=5cm]{planta11-5}{figures/planta11-5.pdf}
+\pgfdeclareimage[height=4cm]{planta11}{figures/planta11.pdf}
 
 %PROTOTYPES
-\pgfdeclareimage[height=5cm]{ir_proto}{figures/ir_proto.jpg}
-\pgfdeclareimage[height=5cm]{ir_emitters}{figures/ir_emitters.jpg}
-\pgfdeclareimage[height=5cm]{ir_entrance1}{figures/ir_entrance1.jpg}
-\pgfdeclareimage[height=5cm]{ir_entrance2}{figures/ir_entrance2.jpg}
-\pgfdeclareimage[height=5cm]{ir_close_up}{figures/ir_close_up.jpg}
-\pgfdeclareimage[height=5cm]{ir_receivers}{figures/ir_receivers.jpg}
-\pgfdeclareimage[height=5cm]{bt_proto}{figures/bt_simple.jpg}
+\pgfdeclareimage[height=5cm]{ts7500}{figures/ts7500.pdf}
+\pgfdeclareimage[height=3.2cm]{ir_proto}{figures/ir_proto.jpg}
+\pgfdeclareimage[height=3.2cm]{ir_emitters}{figures/ir_emitters.jpg}
+%\pgfdeclareimage[height=3.2cm]{ir_entrance1}{figures/ir_entrance1.jpg}
+%\pgfdeclareimage[height=3.2cm]{ir_entrance2}{figures/ir_entrance2.jpg}
+\pgfdeclareimage[height=3.2cm]{ir_receivers}{figures/ir_receivers.jpg}
+\pgfdeclareimage[height=3.2cm]{bt_proto}{figures/bt_simple.jpg}
 
 %TESTS
-\pgfdeclareimage[height=5cm]{test_mov}{figures/movimento.pdf}
-\pgfdeclareimage[height=3cm]{test1.2}{figures/13-16zona2.pdf}
-\pgfdeclareimage[height=3cm]{test1.3}{figures/13-16zona3.pdf}
-\pgfdeclareimage[height=3cm]{test2.2}{figures/17-20zona2.pdf}
-\pgfdeclareimage[height=3cm]{test2.3}{figures/17-20zona3.pdf}
-\pgfdeclareimage[height=3cm]{test3.2}{figures/21-23zona2.pdf}
-\pgfdeclareimage[height=3cm]{test3.3}{figures/21-23zona3.pdf}
+\pgfdeclareimage[height=4cm]{test_mov}{figures/movimento.pdf}
+\pgfdeclareimage[height=3.6cm]{test1.2}{figures/13-16zona2.pdf}
+\pgfdeclareimage[height=3.6cm]{test1.3}{figures/13-16zona3.pdf}
+\pgfdeclareimage[height=3.6cm]{test2.2}{figures/17-20zona2.pdf}
+\pgfdeclareimage[height=3.6cm]{test2.3}{figures/17-20zona3.pdf}
+\pgfdeclareimage[height=3.6cm]{test3.2}{figures/21-23zona2.pdf}
+\pgfdeclareimage[height=3.6cm]{test3.3}{figures/21-23zona3.pdf}
 % is a graphic format that can be processed by latex or pdflatex,
 % resp., then you can add a logo as follows:
 
@@ -106,12 +106,12 @@
 
 %\logo{}
 
-\AtBeginSection[] {
-	\begin{frame}<beamer>{Índice}
-	\MyLogo
-	\tableofcontents[currentsection,subsubsectionstyle=hide]
-	\end{frame}
-}
+%\AtBeginSection[] {
+%	\begin{frame}<beamer>{Índice}
+%	\MyLogo
+%	\tableofcontents[currentsection,subsubsectionstyle=hide]
+%	\end{frame}
+%}
 
 
 
@@ -147,12 +147,12 @@
 
 \section{Introdução}
 
-\subsection{Motivação}
+%\subsection{Motivação}
 
 \begin{frame}
   \MyLogo 
-  \frametitle{Motivação}   % Insert frame title between curly braces
-
+  \frametitle{Introdução}   % Insert frame title between curly braces
+  \framesubtitle{Motivação}
   \begin{itemize}\setlength{\itemsep}{7mm}
 	\item<1-> Dificuldade de gerir consumos energéticos num campus
 	\item<2-> Redução de custos energéticos é uma necessidade
@@ -166,12 +166,12 @@
 \item Note for Point 2   
 }
 
-\subsection{Objectivos}
+%\subsection{Objectivos}
 
 \begin{frame}
   \MyLogo
-  \frametitle{Objectivos}   % Insert frame title between curly braces
-
+  \frametitle{Introdução}   % Insert frame title between curly braces
+  \framesubtitle{Objectivos}
   \begin{itemize}\setlength{\itemsep}{7mm}
 	\item<1-> Desenhar um sistema capaz de contar pessoas e identificar os seus padrões de mobilidade dentro de edifícios
 	\item<2-> O custo do sistema deve ser inferior às poupanças
@@ -187,16 +187,17 @@
 
 \begin{frame}
   \MyLogo
-  \frametitle{Vantagens de uso da plataforma}   % Insert frame title between curly braces
+  \frametitle{Introdução}
+\framesubtitle{Vantagens de uso da plataforma}   % Insert frame title between curly braces
 
   \begin{itemize}\setlength{\itemsep}{8mm}
 	\item<1-> Abstracção de problemas de comunicação
 	\begin{itemize}
-		\item Sincronização
-		\item Estado da rede
-		\item Descoberta de Serviços
+		  \item Sincronização
+	 	 \item Estado da rede
+			 \item Descoberta de Serviços
 	\end{itemize}
-	\item<2-> Optimizar o processamento à capacidade do nó
+   %\item<2-> Optimizar o processamento à capacidade do nó
   \end{itemize}
 \end{frame}
 \note[enumerate]       % Add notes to yourself that will be displayed when
@@ -258,7 +259,7 @@
 
 \begin{frame}
   \MyLogo
-  \frametitle{Requisitos}   % Insert frame title between curly braces
+  \frametitle{Sistema de localização}\framesubtitle{Requisitos}   % Insert frame title between curly braces
 
   \begin{itemize}\setlength{\itemsep}{6mm}
   \item<1-> Não intrusivo %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
@@ -273,17 +274,17 @@
 
 \begin{frame}
   \MyLogo
-  \frametitle{Topologia}   % Insert frame title between curly braces
+  \frametitle{Sistema de localização}\framesubtitle{Topologia Física}   % Insert frame title between curly braces
   \begin{columns}
    \column{.5\textwidth}
        \pgfuseimage{topoFIS}
    
    \column{.5\textwidth}
-        \begin{itemize}
-               \item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-	  	\item<2-> Nós espalhados pela área de monitorização
-	  	\item<3-> Nós contêm diferentes tipos de sensores  % Use Next Page to go to Point 3
-	  	\item<4-> Informação é agrupada e enviada para um servidor para armazenamento
+        \begin{itemize}\setlength{\itemsep}{3mm}
+               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item<1-> Nós espalhados pela área de monitorização
+	  	\item<2-> Nós contêm diferentes tipos de sensores  % Use Next Page to go to Point 3
+	  	\item<3-> Informação é agrupada e enviada para um servidor para armazenamento
         \end{itemize}
  \end{columns}
 	%\vbox{\hbox to 2.17cm{\hfil\pgfuseimage{topoFIS}}
@@ -306,16 +307,20 @@
 
 \begin{frame}
   \MyLogo
-  \frametitle{Topologia}   % Insert frame title between curly braces
+  \frametitle{Sistema de localização}\framesubtitle{Topologia Lógica}   % Insert frame title between curly braces
 	%\vbox{\hbox to 2.17cm{\hfil\pgfuseimage{topoLOG}}
   \begin{columns}
    \column{.5\textwidth}
        \pgfuseimage{topoLOG}
    
    \column{.5\textwidth}
-        \begin{itemize}
-               \item<1-> Topologia lógica da rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-	  	%\item<2-> Nós espalhados pela área de monitorização
+        \begin{itemize}\setlength{\itemsep}{2mm}
+               \item<1-> Topologia Hierárquica  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item<2-> Spotters %estão associados a zonas e interagem com sensores
+		\item<3-> Zone Managers %realizam a computação de localização e contagem na zona
+		\item<4-> Aggregator %é o nó sink que agrega a informação de localização de todas as zonas
+		\item<5-> Servidor UMP %armazena a informação ao longo do tempo e calcula padrões de movimento
+		%\item<2-> Nós espalhados pela área de monitorização
 	  	%\item<3-> Nós contêm diferentes tipos de sensores  % Use Next Page to go to Point 3
 	  	%\item<4-> Informação é agrupada e enviada para um servidor para armazenamento
         \end{itemize}
@@ -329,26 +334,48 @@
 
 \begin{frame}
   \MyLogo
-  \frametitle{Overview}   % Insert frame title between curly braces
+  \frametitle{Plataforma Multi-Funcional}\framesubtitle{Overview}   % Insert frame title between curly braces
 
-  \begin{itemize}
-  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-  \item<3-> Point 3
-  \item<2-> Point 2  % Use Next Page to go to Point 3
-  \end{itemize}
+  \begin{columns}
+   \column{.5\textwidth}
+       \pgfuseimage{arch_top}
+   
+   \column{.5\textwidth}
+        \begin{itemize}\setlength{\itemsep}{2mm}
+               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item<1-> Múltiplas aplicações por nó
+	  	\item<2-> Spotter acede directamente ao hardware  % Use Next Page to go to Point 3
+	  	\item<3-> Uso dos módulos de:
+									 \begin{itemize}
+               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item Sincronização
+	  	\item Transporte Não-fiável  % Use Next Page to go to Point 3
+			 \item Descoberta de Serviços
+	  	\item Configuração
+	
+        \end{itemize}
+        \end{itemize}
+ \end{columns}
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
 
 \begin{frame}
   \MyLogo
-  \frametitle{Descoberta de Serviços}   % Insert frame title between curly braces
+  \frametitle{Plataforma Multi-Funcional}\framesubtitle{Descoberta de Serviços}   % Insert frame title between curly braces
 
-  \begin{itemize}
-  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-  \item<2-> Point 2  % Use Next Page to go to Point 3
-  \item<3-> Point 3
-  \end{itemize}
+  \begin{columns}
+   \column{.5\textwidth}
+       \pgfuseimage{arch_gsd_plat}
+   
+   \column{.5\textwidth}
+        \begin{itemize}\setlength{\itemsep}{6mm}
+               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item<1-> Funciona como um add-on à plataforma
+	  	\item<2-> Fornece uma API para que outras aplicações possam usar o módulo  % Use Next Page to go to Point 3
+	  	\item<3-> Funcionamento baseado no protocolo GSD
+        \end{itemize}
+   \end{columns}
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
@@ -357,13 +384,20 @@
 
 \begin{frame}
   \MyLogo
-  \frametitle{Spotter}   % Insert frame title between curly braces
-
-  \begin{itemize}
-  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-  \item<3-> Point 3
-  \item<2-> Point 2  % Use Next Page to go to Point 3
-  \end{itemize}
+  \frametitle{Componentes de localização}\framesubtitle{Spotter}   % Insert frame title between curly braces
+  \begin{columns}
+   \column{.5\textwidth}
+       \pgfuseimage{arch_spotter}
+   
+   \column{.5\textwidth}
+        \begin{itemize}\setlength{\itemsep}{6mm}
+               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item<1-> Sistema de plugins
+	  	\item<2-> Síncronos ou assíncronos
+	  	\item<3-> Infromação abstraída para tipo de dados comum
+		\item<4-> Utiliza a API para descobrir o respectivo manager
+        \end{itemize}
+ \end{columns}
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
@@ -373,69 +407,112 @@
 
 \begin{frame}
   \MyLogo
-  \frametitle{Ambiente}   % Insert frame title between curly braces
-  \begin{columns}[c]
-  \column{2in}  % slides are 3in high by 5in wide
-  \begin{itemize}
-  \item<1-> First item
-  \item<2-> Second item
-  \item<3-> ...
-  \end{itemize}
-  \column{2in}
-  \framebox{Insert graphic here % e.g. \includegraphics[height=2.65in]{graphic}
-  }
-  \end{columns}
+  \frametitle{Ambiente}\framesubtitle{}   % Insert frame title between curly braces
+\begin{columns}
+   \column{.5\textwidth}
+	\begin{itemize}\setlength{\itemsep}{6mm}
+               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item<1-> Boards TS-7500
+	  	\item<2-> Processador ARM 250MHz
+		  \item<3-> 64MB de RAM 
+	  	\item<3-> Debian Linux
+	  	\item<4-> Linguagem C
+        \end{itemize}
+   \column{.5\textwidth}
+       \pgfuseimage{ts7500}        
+ \end{columns}
 \end{frame}
 \note{The end}       % Add notes to yourself that will be displayed when
 		     % typeset with the notes or notesonly class options
+
+\begin{frame}
+  \MyLogo
+  \frametitle{Mapas}\framesubtitle{}   % Insert frame title between curly braces
+\begin{columns}
+   \column{.7\textwidth}
+	\begin{itemize}\setlength{\itemsep}{6mm}
+               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item<1-> Representação por células hexagonais
+	  	\item<2-> Células de dimensão variável
+	  	\item<3-> Células de transição para outros mapas
+        \end{itemize}
+   \column{.3\textwidth}
+       \pgfuseimage{cells11-5}        
+ \end{columns}
+\end{frame}
 
 
 \subsection{Protótipo IST-Taguspark}
 
 \begin{frame}
   \MyLogo
-  \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces
+  \frametitle{Protótipo}\framesubtitle{Plugins}   % Insert frame title between curly braces
 
   \begin{itemize}
-  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-  \item<2-> Point 2  % Use Next Page to go to Point 3
-  \item<3-> Point 3
+  \item<1-> Feixes de infra-vermelhos para detectar entradas e saídas de pessoas
+	\begin{itemize}
+  		\item<2-> Curto alcance que é simulateamente emissor e receptor
+		\item<2-> Par emissor e receptor infra-vermelho de longo alcance
+		\item<3-> Uso de dois feixes em paralelo para detectar direcção
+		\item<4-> Dispositivos de longo alcance usados de forma síncrona para não causar interferências
+	\end{itemize}
+  \item<5-> Tecnologia Bluetooth para detectar a força de sinal de aparelhos pessoais 
+	\begin{itemize}
+  		\item<6-> Transformar força de sinal em distância ao nó
+		\item<7-> Através de leis de propagação em espaço livre
+		\item<7-> Através de fingerprinting
+	\end{itemize}
   \end{itemize}
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
 
-\subsection{Plugins}
 
 \begin{frame}
   \MyLogo
-  \frametitle{Simple slide with three points shown in succession}   % Insert frame title between curly braces
-
-  \begin{itemize}
-  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-  \item<2-> Point 2  % Use Next Page to go to Point 3
-  \item<3-> Point 3
-  \end{itemize}
+  \frametitle{Protótipo}\framesubtitle{Hardware}   % Insert frame title between curly braces
+	
+   \begin{columns}
+   \column{.5\textwidth}
+	\begin{center}
+        \pgfuseimage{ir_proto}
+	\end{center}
+   \column{.5\textwidth}
+	\begin{center}
+        \pgfuseimage{ir_emitters}
+	\end{center}
+ \end{columns}
+   \begin{columns}
+   \column{.5\textwidth}
+	\begin{center}
+	\pgfuseimage{bt_proto}
+	\end{center}
+   \column{.5\textwidth}
+	\begin{center}
+	\pgfuseimage{ir_receivers}
+	\end{center}
+ \end{columns}
+	
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
 
 \section{Resultados}
-
 \begin{frame}
   \MyLogo
-  \frametitle{Ambiente de Testes}   % Insert frame title between curly braces
-  \begin{columns}[c]
-  \column{2in}  % slides are 3in high by 5in wide
-  \begin{itemize}
-  \item<1-> First item
-  \item<2-> Second item
-  \item<3-> ...
-  \end{itemize}
-  \column{2in}
-  \framebox{Insert graphic here % e.g. \includegraphics[height=2.65in]{graphic}
-  }
-  \end{columns}
+  \frametitle{Resultados}\framesubtitle{Ambiente de Testes}   % Insert frame title between curly braces
+	\begin{columns}
+   \column{.5\textwidth}
+	\begin{itemize}\setlength{\itemsep}{4mm}
+               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item<1-> Duas zonas de contagem de pessoas
+	  	\item<2-> Uma zona de localização de pessoas
+	  	\item<3-> Nós A e D detectam entradas e saídas
+		\item<4-> Nós A, B e C realizam a triangulação
+        \end{itemize}
+   \column{.5\textwidth}
+       \pgfuseimage{planta11}        
+ \end{columns}
 \end{frame}
 \note{The end}       % Add notes to yourself that will be displayed when
 		     % typeset with the notes or notesonly class options
@@ -444,41 +521,114 @@
 
 \begin{frame}
   \MyLogo
-  \frametitle{Funcionamento do Sensor Infra-Vermelhos}   % Insert frame title between curly braces
+  \frametitle{Resultados}\framesubtitle{Funcionamento do Sensor Infra-Vermelhos}   % Insert frame title between curly braces
 
-  \begin{itemize}
-  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-  \item<2-> Point 2  % Use Next Page to go to Point 3
-  \item<3-> Point 3
-  \end{itemize}
+\tiny
+\begin{center}
+\begin{tabular}{ | l | p{7cm} |}
+
+\hline
+	\textbf{Test} & \textbf{Result} \\ \hline
+	Entrada/saída normal & Uma entrada/saída \\ \hline
+	Entrada/saída rápida (a correr) & Se o sensor estiver obstruído por um intervalo inferior a 10ms poderá não detectar a passagem \\ \hline
+	Passagem cruzada & Usualmente detecta apenas uma das direcções \\ \hline
+	Passagem simultânea & Se os feixes não deixarem de estar obstruídos durante as duas passagens, apenas uma é detectada\\
+\hline
+
+\end{tabular} 
+\end{center}
+\normalsize
+	\begin{itemize}\setlength{\itemsep}{2mm}
+	  	\item<2-> Limitação de leitura a uma frequência de 100Hz
+	  	\item<3-> Mais indicado para passagens singulares
+        \end{itemize}
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
 
 \begin{frame}
   \MyLogo
-  \frametitle{Análise ao longo do dia}   % Insert frame title between curly braces
-
-  \begin{itemize}
-  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-  \item<2-> Point 2  % Use Next Page to go to Point 3
-  \item<3-> Point 3
-  \end{itemize}
+  \frametitle{Resultados}\framesubtitle{Análise ao longo do dia}   % Insert frame title between curly braces
+   \begin{columns}
+   \column{.56\textwidth}
+	\begin{itemize}\setlength{\itemsep}{5mm}
+		\item É possível verificar a variação do número de pessoas na àrea ao longo do dia
+		\item A área exterior teve um máximo de 18 pessoas
+		\item A área interior teve um máximo de 5 pessoas
+	\end{itemize}
+   \column{.44\textwidth}
+	\begin{columns}
+		\column{1\textwidth}
+		\pgfuseimage{test1.2}
+	\end{columns}
+	\begin{columns}
+		\column{1\textwidth}
+		\pgfuseimage{test1.3}
+	\end{columns}
+   \end{columns}
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
+\begin{frame}
+  \MyLogo
+  \frametitle{Resultados}\framesubtitle{Análise ao longo do dia} 
+   \begin{columns}
+   \column{.56\textwidth}
+	\begin{itemize}\setlength{\itemsep}{5mm}
+		\item É possível verificar a variação do número de pessoas na àrea ao longo do dia
+		\item A área exterior teve um máximo de 18 pessoas
+		\item A área interior teve um máximo de 5 pessoas
+	\end{itemize}
+   \column{.44\textwidth}
+	\begin{columns}
+		\column{1\textwidth}
+		\pgfuseimage{test2.2}
+	\end{columns}
+	\begin{columns}
+		\column{1\textwidth}
+		\pgfuseimage{test2.3}
+	\end{columns}
+   \end{columns}
+\end{frame}
+
+\begin{frame}
+  \MyLogo
+  \frametitle{Resultados}\framesubtitle{Análise ao longo do dia} 
+   \begin{columns}
+   \column{.56\textwidth}
+	\begin{itemize}\setlength{\itemsep}{5mm}
+		\item É possível verificar a variação do número de pessoas na àrea ao longo do dia
+		\item A área exterior teve um máximo de 18 pessoas
+		\item A área interior teve um máximo de 5 pessoas
+	\end{itemize}
+   \column{.44\textwidth}
+	\begin{columns}
+		\column{1\textwidth}
+		\pgfuseimage{test3.2}
+	\end{columns}
+	\begin{columns}
+		\column{1\textwidth}
+		\pgfuseimage{test3.3}
+	\end{columns}
+   \end{columns}
+\end{frame}
 
 \subsection{Rastreamento de pessoas}
 
 \begin{frame}
   \MyLogo
-  \frametitle{Experimentação}   % Insert frame title between curly braces
-
-  \begin{itemize}
-  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-  \item<2-> Point 2  % Use Next Page to go to Point 3
-  \item<3-> Point 3
-  \end{itemize}
+  \frametitle{Resultados}\framesubtitle{Rastreamento de pessoas}   % Insert frame title between curly braces
+	\begin{columns}
+   \column{.5\textwidth}
+	\begin{itemize}\setlength{\itemsep}{4mm}
+               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item<1-> Movimento real vs. detectado
+		\item<2-> Movimento detectado não é contínuo devido à perda de sinal
+		\item<3-> Pontos adjacentes correspondem na realidade à mesma célula
+        \end{itemize}
+   \column{.5\textwidth}
+       \pgfuseimage{test_mov}        
+ \end{columns}
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
@@ -488,31 +638,26 @@
 \begin{frame}
   \MyLogo
   \frametitle{Conclusões}   % Insert frame title between curly braces
-  \begin{columns}[c]
-  \column{2in}  % slides are 3in high by 5in wide
-  \begin{itemize}
-  \item<1-> First item
-  \item<2-> Second item
-  \item<3-> ...
+  \begin{itemize}\setlength{\itemsep}{6mm}
+	  \item<1-> Criação de plataforma de localização escalável
+	  \item<2-> Capaz de integrar variadas tecnologias de comunicação a custo reduzido
+	  \item<3-> Outros projectos podem dar uso a esta plataforma para aplicar políticas de poupança energética
+	  \item<4-> Criação de um add-on de descoberta de serviços a plataforma multi-funcional de monitorização
   \end{itemize}
-  \column{2in}
-  \framebox{Insert graphic here % e.g. \includegraphics[height=2.65in]{graphic}
-  }
-  \end{columns}
 \end{frame}
 \note{The end}       % Add notes to yourself that will be displayed when
 		     % typeset with the notes or notesonly class options
 
-\subsection{Trabalho Futuro}
+%\subsection{Trabalho Futuro}
 
 \begin{frame}
   \MyLogo
-  \frametitle{Trabalho Futuro}   % Insert frame title between curly braces
+  \frametitle{Conclusões}\framesubtitle{Trabalho Futuro}   % Insert frame title between curly braces
 
-  \begin{itemize}
-  \item<1-> Point 1 (Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-  \item<2-> Point 2  % Use Next Page to go to Point 3
-  \item<3-> Point 3
+  \begin{itemize}\setlength{\itemsep}{7mm}
+	  \item<1-> Carregar mapas dinâmicamente à medida que são necessários
+	  \item<2-> Realizar aproximações das distâncias para obter sempre triangulações solucionáveis
+	  \item<3-> Providenciar mecanismos de reset para quando é detectada adulteração de dados
   \end{itemize}
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
