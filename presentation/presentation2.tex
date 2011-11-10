@@ -67,7 +67,7 @@
 \pgfdeclareimage[height=4.9cm]{topoFIS}{figures/novais_arch2.pdf}
 \pgfdeclareimage[height=4.5cm]{topoLOG}{figures/novais_arch.pdf}
 \pgfdeclareimage[height=5.7cm]{arch_top}{figures/top_level_arch.pdf}
-\pgfdeclareimage[height=5cm]{arch_gsd_plat}{figures/gsd_platform.pdf}
+\pgfdeclareimage[height=6cm]{arch_gsd_plat}{figures/gsd_platform_new.pdf}
 \pgfdeclareimage[height=4.5cm]{arch_spotter}{figures/spotter_v2.pdf}
 
 %MAP PLANT/CELL
@@ -77,21 +77,21 @@
 
 %PROTOTYPES
 \pgfdeclareimage[height=5cm]{ts7500}{figures/ts7500.pdf}
-\pgfdeclareimage[height=3.2cm]{ir_proto}{figures/ir_proto.jpg}
-\pgfdeclareimage[height=3.2cm]{ir_emitters}{figures/ir_emitters.jpg}
-%\pgfdeclareimage[height=3.2cm]{ir_entrance1}{figures/ir_entrance1.jpg}
-%\pgfdeclareimage[height=3.2cm]{ir_entrance2}{figures/ir_entrance2.jpg}
-\pgfdeclareimage[height=3.2cm]{ir_receivers}{figures/ir_receivers.jpg}
-\pgfdeclareimage[height=3.2cm]{bt_proto}{figures/bt_simple.jpg}
+\pgfdeclareimage[height=6.6cm]{ir_proto}{figures/ir_proto_new.jpg}
+\pgfdeclareimage[height=6.6cm]{ir_emitters}{figures/ir_emitters_new.jpg}
+\pgfdeclareimage[height=6.6cm]{ir_entrance1}{figures/ir_entrance1.jpg}
+\pgfdeclareimage[height=6.6cm]{ir_entrance2}{figures/ir_entrance2.jpg}
+\pgfdeclareimage[height=6.6cm]{ir_receivers}{figures/ir_receivers_new.jpg}
+\pgfdeclareimage[height=6.6cm]{bt_proto}{figures/bt_simple_new.jpg}
 
 %TESTS
-\pgfdeclareimage[height=4cm]{test_mov}{figures/movimento.pdf}
-\pgfdeclareimage[height=6cm]{test1.2}{figures/13-16zona2.pdf}
-\pgfdeclareimage[height=6cm]{test1.3}{figures/13-16zona3.pdf}
-\pgfdeclareimage[height=6cm]{test2.2}{figures/17-20zona2.pdf}
-\pgfdeclareimage[height=6cm]{test2.3}{figures/17-20zona3.pdf}
-\pgfdeclareimage[height=6cm]{test3.2}{figures/21-23zona2.pdf}
-\pgfdeclareimage[height=6cm]{test3.3}{figures/21-23zona3.pdf}
+\pgfdeclareimage[height=4cm]{test_mov}{figures/movimento_new.pdf}
+\pgfdeclareimage[height=3.7cm]{test1.2}{figures/13-16zona2.pdf}
+\pgfdeclareimage[height=3.7cm]{test1.3}{figures/13-16zona3.pdf}
+\pgfdeclareimage[height=3.7cm]{test2.2}{figures/17-20zona2.pdf}
+\pgfdeclareimage[height=3.7cm]{test2.3}{figures/17-20zona3.pdf}
+\pgfdeclareimage[height=3.7cm]{test3.2}{figures/21-23zona2.pdf}
+\pgfdeclareimage[height=3.7cm]{test3.3}{figures/21-23zona3.pdf}
 % is a graphic format that can be processed by latex or pdflatex,
 % resp., then you can add a logo as follows:
 
@@ -361,10 +361,11 @@
   \frametitle{Plataforma Multi-Funcional}\framesubtitle{Descoberta de Serviços}   % Insert frame title between curly braces
 
   \begin{columns}
-   \column{.5\textwidth}
+   \column{.4\textwidth}
+				\begin{center}
        \pgfuseimage{arch_gsd_plat}
-   
-   \column{.5\textwidth}
+   	\end{center}
+   \column{.6\textwidth}
         \begin{itemize}\setlength{\itemsep}{6mm}
                %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
 	  	\item<1-> Funciona como um add-on à plataforma
@@ -421,21 +422,21 @@
 \note{The end}       % Add notes to yourself that will be displayed when
 		     % typeset with the notes or notesonly class options
 
-\begin{frame}
-  \MyLogo
-  \frametitle{Mapas}\framesubtitle{}   % Insert frame title between curly braces
-\begin{columns}
-   \column{.7\textwidth}
-	\begin{itemize}\setlength{\itemsep}{6mm}
-               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-	  	\item<1-> Representação por células hexagonais
-	  	\item<2-> Células de dimensão variável
-	  	\item<3-> Células de transição para outros mapas
-        \end{itemize}
-   \column{.3\textwidth}
-       \pgfuseimage{cells11-5}        
- \end{columns}
-\end{frame}
+%\begin{frame}
+ % \MyLogo
+ % \frametitle{Mapas}\framesubtitle{}   % Insert frame title between curly braces
+%\begin{columns}
+%   \column{.7\textwidth}
+%	\begin{itemize}\setlength{\itemsep}{6mm}
+%               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+%	  	\item<1-> Representação por células hexagonais
+%5	  	\item<2-> Células de dimensão variável
+%	  	\item<3-> Células de transição para outros mapas
+%        \end{itemize}
+%   \column{.3\textwidth}
+%       \pgfuseimage{cells11-5}        
+% \end{columns}
+%\end{frame}
 
 
 \subsection{Protótipo IST-Taguspark}
@@ -447,7 +448,7 @@
   \begin{itemize}
   \item<1-> Feixes de infra-vermelhos para detectar entradas e saídas de pessoas
 	\begin{itemize}
-  		\item<2-> Curto alcance que é simultaneamente emissor e receptor
+  		\item<2-> Sensor de curto alcance que é simultaneamente emissor e receptor
 		\item<2-> Par emissor e receptor infra-vermelho de longo alcance
 		\item<3-> Uso de dois feixes em paralelo para detectar direcção
 %		\item<4-> Dispositivos de longo alcance usados de forma síncrona para não causar interferências
@@ -470,6 +471,12 @@
 	\begin{center}
         \pgfuseimage{ir_proto}
 	\end{center}
+\tiny
+\begin{center}
+								Nó com integração de sensores infra-vermelho de curto alcance
+	\end{center}
+\normalsize
+
 \end{frame}
 
 \begin{frame}
@@ -478,14 +485,11 @@
 	\begin{center}
         \pgfuseimage{ir_emitters}
 	\end{center}
-\end{frame}
-
-\begin{frame}
-  \MyLogo
-  \frametitle{Protótipo}\framesubtitle{Hardware} 
-	\begin{center}
-	\pgfuseimage{bt_proto}
+\tiny
+\begin{center}
+								Emissores de infra-vermelho de longo alcance em paralelo
 	\end{center}
+\normalsize
 \end{frame}
 
 \begin{frame}
@@ -494,6 +498,37 @@
 	\begin{center}
 	\pgfuseimage{ir_receivers}
 	\end{center}
+\tiny
+\begin{center}
+Nó com integração de sensores receptores de infra-vermelho de longo alcance e Bluetooth
+	\end{center}
+\normalsize
+\end{frame}
+
+\begin{frame}
+  \MyLogo
+  \frametitle{Protótipo}\framesubtitle{Hardware} 
+	\begin{center}
+        \pgfuseimage{ir_entrance1}
+	\end{center}
+\tiny
+\begin{center}
+								Sensores de infra-vermelho de longo alcance à entrada de uma divisão
+	\end{center}
+\normalsize
+\end{frame}
+
+\begin{frame}
+  \MyLogo
+  \frametitle{Protótipo}\framesubtitle{Hardware} 
+	\begin{center}
+	\pgfuseimage{bt_proto}
+	\end{center}
+\tiny
+\begin{center}
+								Nó com acesso a tecnologia Bluetooth
+	\end{center}
+\normalsize
 \end{frame}
 \note{Speak clearly}  % Add notes to yourself that will be displayed when
                       % typeset with the notes or notesonly class options
@@ -522,11 +557,33 @@
   \frametitle{Resultados}\framesubtitle{Ambiente de Testes}   % Insert frame title between curly braces
 	\begin{columns}
    \column{.5\textwidth}
+Spotters
 	\begin{itemize}\setlength{\itemsep}{4mm}
                %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
-	  	\item<3-> Nós A e D detectam entradas e saídas
-		\item<4-> Nós A, B e C realizam a triangulação
+	  	\item<3-> \emph{A} e \emph{D} detectam entradas e saídas através de IV
+		\item<4-> \emph{A}, \emph{B} e \emph{C} detectam distâncias a pessoas através de Bluetooth
         \end{itemize}
+   \column{.5\textwidth}
+       \pgfuseimage{planta11}        
+ \end{columns}
+\end{frame}
+
+\begin{frame}
+  \MyLogo
+  \frametitle{Resultados}\framesubtitle{Ambiente de Testes}   % Insert frame title between curly braces
+	\begin{columns}
+   \column{.5\textwidth}
+Zone Managers
+	\begin{itemize}\setlength{\itemsep}{4mm}
+               %\item<1-> Exemplo de topologia física de rede  %(Click ``Next Page'' to see Point 2) % Use Next Page to go to Point 2
+	  	\item<3-> \emph{D} é responsável pela zona do gabinete (Contagem)
+		\item<4-> \emph{E} é responsável pela zona do núcleo (Contagem e Localização)
+        \end{itemize}
+\vspace{3mm}
+Aggregator
+	\begin{itemize}\setlength{\itemsep}{4mm}
+ 	\item \emph{E} agrega a informação das duas zonas
+ \end{itemize}
    \column{.5\textwidth}
        \pgfuseimage{planta11}        
  \end{columns}
@@ -629,11 +686,11 @@
    \end{columns}
 \end{frame}
 
-\subsection{Rastreamento de pessoas}
+\subsection{Detecção de Movimento}
 
 \begin{frame}
   \MyLogo
-  \frametitle{Resultados}\framesubtitle{Rastreamento de pessoas}   % Insert frame title between curly braces
+  \frametitle{Resultados}\framesubtitle{Detecção de Movimento}   % Insert frame title between curly braces
 	\begin{columns}
    \column{.5\textwidth}
 	\begin{itemize}\setlength{\itemsep}{4mm}
