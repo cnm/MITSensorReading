@@ -1,6 +1,6 @@
 INCLUDE_DIR=include
-#CC=arm-unknown-linux-gnu-gcc
-CC=gcc
+CC=arm-unknown-linux-gnu-gcc
+#CC=gcc
 CFLAGS=-fPIC -g 
 
 #We can only change the name of this folder. We cannot put it into another directory
